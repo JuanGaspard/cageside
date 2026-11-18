@@ -1550,12 +1550,46 @@ run-order noise. Re-measured with the audit's reset in place, on the rolls and r
 total and 8.39 of knee-turn, rate 8 gives **65.0 and 4.57**, rate 20 gives 92.6 and 6.62 with a pop. 8 is the
 sweet spot on both counts, so the change stands — this time on evidence.
 
-**Still open.** `knee turned` is the top complaint in six of the seven worst situations, and `back take
-denied` swings between 4.6 and 36.2 between runs. It is not the pose: the figure already clamps a knee's pole
-to within 0.85 rad of the leg's own front, tighter than the 1.25 the test allows. It is the contact solver
-pushing the knee through a fast roll faster than the anatomical limit is allowed to put it back, and no
-setting of `kneeRate` fixes it — only trades it. That needs the limit applied to the push itself rather than
-after it.
+### The knee through a roll: a limit chasing a number that wasn't there
+
+`knee turned` was the top complaint in six of the seven worst situations and swung wildly between runs. It
+was neither the pose nor the rate limit, and three guesses were wrong before the trace settled it.
+
+`legTrace` through a bridge and roll, on the leg it flags, reading the knee's angle from the front of the leg
+frame by frame:
+
+```
+t1035  anat 0.69,1.2,0     bend 1.2cm      ← within the limit, nothing to correct
+t1050  anat 0.95,1.2,0     bend 1.7cm
+t1065  anat 1.64,1.2,-0.12 bend 4.0cm      ← 0.69 rad in one frame: 43 rad/s
+t1080  anat 1.8,1.2,-0.24  bend 8.7cm      ← needs -0.6, the rate limit allows -0.24
+t1095  anat 1.39,1.2,-0.19 bend 6.8cm
+```
+
+The angle is measured **round the line from hip to ankle**. At that moment the leg is folded to 23% of its
+length, so that line is a few centimetres long and its direction swings with every centimetre the foot moves.
+The angle it gives is mostly noise — and the correction chasing it was twitching the knee 4 to 9 cm a frame.
+That is the visual fault: not a knee bent the wrong way, but a knee being shaken by a limit arguing with a
+measurement. Rendered close at the flagged frames, the figure was already fine.
+
+This explains everything that didn't add up. `kneeRate` 0 made it worse (90.9, movement spiking to 31.5) and
+20 worse again, because neither the correction nor its absence was the problem. And the scores swung run to
+run because the number being scored was unstable.
+
+The limit now eases off as the leg folds, the same way the hip's limit already holds "as far as the angle can
+be read". Full above 40% extension, nothing below 18%. The test got the same guard, since it was measuring
+the same unreadable angle and reporting a fault that wasn't on screen.
+
+| through the roll | before | after |
+|---|---|---|
+| knee moved by the limit, per frame | 4.0 / 8.7 / 6.8 cm | **2.1 / 2.7 cm**, 0.1 elsewhere |
+| worst angle reached | 1.8 rad | **1.35** |
+| audit total | 230 | **203** |
+| knee-turn across the audit | 4.57 | **1.16** on the rolls |
+
+Standing is untouched: a leg under a man is 80 to 100% extended, where the weight is 1 and the limit holds in
+full. The one place it still reads high is a head kick (1.77), where the leg is extended and the measure is
+readable — a different question, and the kick looks right.
 
 **`tools/embed_clips.py` was broken on this checkout.** It anchors on `;$`, and cloning the repo on Windows
 turned every line ending into CRLF, so `$` sat before the `\n` and never matched the `;\r`. The tool failed on

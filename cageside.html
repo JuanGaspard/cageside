@@ -20362,6 +20362,14 @@ defences|Johnny Eblen|3`,
           // prefer it, and the jumps the limit was put here to stop don't come back. A first reading of this made
           // it look like a large win; that was the audit scoring a situation by whatever had run before it.)
           let back = Math.abs(a2) > most ? wrapPi((Math.abs(a2) > Math.PI - 0.4 ? M.sgn[i] : Math.sign(a2)) * most - a2) : 0;
+          // (and only as far as the angle can be read, as the hip's limit is. This turn is measured round the
+          // line from hip to ankle: with the leg folded that line is a few centimetres long and swings with
+          // every centimetre the foot moves, so the angle it gives is mostly noise. Traced through a bridge
+          // and roll with the leg folded to a quarter of its length, it read 0.95 then 1.64 then 1.8 rad in
+          // three frames — 43 rad/s, which nothing could follow — and the correction chasing it twitched the
+          // knee 4 to 9 cm a frame. No value of kneeRate helped, because the number it was chasing was not
+          // really there. Extended, it is readable and the limit holds in full.)
+          if (back) back *= clampN((dl / (L1 + L2) - 0.18) / 0.22, 0, 1);
           if (final && CFG.kneeRate) { const was = M.anQ[i] || 0, k = CFG.kneeRate / 1000 * (M.dt || 16); back = clampN(back, was - k, was + k); M.anOut[i] = back; }
           if (back) w = turnAbout(w, u, back);
           if (fd) fd.anat = [+a2.toFixed(2), +most.toFixed(2), +back.toFixed(2)];

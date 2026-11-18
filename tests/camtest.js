@@ -607,7 +607,13 @@ export function posture(g) {
       const fw1 = [0, 1, 2].map((i) => Rp[0][i] * Math.cos(hb) + Rp[1][i] * Math.sin(hb));
       const fr0 = sub(fw1, ax.map((x) => x * dot(fw1, ax))), side0 = cross(ax, fr0);
       // (turned out or in past what the hip turns, up to pointing straight backwards at pi)
-      if (Math.hypot(...fr0) > 0.2) over('knee' + k + ' turned', Math.abs(Math.atan2(dot(b, unit(side0)), dot(b, unit(fr0)))), RANGE.kneeOut);
+      // (and only on a leg open enough for the turn to mean anything. It is measured round the line from hip
+      // to ankle: folded up, that line is a few centimetres long and swings with every centimetre the foot
+      // moves, so the angle it gives is noise. Through a bridge and roll it read 0.95, 1.64 then 1.8 rad in
+      // three frames with the leg folded to a quarter of its length, and the figure on screen was fine. This
+      // was reporting a fault that wasn't there, and the solver was chasing it: see the knee limit in CONTACT)
+      const reach = Math.hypot(...sub(A, H)) / (Math.hypot(...sub(K, H)) + Math.hypot(...sub(A, K)) || 1);
+      if (Math.hypot(...fr0) > 0.2 && reach > 0.34) over('knee' + k + ' turned', Math.abs(Math.atan2(dot(b, unit(side0)), dot(b, unit(fr0)))), RANGE.kneeOut);
       // the ankle: the foot (heel to toes, square to the shin) pointing the way the knee does, give or take
       // (both square to the shin, and only a foot well off the shin's line: one along it has no twist to see)
       // (the knee's front as the thigh's direction square to the shin, as the figure takes it: taken from the
