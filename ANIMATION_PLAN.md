@@ -1515,6 +1515,53 @@ moved anyway — run-to-run variance between fights is large enough to look like
 improvements that had not happened. Check what the server is actually serving before trusting a number: fetch
 the page and grep it for the change.
 
+### The ground: what was wrong, and what the guard actually was
+
+The guard not enveloping turned out not to be the guard. Measured on entering closed guard, the ankles sat
+25 cm apart where the pose and the grips put them 4 — but a time course showed it **settles by about 1.3 s**
+and then holds (gap 6 cm, ankles 18 cm from his waist, hips 39 cm apart) for as long as you watch. My earlier
+single readings at 2.5 s were landing in the transient and in solver state left over from the position
+before. Rendered settled, the closed guard wraps correctly.
+
+Two false starts, both measured and reverted. Exempting gripped limbs from self-collision did not close the
+gap and let a forearm sink 13 cm into the man's own body. A `hug` factor that let a gripped limb press into
+the other man was no better: the knees moved 2 cm and the ankle gap got worse. The knee position in a closed
+guard is **forced by geometry** — with the ankles crossed behind his back, a leg 83 cm long has to bow about
+35 cm out. It was right all along.
+
+What was actually wrong, and is now fixed:
+
+- **Half guard** read as a sprawl. The top man's free leg was posted 62 cm behind him with the knee nearly
+  straight, so he lay flat and long over the man instead of driving his weight down. Leg in to 44 cm, knee
+  bent under him, hips lower. 6.3 -> 1.1.
+- **Mount** had the knees poled a full 1 to each side, so they sat wide of the man underneath — the knees are
+  the thing that pins him. In at his ribs now.
+- **The back take from the mount**: the bottom man's feet were keyed once at 350 ms and left there while his
+  pelvis went on turning from 1.1 to 1.4, so the foot stopped matching the shin and the ankle read as twisted
+  a whole 2 rad. The feet come round with the hips now. 19 -> 9.6, and `back take denied` 12.2 -> 4.6.
+- **Rear-naked choke** (previous round): both of the defender's elbows were poled behind him, wrenching both
+  shoulders 0.6 to 0.8 rad past range for over a hundred frames.
+
+Held positions now score: closed guard 0.1, half guard 1.1, side control 0, mount 3.1, back 2.8. Whole audit
+230 with **one** single-frame pop and nothing under the mat.
+
+**`CFG.kneeRate`, settled properly.** Last round I raised it 4 -> 8 on a reading I then had to retract as
+run-order noise. Re-measured with the audit's reset in place, on the rolls and reversals: rate 4 gives 72.5
+total and 8.39 of knee-turn, rate 8 gives **65.0 and 4.57**, rate 20 gives 92.6 and 6.62 with a pop. 8 is the
+sweet spot on both counts, so the change stands — this time on evidence.
+
+**Still open.** `knee turned` is the top complaint in six of the seven worst situations, and `back take
+denied` swings between 4.6 and 36.2 between runs. It is not the pose: the figure already clamps a knee's pole
+to within 0.85 rad of the leg's own front, tighter than the 1.25 the test allows. It is the contact solver
+pushing the knee through a fast roll faster than the anatomical limit is allowed to put it back, and no
+setting of `kneeRate` fixes it — only trades it. That needs the limit applied to the push itself rather than
+after it.
+
+**`tools/embed_clips.py` was broken on this checkout.** It anchors on `;$`, and cloning the repo on Windows
+turned every line ending into CRLF, so `$` sat before the `\n` and never matched the `;\r`. The tool failed on
+a fresh clone of its own repo. It keeps the line's own ending now, and strips `note` wherever it sits — the
+ones nested in a key's `top`/`bot` were riding along into the game (1.8 KB of them).
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
