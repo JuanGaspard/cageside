@@ -1,0 +1,19 @@
+{
+  "id": "kick_2",
+  "ref": "guard",
+  "note": "Body kick, the quicker one: a lower, shorter chamber, the hip turned over sooner and the rear arm thrown down and back hard to whip it through.",
+  "aim": { "foot": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 60, "set": { "root": [0.1, 0.87], "toeL": [0.2, 0.15], "pelvis": [-0.2, 0.05, -0.08], "handR": [0.05, 0.0, 0.18], "footR": [-0.22, 0.2, 0.12], "toeR": [-0.4, 0.8], "kneeAtR": [0.2, 0.55, 0.18, 0.35] } },
+    { "t": 170, "pose": "chamber", "set": { "kneeAtR": [0.75, 0.92, 0.18, 1], "footR": [0.42, 0.82, 0.32], "handR": [-0.2, -0.1, 0.25], "elbowR": [-1, -0.5, 0.3] } },
+    { "t": 230, "set": { "footR": [0.8, 0.9, 0.5], "kneeAtR": [0.8, 0.95, 0.1, 1] } },
+    { "t": 290, "pose": "kick", "tan": "flat", "set": { "kneeAtR": [0.7, 0.98, 0, 1], "kneeR": [0.15, 0.45, -0.9], "handR": [-0.35, -0.15, 0.25] } },
+    { "t": 350, "set": { "footR": [0.9, 0.95, 0.02], "kneeAtR": [0.68, 0.97, 0.02, 1], "kneeR": [0.3, 0.6, -0.75] } },
+    { "t": 400, "set": { "footR": [0.8, 0.92, 0.45], "kneeAtR": [0.78, 0.98, 0.12, 1], "kneeR": [0.7, 0.8, -0.1], "handR": [-0.12, -0.04, 0.24], "elbowR": [-0.8, -0.65, 0.3] } },
+    { "t": 460, "pose": "chamber", "set": { "footR": [0.35, 0.45, 0.15], "root": [0.2, 0.9], "kneeAtR": [0.55, 0.75, 0.18, 0.6], "handR": [0.08, 0.12, 0.14], "elbowR": [-0.45, -0.9, 0.3] } },
+    { "t": 580, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 290, "recover": 500 },
+  "contacts": { "L": [[0, 580]], "R": [[0, 40], [530, 580]] }
+}

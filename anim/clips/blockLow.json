@@ -1,0 +1,14 @@
+{
+  "id": "blockLow",
+  "ref": "guard",
+  "note": "Covering the body: elbows down tight to the ribs, a small crunch over them, gloves still by the face.",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 70, "set": { "handL": [0.24, 0.17, -0.08], "handR": [0.16, 0.16, 0.09], "elbowL": [0, -1, -0.1], "elbowR": [0, -1, 0.1], "spine": [-0.15, 0.36, 0], "root": [0, 0.83], "neck": [0.6, -0.05] } },
+    { "t": 110, "set": { "handL": [0.24, 0.17, -0.08], "handR": [0.16, 0.16, 0.09], "elbowL": [0, -1, -0.1], "elbowR": [0, -1, 0.1], "spine": [-0.15, 0.4, 0], "root": [-0.02, 0.825], "neck": [0.6, -0.05] } },
+    { "t": 200, "set": { "handL": [0.24, 0.17, -0.08], "handR": [0.16, 0.16, 0.09], "elbowL": [0, -1, -0.1], "elbowR": [0, -1, 0.1], "spine": [-0.15, 0.36, 0], "root": [-0.01, 0.83], "neck": [0.6, -0.05] } },
+    { "t": 360, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 110 },
+  "contacts": { "L": [[0, 360]], "R": [[0, 360]] }
+}

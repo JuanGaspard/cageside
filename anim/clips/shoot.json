@@ -1,0 +1,15 @@
+{
+  "id": "shoot",
+  "ref": "guard",
+  "note": "Double-leg: level change, the penetration step (lead knee down between his feet), hands to the backs of the knees, and the rear foot comes up behind to drive; the aim carries the body the rest of the distance. If it works the picture goes to the mat from here; if not, both feet go back.",
+  "aim": { "hand": "L", "at": "hips", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 120, "set": { "root": [0.02, 0.7], "pelvis": [-0.4, 0.35, 0], "spine": [-0.15, 0.3, 0], "neck": [0.5, -0.3], "handL": [0.35, 0.05, -0.1], "handR": [0.3, 0.05, 0.1] } },
+    { "t": 380, "pose": "shot", "tan": "flat" },
+    { "t": 560, "pose": "shot", "set": { "footR": [-0.4, 0.15, 0.14], "root": [0.2, 0.52] } },
+    { "t": 820, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 380, "recover": 700 },
+  "contacts": { "L": [[0, 140], [360, 600], [760, 820]], "R": [[0, 300], [500, 620], [780, 820]] }
+}

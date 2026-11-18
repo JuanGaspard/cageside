@@ -1,0 +1,25 @@
+{
+  "id": "techStandUp",
+  "note": "Back to the feet from the mat (the man underneath gets up). top: the man who was on top; bot: the man getting up. The man on top postures up and steps back first, a foot coming up under him, and rises into his stance; the man underneath, given the room, sits up and posts a hand behind him, lifts his hips off the mat, swings the leg back through and comes up into his stance a step back.",
+  "from": ["guard", "half", "side", "mount", "back"],
+  "to": ["stand"],
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 300, "top": { "mix": 0.15, "add": { "root": [-0.1, 0.12], "spine": [0, -0.15, 0] } },
+      "bot": { "mix": 0, "add": { "pelvis": [0, 0.25, 0], "spine": [0, 0.1, 0] } } },
+    { "t": 650, "top": { "mix": 0.45, "add": { "root": [-0.08, 0.1], "spine": [0, 0.05, 0] } },
+      "bot": { "mix": 0, "add": { "pelvis": [0, 0.7, 0], "spine": [0, 0.25, 0], "handR": [-0.15, -0.4, 0.12], "root": [-0.03, 0.06] } } },
+    { "t": 950, "top": { "mix": 0.85, "add": { "root": [-0.02, 0.03] } },
+      "bot": { "mix": 0.1, "add": { "pelvis": [0, 0.7, 0], "root": [-0.08, 0.2], "handR": [-0.15, -0.35, 0.1], "spine": [0, 0.2, 0] } } },
+    { "t": 1250, "top": { "mix": 1 },
+      "bot": { "mix": 0.55, "add": { "root": [-0.15, 0.12], "pelvis": [0, 0.35, 0], "spine": [0, 0.25, 0], "handR": [-0.05, -0.2, 0.05] } } },
+    { "t": 1500, "top": "@to", "bot": { "mix": 0.92, "add": { "root": [-0.04, -0.03] } } },
+    { "t": 1800, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "contacts": { "top": { "L": [[700, 1800]], "R": [[600, 1800]] }, "bot": { "L": [[1450, 1800]], "R": [[1350, 1800]] } },
+  "place": {
+    "top": [[0, 0, 0, 0, 0], [300, 0.2, 0, 0, 0], [650, 0.55, 0, 0, 0], [950, 0.9, 0, 0, 0], [1250, 1, 0, 0, 0], [1800, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [950, 0.1, 0, 0, 0], [1250, 0.5, -0.05, 0, 0], [1500, 0.9, 0, 0, 0], [1800, 1, 0, 0, 0]]
+  },
+  "land": { "top": { "at": 0.6, "root": -0.0006 }, "bot": { "at": 0.83, "root": -0.0008 } }
+}

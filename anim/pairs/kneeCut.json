@@ -1,0 +1,48 @@
+{
+  "id": "kneeCut",
+  "note": "The knee-cut pass from the closed guard to half guard. top: the man passing; bot: the man playing guard. He postures up and opens the guard, the lead knee coming up and a hand pinning the near knee down (the man underneath lets go and his feet go to the hips). Then the lead knee cuts across the thigh as the hips turn, the arm goes under the head, and the back leg stays behind, where the man underneath traps it; the chest comes down onto him and sinks in.",
+  "from": ["guard"],
+  "to": ["half"],
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 250, "note": "postured up, the lead knee up (combat base); the guard opens, feet on the hips",
+      "top": { "set": { "root": [-0.02, 0.38], "pelvis": [0, 0.2, 0], "spine": [0, 0.1, 0], "neck": [0, 0.05],
+        "footL": [0.18, 0.06, -0.26], "toeL": [0, 0], "kneeL": [1, 0.6, -0.4] } },
+      "bot": { "set": { "pelvis": [0, -1.2, 0], "spine": [0, -0.4, 0], "kneeL": [0.2, 1, -1], "kneeR": [0.2, 1, 1] } } },
+    { "t": 550, "note": "the knee drives in across the thigh, the hips turning; he's turned onto his side to frame (about his spine), the leg cut across pinned flat on the mat",
+      "top": { "set": { "root": [0.15, 0.32], "pelvis": [-0.45, 0.8, 0], "spine": [0.2, 0.35, 0], "neck": [0, -0.45],
+        "footL": [0.02, 0.06, 0.02], "toeL": [2.4, 0.3], "kneeL": [1, -0.2, 0.7], "footR": [-0.45, 0.06, 0.22], "toeR": [3.14, 0.3], "kneeR": [1, -0.6, 0.3] } },
+      "bot": { "set": { "pelvis": [0.5, -1.3, 0], "spine": [0, -0.2, 0.15], "neck": [0, 0.55],
+        "footL": [0.72, 0.07, -0.12], "toeL": [0, -0.3], "footR": [0.42, 0.07, -0.02], "toeR": [0, 0], "kneeL": [0.1, 1, -0.5], "kneeR": [0.3, 1, -0.1] } } },
+    { "t": 850, "note": "through: the knee down on the far side, hips low, the back leg trailing between his legs; chest coming down",
+      "top": { "mix": 0.6, "add": { "root": [0.05, -0.02], "pelvis": [-0.3, 0.15, 0], "spine": [0.1, 0.05, 0] } },
+      "bot": { "mix": 0.6, "add": { "pelvis": [0, 0, 0.2] } } },
+    { "t": 1100, "note": "the chest down onto him, heavy",
+      "top": { "mix": 0.95, "add": { "root": [0, -0.04], "pelvis": [-0.05, 0.1, 0] } },
+      "bot": { "mix": 0.95 } },
+    { "t": 1500, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "grips": [
+    { "who": "top", "eff": "handR", "to": ["knL", "hpL", 0.15], "out": [1, 0, 0], "t": [150, 800] },
+    { "who": "top", "eff": "handL", "to": ["W", "Ch", 0.4], "out": [1, 0, 0], "t": [100, 450] },
+    { "who": "top", "eff": "handL", "to": ["N", "Hd", 0.4], "out": [-1, 0, 0], "t": [600, 1600] },
+    { "who": "bot", "eff": "footL", "to": ["P", "W", 0.3], "out": [1, 0, 0], "add": [0, 0, -0.08], "t": [150, 550] },
+    { "who": "bot", "eff": "footR", "to": ["P", "W", 0.3], "out": [1, 0, 0], "add": [0, 0, 0.08], "t": [150, 450] },
+    { "who": "bot", "eff": "handL", "to": ["shL", "elL", 0.4], "t": [400, 1600] }
+  ],
+  "place": {
+    "note": "the passer's hips stay back as the knee drives across (x: along the line, the way he faces), not over the man's legs: there, the feet on his hips and the knee cutting across were 15 cm into each other",
+    "top": [[0, 0, 0, 0, 0], [250, 0, -0.05, 0, 0], [550, 0.25, -0.1, 0, -0.35], [850, 0.7, -0.05, 0.05, -0.3], [1100, 0.95, 0, 0.05, -0.1], [1500, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [550, 0.2, 0, -0.03, 0.2], [850, 0.7, 0, -0.03, 0.25], [1500, 1, 0, 0, 0]]
+  },
+  "land": { "top": { "at": 0.73, "root": -0.001, "spine": 0.002 } },
+  "deny": { "at": 430, "hold": 300, "back": 700,
+    "note": "stopped as the knee drives in: a frame on the chest pushes him back up into his base, the other hand peels off the wrist pinning his knee, the knee comes back in front, and the guard closes again",
+    "top": { "add": { "root": [-0.04, 0.02], "pelvis": [0, -0.15, 0], "spine": [0, -0.05, 0] } },
+    "bot": { "add": { "pelvis": [-0.25, 0, 0] } },
+    "grips": [
+      { "who": "bot", "eff": "handR", "to": ["Ch", "shR", 0.5], "out": [1, 0, 0], "t": [-150, 450] },
+      { "who": "bot", "eff": "handL", "to": ["elR", "fiR", 0.75], "t": [-100, 400] }
+    ] },
+  "revAt": 300, "revNote": "caught postured up with the knee raised: his weight is high and back, the moment for the hip bump"
+}

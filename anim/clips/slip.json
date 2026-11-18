@@ -1,0 +1,13 @@
+{
+  "id": "slip",
+  "ref": "guard",
+  "note": "Slipping a straight punch: the head goes off the line to one side and a little forward, from the knees and waist, the hands staying home. (Played either way round.)",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 110, "tan": "flat", "set": { "root": [0, 0.83], "spine": [-0.25, 0.36, -0.22], "pelvis": [-0.65, 0.1, -0.06], "neck": [0.75, 0], "handL": [0.36, 0.22, -0.08], "handR": [0.2, 0.26, 0.04] } },
+    { "t": 170, "set": { "root": [0, 0.835], "spine": [-0.25, 0.34, -0.2], "pelvis": [-0.65, 0.1, -0.05], "neck": [0.75, 0], "handL": [0.37, 0.22, -0.07], "handR": [0.2, 0.25, 0.05] } },
+    { "t": 330, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 110 },
+  "contacts": { "L": [[0, 330]], "R": [[0, 330]] }
+}

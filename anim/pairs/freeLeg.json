@@ -1,0 +1,38 @@
+{
+  "id": "freeLeg",
+  "note": "Half guard to side control: the trapped leg freed. top: the man on top. Chest heavy on him with the arm under his head, he lifts his hips and uses the free knee to push the man's knees down, pulls the trapped leg up and out, and swings his hips out to the side, turning across him, and sinks into side control. The man underneath squeezes the leg, loses it, and is flattened.",
+  "from": ["half"],
+  "to": ["side"],
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 300, "note": "hips up, the free knee pushes his knees down; the trapped leg starts to pull",
+      "top": { "set": { "root": [0, 0.44], "pelvis": [0, 1.0, 0], "footL": [-0.05, 0.07, -0.26], "kneeL": [1, -0.4, -0.5],
+        "footR": [-0.45, 0.16, 0.06], "toeR": [3.14, 0.6], "kneeR": [1, -0.6, 0.2] } },
+      "bot": { "set": { "pelvis": [0.4, -1.35, 0], "kneeL": [0, 1, -0.3], "kneeR": [0, 1, 0.3] } } },
+    { "t": 650, "note": "the leg out, the hips swinging out to the side, chest still on him",
+      "top": { "set": { "root": [-0.05, 0.42], "pelvis": [0, 1.15, 0], "footR": [-0.6, 0.07, 0.28], "toeR": [3.14, 0.3], "kneeR": [0.5, -1, 0.3] } },
+      "bot": { "mix": 0.4 } },
+    { "t": 950, "note": "across him", "top": { "mix": 0.75 }, "bot": { "mix": 0.85 } },
+    { "t": 1200, "note": "sinks in", "top": { "mix": 1, "add": { "root": [0, -0.04] } }, "bot": { "mix": 1 } },
+    { "t": 1500, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "grips": [
+    { "who": "top", "eff": "handL", "to": ["N", "Hd", 0.4], "out": [-1, 0, 0], "t": [-1, 1600] },
+    { "who": "top", "eff": "handR", "to": ["knL", "hpL", 0.2], "out": [1, 0, 0], "t": [150, 750] },
+    { "who": "bot", "eff": "footL", "to": ["knR", "anR", 0.35], "add": [0, 0.05, 0], "t": [-1, 450] },
+    { "who": "bot", "eff": "footR", "to": ["knR", "anR", 0.55], "add": [0, -0.04, 0], "t": [-1, 400] }
+  ],
+  "place": {
+    "top": [[0, 0, 0, 0, 0], [300, 0.02, 0, 0, 0], [650, 0.3, -0.05, 0, 0], [950, 0.75, 0, 0, 0], [1200, 0.97, 0, 0, 0], [1500, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [1500, 1, 0, 0, 0]]
+  },
+  "land": { "top": { "at": 0.8, "root": -0.001, "spine": 0.002 } },
+  "deny": { "at": 480, "hold": 300, "back": 700,
+    "note": "stopped as the leg comes out: the feet lock on it again and he squeezes, turned in to him (a hand reaching round his back for the underhook flipped the elbow: left out)",
+    "bot": { "add": { "pelvis": [0.2, 0, 0] } },
+    "grips": [
+      { "who": "bot", "eff": "footL", "to": ["knR", "anR", 0.35], "add": [0, 0.05, 0], "t": [-200, 450] },
+      { "who": "bot", "eff": "footR", "to": ["knR", "anR", 0.55], "add": [0, -0.04, 0], "t": [-150, 450] }
+    ] },
+  "revAt": 330, "revNote": "caught with his hips up and his weight on the leg he's pulling: the bridge into him rolls him"
+}

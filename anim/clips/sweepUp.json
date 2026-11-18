@@ -1,0 +1,15 @@
+{
+  "id": "sweepUp",
+  "ref": "guard",
+  "transition": true,
+  "note": "A sweep, the man underneath coming up on top. As in the reference footage: he first breaks the man's posture, pulling him down (about 0.4 s); then the hips bump up onto one side and he rolls over with him (about 0.5 s), coming up low and driving forward onto him (never sitting up straight on the way), and lands on top, his weight sinking in, and settles.",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 400, "mix": 0, "add": { "spine": [0, -0.2, 0], "neck": [0, 0.2], "handL": [-0.05, -0.1, 0], "handR": [-0.05, -0.1, 0] } },
+    { "t": 650, "mix": 0.08, "add": { "pelvis": [0, 0.2, 0.5], "root": [0, 0.08], "spine": [0, 0.1, 0.25] } },
+    { "t": 950, "mix": 0.5, "add": { "pelvis": [0, 0.8, 0.35], "spine": [0, 0.2, 0], "root": [0.08, -0.02] } },
+    { "t": 1150, "mix": 0.95, "add": { "pelvis": [0, 0.15, 0], "root": [0.03, -0.04] } },
+    { "t": 1500, "pose": "@to", "tan": "flat" }
+  ],
+  "land": { "at": 0.77, "root": -0.0012, "spine": 0.002 }
+}

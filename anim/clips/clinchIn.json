@@ -1,0 +1,12 @@
+{
+  "id": "clinchIn",
+  "ref": "guard",
+  "transition": true,
+  "note": "Into the clinch: a step in with the hands reaching for the neck and the body, and the tie-up.",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 286, "mix": 0.55, "add": { "handL": [0.12, 0.08, 0], "handR": [0.1, 0.06, 0], "root": [0.03, 0] } },
+    { "t": 600, "pose": "@to", "tan": "flat" }
+  ],
+  "contacts": { "L": [[0, 100], [329, 600]], "R": [[0, 600]] }
+}

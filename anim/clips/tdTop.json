@@ -1,0 +1,15 @@
+{
+  "id": "tdTop",
+  "ref": "guard",
+  "transition": true,
+  "note": "Finishing a takedown on top (from the shot, or the clinch): he drives in low through the hips, lifts and turns the man, comes down with him and lands heavy in his position, his weight sinking onto him before he settles. Timed from a judo throw (about 1.25 s in, 0.6 s down) and the double-leg finish.",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 180, "mix": 0.05, "add": { "root": [0.12, -0.04], "spine": [0, 0.25, 0], "neck": [0, -0.2] } },
+    { "t": 420, "mix": 0.3, "add": { "root": [0.2, 0.02], "pelvis": [0, 0.2, 0], "spine": [0, 0.2, 0], "neck": [0, -0.15] } },
+    { "t": 650, "mix": 0.75, "add": { "root": [0.08, -0.06], "spine": [0, 0.15, 0] } },
+    { "t": 820, "mix": 1, "add": { "root": [0, -0.03] } },
+    { "t": 1100, "pose": "@to", "tan": "flat" }
+  ],
+  "land": { "at": 0.68, "root": -0.0012, "spine": 0.002 }
+}

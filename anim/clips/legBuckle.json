@@ -1,0 +1,13 @@
+{
+  "id": "legBuckle",
+  "ref": "guard",
+  "note": "A kick lands on the lead leg: the knee gives inward, the hips drop over it and he sways to catch himself.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 70, "set": { "root": [-0.03, 0.8], "pelvis": [-0.6, 0.08, -0.1], "spine": [-0.15, 0.26, 0.12], "kneeL": [1, -0.1, 0.4], "toeL": [0, 0.2] } },
+    { "t": 220, "set": { "root": [-0.03, 0.82], "pelvis": [-0.6, 0.08, -0.05], "spine": [-0.15, 0.25, 0.06], "kneeL": [1, -0.05, 0.1], "toeL": [-0.15, 0.1] } },
+    { "t": 560, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 560]], "R": [[0, 560]] }
+}

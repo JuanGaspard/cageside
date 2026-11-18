@@ -1,0 +1,13 @@
+{
+  "id": "workBackTop",
+  "ref": "guard",
+  "loop": true,
+  "note": "On his back, working: flattens him out with the hips, follows his turn, settles.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 750, "pose": "guard", "add": { "spine": [0, 0.1, 0], "root": [0.02, 0] } },
+    { "t": 1500, "pose": "guard", "add": { "pelvis": [0, 0, 0.1] } },
+    { "t": 2250, "pose": "guard", "add": { "root": [-0.02, 0] } },
+    { "t": 3000, "pose": "guard" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "shoot_2",
+  "ref": "guard",
+  "note": "Single leg: a shorter level change and a step to the outside of his lead leg, both hands on it at the knee, head tight on the inside, then up with the leg (if it works, the picture takes them down from there).",
+  "aim": { "hand": "L", "at": "thigh", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 110, "set": { "root": [0.02, 0.74], "pelvis": [-0.45, 0.3, 0], "spine": [-0.15, 0.3, 0], "neck": [0.5, -0.25], "handL": [0.36, 0.05, -0.12], "handR": [0.3, 0.05, 0.06] } },
+    { "t": 340, "tan": "flat", "set": { "root": [0.2, 0.6], "pelvis": [-0.2, 0.75, 0.1], "spine": [0, 0.35, 0.1], "neck": [0.3, -0.6], "handL": [0.5, -0.2, -0.12], "handR": [0.45, -0.25, 0.02], "elbowL": [0, -1, -0.5], "elbowR": [0, -1, 0.5], "footL": [0.48, 0.07, -0.16], "footR": [-0.15, 0.08, 0.14], "toeR": [-0.3, 0.9], "kneeR": [1, -0.6, 0.2] } },
+    { "t": 520, "set": { "root": [0.18, 0.68], "pelvis": [-0.2, 0.55, 0.05], "spine": [0, 0.25, 0.05], "neck": [0.3, -0.45], "handL": [0.45, -0.05, -0.1], "handR": [0.4, -0.08, 0.04], "elbowL": [0, -1, -0.5], "elbowR": [0, -1, 0.5], "footL": [0.48, 0.07, -0.16], "footR": [-0.15, 0.08, 0.14], "toeR": [-0.3, 0.9], "kneeR": [1, -0.6, 0.2] } },
+    { "t": 780, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 340, "recover": 680 },
+  "contacts": { "L": [[0, 140], [300, 600], [720, 780]], "R": [[0, 780]] }
+}

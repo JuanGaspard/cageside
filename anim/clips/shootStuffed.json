@@ -1,0 +1,16 @@
+{
+  "id": "shootStuffed",
+  "ref": "guard",
+  "note": "A double-leg stopped by the sprawl: the same way in as `shoot` (level change, the penetration step, the hands to the backs of the knees), then he's pressed down under the other man's chest, flattened on his knees with his head down, held there a moment, and backs out and up to his stance. Played instead of `shoot` when the shot doesn't work (the fight cam).",
+  "aim": { "hand": "L", "at": "hips", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 120, "set": { "root": [0.02, 0.7], "pelvis": [-0.4, 0.35, 0], "spine": [-0.15, 0.3, 0], "neck": [0.5, -0.3], "handL": [0.35, 0.05, -0.1], "handR": [0.3, 0.05, 0.1] } },
+    { "t": 380, "pose": "shot", "tan": "flat" },
+    { "t": 600, "pose": "sprawled", "tan": "flat" },
+    { "t": 800, "pose": "sprawled", "tan": "flat" },
+    { "t": 1150, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 380, "recover": 1000 },
+  "contacts": { "L": [[0, 140], [360, 840], [1090, 1150]], "R": [[0, 300], [500, 860], [1100, 1150]] }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "parry",
+  "ref": "guard",
+  "note": "Parrying the jab: the rear glove taps it across, a short move from the elbow, and comes straight back to the chin.",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 100, "tan": "flat", "set": { "handR": [0.36, 0.25, -0.08], "elbowR": [0.2, -1, 0.3], "spine": [-0.18, 0.25, 0], "neck": [0.62, 0.04] } },
+    { "t": 150, "set": { "handR": [0.32, 0.22, -0.1], "elbowR": [0.1, -1, 0.3] } },
+    { "t": 280, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 100 },
+  "contacts": { "L": [[0, 280]], "R": [[0, 280]] }
+}

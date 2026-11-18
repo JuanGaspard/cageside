@@ -1,0 +1,15 @@
+{
+  "id": "bodyPunch_2",
+  "ref": "guard",
+  "note": "Rear straight to the body: the same level change, the fist straight through the middle.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 80, "set": { "root": [0.03, 0.79], "pelvis": [-0.65, 0.12, 0.04], "spine": [-0.15, 0.42, 0.04], "neck": [0.65, -0.3], "handR": [0.2, 0.12, 0.07] } },
+    { "t": 170, "tan": "flat", "set": { "root": [0.1, 0.77], "pelvis": [0.1, 0.12, 0], "spine": [0.3, 0.44, -0.05], "neck": [-0.45, -0.35], "handR": [0.66, -0.02, 0], "elbowR": [0, -0.4, 1], "shR": [0.06, 0.01], "footR": [-0.32, 0.158, 0.11], "toeR": [-0.2, 0.65], "handL": [0.22, 0.22, -0.06] } },
+    { "t": 215, "set": { "handR": [0.68, -0.03, 0] } },
+    { "t": 380, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 170, "recover": 315 },
+  "contacts": { "L": [[0, 380]], "R": [[0, 380]] }
+}

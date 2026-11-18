@@ -1,0 +1,13 @@
+{
+  "id": "snapBack_2",
+  "ref": "guard",
+  "note": "Hit in the face, lightly, the other way: the head goes back and turns a little off it, the lead hand pawing out.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 50, "set": { "neck": [0.75, -0.24], "spine": [-0.12, 0.18, 0.04], "root": [-0.03, 0.855], "handL": [0.44, 0.22, -0.06] } },
+    { "t": 150, "set": { "neck": [0.66, -0.06], "spine": [-0.14, 0.22, 0.01], "root": [-0.02, 0.86] } },
+    { "t": 320, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 320]], "R": [[0, 320]] }
+}

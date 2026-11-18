@@ -1,0 +1,13 @@
+{
+  "id": "leanBack",
+  "ref": "guard",
+  "note": "Pulling back from it: the weight onto the rear leg and the upper body back out of reach, chin down, eyes on him, gloves up.",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 130, "tan": "flat", "set": { "root": [-0.08, 0.86], "spine": [-0.15, -0.12, 0], "pelvis": [-0.6, -0.05, 0], "neck": [0.6, 0.3], "handL": [0.32, 0.28, -0.06], "handR": [0.18, 0.28, 0.06] } },
+    { "t": 200, "set": { "root": [-0.07, 0.86], "spine": [-0.15, -0.08, 0], "pelvis": [-0.6, -0.03, 0], "neck": [0.6, 0.26], "handL": [0.33, 0.27, -0.06], "handR": [0.18, 0.27, 0.06] } },
+    { "t": 400, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 130 },
+  "contacts": { "L": [[0, 400]], "R": [[0, 400]] }
+}

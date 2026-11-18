@@ -1,0 +1,14 @@
+{
+  "id": "stepIn",
+  "ref": "guard",
+  "note": "Footwork: step and drag forward. The rear foot pushes off its ball, the lead foot reaches (low), the weight lands on it with a little dip and a lean in, then the rear foot drags up. The body's travel comes from the footwork; this is its shape.",
+  "keys": [
+    {"t": 0, "pose": "guard", "tan": "flat"},
+    {"t": 60, "set": {"root": [0, 0.845], "toeR": [-0.8, 0.5], "footR": [-0.33, 0.14, 0.13]}},
+    {"t": 130, "set": {"footL": [0.3, 0.105, -0.07], "toeL": [-0.3, -0.12], "pelvis": [-0.6, 0.12, 0], "spine": [-0.15, 0.27, 0], "root": [0, 0.852]}},
+    {"t": 200, "set": {"footL": [0.3, 0.07, -0.07], "toeL": [-0.3, 0], "root": [0, 0.835], "pelvis": [-0.6, 0.11, 0], "spine": [-0.15, 0.27, 0]}},
+    {"t": 270, "set": {"footR": [-0.33, 0.15, 0.13], "toeR": [-0.8, 0.5], "root": [0, 0.848]}},
+    {"t": 360, "pose": "guard", "tan": "flat"}
+  ],
+  "contacts": {"L": [[0, 40], [200, 360]], "R": [[0, 175], [330, 360]]}
+}

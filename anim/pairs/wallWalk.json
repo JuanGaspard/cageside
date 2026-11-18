@@ -1,0 +1,26 @@
+{
+  "id": "wallWalk",
+  "note": "Up off the mat into the clinch (the wall walk). top: the man who was on top, who hangs on; bot: the man getting up. He sits up and posts, gets his feet under him and rises with the man still on him; the man on top comes up with him, arms round his waist, and they end chest to chest.",
+  "from": ["guard", "half", "side", "mount", "back"],
+  "to": ["clinch"],
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 350, "top": { "mix": 0.05, "add": { "spine": [0, 0.1, 0] } },
+      "bot": { "mix": 0, "add": { "pelvis": [0, 0.7, 0], "spine": [0, 0.25, 0], "handR": [-0.15, -0.4, 0.12], "root": [-0.03, 0.06] } } },
+    { "t": 750, "top": { "mix": 0.35, "add": { "root": [0, 0.08], "spine": [0, 0.2, 0] } },
+      "bot": { "mix": 0.3, "add": { "pelvis": [0, 0.5, 0], "root": [-0.05, 0.15], "spine": [0, 0.2, 0] } } },
+    { "t": 1100, "top": { "mix": 0.8, "add": { "spine": [0, 0.1, 0] } }, "bot": { "mix": 0.8 } },
+    { "t": 1350, "top": { "mix": 1 }, "bot": { "mix": 1 } },
+    { "t": 1600, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "grips": [
+    { "who": "top", "eff": "handL", "to": ["P", "W", 0.6], "out": [-1, 0, 0], "add": [0, 0, -0.06], "t": [300, 1400] },
+    { "who": "top", "eff": "handR", "to": ["P", "W", 0.6], "out": [-1, 0, 0], "add": [0, 0, 0.06], "t": [300, 1400] }
+  ],
+  "contacts": { "top": { "L": [[1000, 1600]], "R": [[900, 1600]] }, "bot": { "L": [[1100, 1600]], "R": [[1000, 1600]] } },
+  "place": {
+    "top": [[0, 0, 0, 0, 0], [750, 0.3, 0, 0, 0], [1100, 0.8, 0, 0, 0], [1600, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [750, 0.25, 0, 0, 0], [1100, 0.8, 0, 0, 0], [1600, 1, 0, 0, 0]]
+  },
+  "land": { "bot": { "at": 0.8, "root": -0.0006 } }
+}

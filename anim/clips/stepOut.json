@@ -1,0 +1,14 @@
+{
+  "id": "stepOut",
+  "ref": "guard",
+  "note": "Footwork: step back. The lead foot pushes, the rear foot reaches back (low), the weight settles onto it and the chin stays down with the body a touch more upright, then the lead foot comes back.",
+  "keys": [
+    {"t": 0, "pose": "guard", "tan": "flat"},
+    {"t": 60, "set": {"root": [0, 0.848], "toeL": [-0.3, 0.12]}},
+    {"t": 130, "set": {"footR": [-0.33, 0.155, 0.13], "toeR": [-0.8, 0.5], "pelvis": [-0.6, 0.05, 0], "spine": [-0.15, 0.2, 0], "neck": [0.6, 0.06], "root": [0, 0.855]}},
+    {"t": 200, "set": {"footR": [-0.33, 0.122, 0.13], "toeR": [-0.8, 0.35], "root": [0, 0.84], "pelvis": [-0.6, 0.05, 0], "spine": [-0.15, 0.2, 0]}},
+    {"t": 270, "set": {"footL": [0.3, 0.1, -0.07], "toeL": [-0.3, 0.1], "root": [0, 0.85]}},
+    {"t": 360, "pose": "guard", "tan": "flat"}
+  ],
+  "contacts": {"L": [[0, 175], [330, 360]], "R": [[0, 40], [200, 360]]}
+}

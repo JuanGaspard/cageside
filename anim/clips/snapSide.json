@@ -1,0 +1,13 @@
+{
+  "id": "snapSide",
+  "ref": "guard",
+  "note": "Hit from the side (made for a blow on his rear side, played the other way round for the other): the face is turned away from it and the head and shoulders tip over with it.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 55, "set": { "neck": [1.1, -0.08], "spine": [-0.05, 0.2, -0.2], "pelvis": [-0.55, 0.08, -0.05], "root": [-0.02, 0.85], "handR": [0.22, 0.18, 0.12] } },
+    { "t": 170, "set": { "neck": [0.8, 0], "spine": [-0.1, 0.22, -0.08], "pelvis": [-0.58, 0.08, -0.02], "root": [-0.02, 0.855] } },
+    { "t": 420, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 420]], "R": [[0, 420]] }
+}

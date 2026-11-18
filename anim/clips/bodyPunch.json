@@ -1,0 +1,15 @@
+{
+  "id": "bodyPunch",
+  "ref": "guard",
+  "note": "Rear hook to the body. Level change first (knees, not the waist), then the hips turn it in under the elbow; the eyes stay up, the lead hand high.",
+  "aim": { "hand": "R", "reach": 0.85, "far": 0.4 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 90, "set": { "root": [0.02, 0.78], "pelvis": [-0.7, 0.12, 0.06], "spine": [-0.15, 0.42, 0.06], "neck": [0.7, -0.3], "handR": [0.18, 0.1, 0.12], "elbowR": [-0.5, -0.6, 0.8] } },
+    { "t": 175, "tan": "flat", "set": { "root": [0.08, 0.76], "pelvis": [0.05, 0.12, -0.06], "spine": [0.25, 0.44, -0.12], "neck": [-0.4, -0.35], "handR": [0.5, -0.04, -0.02], "elbowR": [0, -0.4, 1], "shR": [0.04, 0], "footR": [-0.33, 0.152, 0.12], "toeR": [-0.4, 0.6], "handL": [0.22, 0.2, -0.06] } },
+    { "t": 225, "set": { "handR": [0.46, -0.06, -0.08] } },
+    { "t": 400, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 175, "recover": 330 },
+  "contacts": { "L": [[0, 400]], "R": [[0, 400]] }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "workSideTop",
+  "ref": "guard",
+  "loop": true,
+  "note": "On top in side control, working: chest pressure down on him, the hips up to follow his shrimp, settles again.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 750, "pose": "guard", "add": { "root": [0.03, -0.01], "spine": [0, 0.05, 0] } },
+    { "t": 1500, "pose": "guard", "add": { "root": [-0.02, 0.03], "pelvis": [0, -0.1, 0] } },
+    { "t": 2250, "pose": "guard", "add": { "root": [0.01, 0] } },
+    { "t": 3000, "pose": "guard" }
+  ]
+}

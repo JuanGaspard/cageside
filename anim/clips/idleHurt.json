@@ -1,0 +1,14 @@
+{
+  "id": "idleHurt",
+  "ref": "guard",
+  "loop": true,
+  "note": "The sway of a hurt man (a loop, laid over the hurt stance): the weight drifting side to side and back and forth over legs that won't quite hold, the head lolling with it.",
+  "keys": [
+    { "t": 0, "set": { "spine": [-0.15, 0.24, 0.1], "root": [0.02, 0.86] } },
+    { "t": 350, "set": { "spine": [-0.15, 0.27, 0], "root": [-0.02, 0.845], "neck": [0.66, 0.06], "pelvis": [-0.6, 0.08, -0.05] } },
+    { "t": 700, "set": { "spine": [-0.15, 0.24, -0.1], "root": [0.01, 0.86], "neck": [0.55, 0] } },
+    { "t": 1050, "set": { "spine": [-0.15, 0.27, 0], "root": [-0.03, 0.845], "neck": [0.62, 0.05], "pelvis": [-0.6, 0.08, 0.05] } },
+    { "t": 1400, "set": { "spine": [-0.15, 0.24, 0.1], "root": [0.02, 0.86], "neck": [0.6, 0.02], "pelvis": [-0.6, 0.08, 0] } }
+  ],
+  "contacts": { "L": [[0, 1400]], "R": [[0, 1400]] }
+}

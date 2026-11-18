@@ -1,0 +1,15 @@
+{
+  "id": "uppercut",
+  "ref": "guard",
+  "note": "Rear uppercut. Dips onto the rear side, the fist dropping with the shoulder, then the legs and hips drive it up through the middle, palm up, the rear heel turning; the lead hand on the chin.",
+  "aim": { "hand": "R", "reach": 0.68, "far": 0.45 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 90, "set": { "root": [-0.01, 0.8], "pelvis": [-0.7, 0.1, 0.08], "spine": [-0.15, 0.3, 0.1], "neck": [0.7, -0.05], "handR": [0.16, 0.06, 0.1], "elbowR": [-0.4, -1, 0.3] } },
+    { "t": 190, "tan": "flat", "set": { "root": [0.06, 0.87], "pelvis": [0.05, 0.08, -0.02], "spine": [0.25, 0.16, -0.06], "neck": [-0.45, 0.05], "handR": [0.42, 0.36, 0.02], "elbowR": [0.2, -1, 0.4], "shR": [0.04, 0.03], "footR": [-0.33, 0.158, 0.12], "toeR": [-0.4, 0.65], "kneeR": [1, 0, 0.1], "handL": [0.24, 0.27, -0.05] } },
+    { "t": 240, "set": { "handR": [0.4, 0.42, 0.01] } },
+    { "t": 400, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 190, "recover": 330 },
+  "contacts": { "L": [[0, 400]], "R": [[0, 400]] }
+}

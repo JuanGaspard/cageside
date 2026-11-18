@@ -1,0 +1,14 @@
+{
+  "id": "tdClinch",
+  "ref": "clinch",
+  "note": "Body-lock trip from the clinch: the hands drop and lock round the waist, he sits his hips under, the lead leg steps in behind the other man's, and the chest turns him over it (if it works, the picture takes them down from there).",
+  "keys": [
+    { "t": 0, "pose": "clinch", "tan": "flat" },
+    { "t": 160, "set": { "root": [0.06, 0.78], "pelvis": [-0.25, 0.3, 0], "spine": [0, 0.3, 0], "handL": [0.3, -0.12, -0.05], "handR": [0.28, -0.14, 0.08] } },
+    { "t": 360, "tan": "flat", "set": { "root": [0.12, 0.76], "pelvis": [0.2, 0.32, -0.1], "spine": [0.25, 0.3, -0.12], "neck": [0, 0.2], "handL": [0.32, -0.15, -0.02], "handR": [0.3, -0.16, 0.06], "footL": [0.48, 0.12, 0.05], "toeL": [0.3, 0.4], "kneeL": [1, 0, 0.3] } },
+    { "t": 540, "set": { "root": [0.1, 0.78], "pelvis": [0.35, 0.3, -0.15], "spine": [0.3, 0.3, -0.15], "handL": [0.3, -0.12, -0.02], "handR": [0.28, -0.14, 0.06], "footL": [0.46, 0.08, 0.06], "toeL": [0.3, 0.2] } },
+    { "t": 720, "pose": "clinch", "tan": "flat" }
+  ],
+  "events": { "impact": 360, "recover": 640 },
+  "contacts": { "L": [[0, 200], [330, 720]], "R": [[0, 720]] }
+}

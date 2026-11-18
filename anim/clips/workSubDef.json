@@ -1,0 +1,13 @@
+{
+  "id": "workSubDef",
+  "ref": "guard",
+  "loop": true,
+  "note": "Caught in a submission, fighting it: twisting one way and the other, the head straining, on the same beat as the man squeezing.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 300, "pose": "guard", "add": { "pelvis": [0, 0, 0.1] } },
+    { "t": 900, "pose": "guard", "add": { "pelvis": [0, 0, -0.1], "neck": [0.1, 0] } },
+    { "t": 1500, "pose": "guard", "add": { "root": [0, 0.02] } },
+    { "t": 1800, "pose": "guard" }
+  ]
+}

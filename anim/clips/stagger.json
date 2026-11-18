@@ -1,0 +1,14 @@
+{
+  "id": "stagger",
+  "ref": "guard",
+  "note": "Rocked: the legs go, he drops and staggers back a long step to catch himself, the hands sagging and the head lolling, sways over to one side, and gathers himself up again (the hurt stance carries on from there). Big enough to read from the broadcast camera.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 130, "set": { "root": [-0.16, 0.77], "spine": [-0.15, 0.08, 0.2], "neck": [0.6, -0.3], "handL": [0.34, 0.06, -0.1], "handR": [0.18, 0.04, 0.12], "elbowL": [-0.2, -1, -0.7], "elbowR": [-0.3, -1, 0.7], "footR": [-0.58, 0.07, 0.2], "toeR": [-0.8, 0.1], "kneeL": [1, -0.15, 0.4], "kneeR": [1, -0.1, 0.6] } },
+    { "t": 400, "set": { "root": [-0.2, 0.78], "spine": [-0.15, 0.2, -0.18], "neck": [0.5, 0.1], "pelvis": [-0.6, 0.08, -0.08], "footR": [-0.58, 0.07, 0.2], "toeR": [-0.8, 0.1], "footL": [0.2, 0.07, -0.02], "handL": [0.32, 0.1, -0.08], "handR": [0.17, 0.08, 0.1], "kneeL": [1, -0.1, 0.2], "kneeR": [1, 0, 0.5] } },
+    { "t": 650, "set": { "root": [-0.12, 0.82], "spine": [-0.15, 0.22, 0.08], "neck": [0.6, 0], "pelvis": [-0.6, 0.08, 0], "footR": [-0.48, 0.1, 0.16], "footL": [0.26, 0.07, -0.05], "handL": [0.36, 0.16, -0.06], "handR": [0.19, 0.15, 0.07] } },
+    { "t": 950, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 270], [380, 950]], "R": [[0, 40], [150, 720], [840, 950]] }
+}

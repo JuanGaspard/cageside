@@ -1,0 +1,16 @@
+{
+  "id": "jab",
+  "ref": "guard",
+  "note": "Lead straight. A twitch of the hips, the fist out fast with the lead foot sliding in, a beat on target, home with a step back.",
+  "aim": { "hand": "L" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 35, "set": { "handL": [0.37, 0.2, -0.05], "pelvis": [-0.64, 0.08, 0], "root": [-0.01, 0.85] } },
+    { "t": 85, "set": { "handL": [0.66, 0.25, -0.03], "spine": [-0.22, 0.22, 0], "pelvis": [-0.68, 0.08, 0], "shL": [0.03, 0.02], "footL": [0.35, 0.095, -0.07], "root": [0.035, 0.87], "neck": [0.72, 0.01] } },
+    { "t": 125, "pose": "jab", "tan": "flat" },
+    { "t": 165, "set": { "handL": [0.79, 0.25, -0.02] } },
+    { "t": 300, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 125, "recover": 260 },
+  "contacts": { "L": [[0, 45], [118, 205], [285, 300]], "R": [[0, 300]] }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "elbow_2",
+  "ref": "guard",
+  "note": "Rear elbow, coming down: the elbow goes up high first, then the point slices down and across through the head as he sits into it.",
+  "aim": { "elbow": "R", "far": 0.45 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 80, "set": { "root": [0.02, 0.87], "pelvis": [-0.7, 0.08, 0.04], "spine": [-0.15, 0.18, 0.06], "handR": [0.06, 0.42, 0.12], "elbowR": [0.2, 1, 0.6] } },
+    { "t": 170, "tan": "flat", "set": { "root": [0.08, 0.84], "pelvis": [0.15, 0.12, -0.04], "spine": [0.3, 0.36, -0.1], "neck": [-0.5, -0.1], "handR": [0.14, 0.34, -0.08], "elbowR": [1, 0.3, 0.1], "footR": [-0.33, 0.158, 0.12], "toeR": [-0.3, 0.65], "handL": [0.26, 0.26, -0.06] } },
+    { "t": 215, "set": { "handR": [0.1, 0.26, -0.16], "spine": [0.3, 0.42, -0.1] } },
+    { "t": 380, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 170, "recover": 320 },
+  "contacts": { "L": [[0, 380]], "R": [[0, 380]] }
+}

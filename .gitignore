@@ -1,0 +1,27 @@
+# Reference footage: third-party video, kept locally to look at while animating.
+# It is not ours to republish, and it is 167 MB.
+anim/footage/
+
+# Everything the review tools render: film strips, posture sheets, clips of the
+# fight view, and the footage they were compared against. All reproducible by
+# re-running tests/camtest.js and tests/contact.js, and 582 MB of it.
+review/
+
+# MediaPipe, vendored for the pose-tracking tool: a 29 MB model and a 13 MB wasm
+# build. Both are downloads, not ours, and the footage they run on isn't in the
+# repo either, so the tracking pipeline can't be reproduced from here regardless.
+# Get them back with:
+#   npm pack @mediapipe/tasks-vision@1.1.1     (the wasm/ and .mjs bundle)
+#   https://storage.googleapis.com/mediapipe-models/pose_landmarker/
+#     pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task
+tools/mediapipe/
+*.task
+
+# Dated snapshots of cageside.html taken before big changes. Git is the backup now.
+backups/
+cageside-*-before-*.html
+
+# Local scratch
+*.log
+.DS_Store
+Thumbs.db

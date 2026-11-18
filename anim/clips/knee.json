@@ -1,0 +1,16 @@
+{
+  "id": "knee",
+  "ref": "guard",
+  "note": "Rear knee to the body (rough, Phase 2): hands reach for the head, the knee drives up into him. The knee is placed (kneeAtR): folded tight, the bend direction alone swings it round.",
+  "aim": { "knee": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 90, "set": { "handL": [0.45, 0.27, -0.08], "handR": [0.42, 0.27, 0.08], "root": [0.08, 0.88], "kneeAtR": [0.3, 0.64, 0.12, 0.65] } },
+    { "t": 220, "pose": "knee", "tan": "flat", "set": { "kneeAtR": [0.72, 1.0, 0.06, 1] } },
+    { "t": 280, "set": { "footR": [0.45, 0.45, 0.06] } },
+    { "t": 400, "set": { "kneeAtR": [0.3, 0.6, 0.12, 0.4] } },
+    { "t": 480, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 220, "recover": 420 },
+  "contacts": { "L": [[0, 480]], "R": [[0, 100], [430, 480]] }
+}

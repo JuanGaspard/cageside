@@ -1,0 +1,13 @@
+{
+  "id": "workBackBot",
+  "ref": "guard",
+  "loop": true,
+  "note": "With his back taken, working: the head up away from the arm, turning to one side to get out (the moment the man on him follows), and down again.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 750, "pose": "guard", "add": { "spine": [0, -0.1, 0], "neck": [0, -0.1] } },
+    { "t": 1500, "pose": "guard", "add": { "pelvis": [0, 0, 0.12] } },
+    { "t": 2250, "pose": "guard", "add": { "spine": [0, 0.04, 0] } },
+    { "t": 3000, "pose": "guard" }
+  ]
+}

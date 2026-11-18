@@ -1,0 +1,14 @@
+{
+  "id": "getUp",
+  "ref": "guard",
+  "transition": true,
+  "note": "Up off the canvas after a knockdown: sits up, a hand posted behind, the hips up and a leg back through, and up into his stance.",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 392, "mix": 0.12, "add": { "pelvis": [0, 0.7, 0], "root": [-0.05, 0.1], "handR": [-0.15, -0.35, 0.1], "spine": [0, 0.25, 0] } },
+    { "t": 784, "mix": 0.45, "add": { "root": [-0.15, 0.12], "pelvis": [0, 0.35, 0], "spine": [0, 0.25, 0], "handR": [-0.05, -0.2, 0.05] } },
+    { "t": 1120, "mix": 0.85, "add": { "root": [-0.06, 0] } },
+    { "t": 1400, "pose": "@to", "tan": "flat" }
+  ],
+  "contacts": { "L": [[1120, 1400]], "R": [[1036, 1400]] }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "standUpTop",
+  "ref": "guard",
+  "transition": true,
+  "note": "The man on top getting back to his feet (the stand-up, or letting him up): he postures up, a foot comes up under him, he rises and steps back into his stance, settling onto the feet.",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 350, "mix": 0, "add": { "root": [-0.05, 0.05], "spine": [0, -0.15, 0] } },
+    { "t": 800, "mix": 0.4, "add": { "root": [-0.08, 0.12], "spine": [0, 0.15, 0] } },
+    { "t": 1200, "mix": 0.9, "add": { "root": [-0.02, -0.03] } },
+    { "t": 1500, "pose": "@to", "tan": "flat" }
+  ],
+  "contacts": { "L": [[1125, 1500]], "R": [[1050, 1500]] },
+  "land": { "at": 0.85, "root": -0.0006 }
+}

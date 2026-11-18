@@ -1,0 +1,19 @@
+{
+  "id": "legKick",
+  "ref": "guard",
+  "note": "Rear low kick to the thigh: a lower chamber than the body kick, the hip turning right over so the shin chops down through the leg, back the way it came.",
+  "aim": { "foot": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 70, "set": { "root": [0.08, 0.86], "toeL": [0.2, 0.15], "pelvis": [-0.2, 0.05, -0.06], "handR": [0.1, 0.05, 0.15], "footR": [-0.2, 0.18, 0.12], "toeR": [-0.4, 0.7], "kneeAtR": [0.15, 0.5, 0.18, 0.35] } },
+    { "t": 170, "pose": "chamber", "set": { "kneeAtR": [0.7, 0.75, 0.2, 1], "footR": [0.4, 0.55, 0.32], "root": [0.22, 0.9] } },
+    { "t": 220, "set": { "footR": [0.72, 0.58, 0.45], "kneeAtR": [0.75, 0.74, 0.12, 1] } },
+    { "t": 270, "pose": "kick", "tan": "flat", "set": { "footR": [1.0, 0.55, 0], "kneeAtR": [0.66, 0.78, 0.02, 1], "kneeR": [0.15, 0.45, -0.9], "pelvis": [1.0, -0.05, -0.55], "spine": [-0.75, -0.2, 0.2] } },
+    { "t": 330, "set": { "footR": [0.9, 0.45, 0.02], "kneeAtR": [0.64, 0.75, 0.04, 1] } },
+    { "t": 380, "set": { "footR": [0.72, 0.6, 0.4], "kneeAtR": [0.72, 0.76, 0.14, 1], "kneeR": [0.7, 0.8, -0.1], "handR": [-0.12, -0.04, 0.24], "elbowR": [-0.8, -0.65, 0.3] } },
+    { "t": 440, "pose": "chamber", "set": { "footR": [0.3, 0.4, 0.15], "root": [0.18, 0.89], "kneeAtR": [0.5, 0.65, 0.18, 0.6], "handR": [0.08, 0.12, 0.14], "elbowR": [-0.45, -0.9, 0.3] } },
+    { "t": 560, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 270, "recover": 470 },
+  "contacts": { "L": [[0, 560]], "R": [[0, 40], [510, 560]] }
+}

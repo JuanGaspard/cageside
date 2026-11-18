@@ -1,0 +1,12 @@
+{
+  "id": "coverGround",
+  "ref": "botGuard",
+  "note": "Underneath, a strike coming down: the hands come up over the face, the chin goes down, and he flinches with it (laid over whatever position he's in).",
+  "keys": [
+    { "t": 0, "pose": "botGuard", "tan": "flat" },
+    { "t": 120, "pose": "botGuard", "add": { "handL": [-0.15, 0.05, 0.05], "handR": [-0.15, 0.05, -0.05], "neck": [0, 0.15], "spine": [0, 0.05, 0] } },
+    { "t": 220, "pose": "botGuard", "add": { "handL": [-0.15, 0.05, 0.05], "handR": [-0.15, 0.05, -0.05], "neck": [0, 0.12], "spine": [0, 0.03, 0] } },
+    { "t": 450, "pose": "botGuard", "tan": "flat" }
+  ],
+  "events": { "impact": 120 }
+}

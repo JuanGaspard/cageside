@@ -1,0 +1,17 @@
+{
+  "id": "calfKick",
+  "ref": "guard",
+  "note": "Calf kick: short and quick, hardly a chamber, the lead foot pivoting hard and the shin sweeping low across into the calf; the rear arm drops back.",
+  "aim": { "foot": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 60, "set": { "root": [0.06, 0.85], "pelvis": [-0.3, 0.06, -0.04], "footR": [-0.22, 0.14, 0.12], "toeR": [-0.4, 0.7], "kneeAtR": [0.1, 0.45, 0.18, 0.3] } },
+    { "t": 150, "set": { "root": [0.15, 0.86], "pelvis": [0.5, 0, -0.3], "spine": [-0.5, 0.05, 0.15], "footR": [0.25, 0.28, 0.32], "kneeAtR": [0.5, 0.55, 0.22, 1], "toeL": [0.6, 0.15], "handR": [0, 0.05, 0.2] } },
+    { "t": 230, "tan": "flat", "set": { "root": [0.18, 0.86], "pelvis": [0.9, -0.05, -0.5], "spine": [-0.7, -0.1, 0.2], "footR": [0.8, 0.22, 0.02], "kneeAtR": [0.55, 0.52, 0.06, 1], "kneeR": [0.2, 0.3, -0.9], "toeR": [0.4, 0.2], "toeL": [1.0, 0.2], "handR": [-0.2, -0.1, 0.24], "elbowR": [-1, -0.5, 0.3], "handL": [0.25, 0.27, -0.06] } },
+    { "t": 290, "set": { "footR": [0.7, 0.2, 0.1], "kneeAtR": [0.52, 0.5, 0.1, 1] } },
+    { "t": 360, "set": { "footR": [0.2, 0.25, 0.15], "kneeAtR": [0.3, 0.5, 0.18, 0.6], "root": [0.1, 0.86], "pelvis": [0, 0.05, -0.1], "spine": [-0.3, 0.15, 0.08], "handR": [0.1, 0.15, 0.12] } },
+    { "t": 480, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 230, "recover": 400 },
+  "contacts": { "L": [[0, 480]], "R": [[0, 40], [420, 480]] }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "hook",
+  "ref": "guard",
+  "note": "Lead hook. Loads with a small turn the other way, then the lead hip and shoulder come round on a pivoting lead foot, the elbow up level with the fist, the forearm flat; the rear hand stays on the chin, the head stays where it was looking.",
+  "aim": { "hand": "L", "reach": 0.8, "far": 0.4 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 70, "set": { "root": [0.02, 0.85], "pelvis": [-0.45, 0.08, 0.04], "spine": [-0.1, 0.24, 0.04], "neck": [0.4, 0.02], "handL": [0.36, 0.25, -0.13], "elbowL": [-0.3, 0.1, -1], "shL": [0, 0.03] } },
+    { "t": 190, "tan": "flat", "set": { "root": [0.04, 0.85], "pelvis": [-1.05, 0.08, -0.04], "spine": [-0.35, 0.22, -0.05], "neck": [1.25, 0.04], "handL": [0.5, 0.27, 0.1], "elbowL": [0, 0.35, -1], "shL": [0.05, 0.035], "toeL": [-0.75, 0.15], "handR": [0.22, 0.25, 0.06] } },
+    { "t": 240, "set": { "handL": [0.44, 0.27, 0.17], "pelvis": [-1.1, 0.08, -0.04] } },
+    { "t": 430, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 190, "recover": 360 },
+  "contacts": { "L": [[0, 430]], "R": [[0, 430]] }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "hook_2",
+  "ref": "guard",
+  "note": "Lead hook, the shorter one: sat down lower, a tighter arc, the elbow a little lower.",
+  "aim": { "hand": "L", "reach": 0.75, "far": 0.4 },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 60, "set": { "root": [0, 0.82], "pelvis": [-0.5, 0.1, 0.06], "spine": [-0.1, 0.3, 0.06], "neck": [0.45, 0], "handL": [0.34, 0.22, -0.12], "elbowL": [-0.3, 0.1, -1] } },
+    { "t": 170, "tan": "flat", "set": { "root": [0.02, 0.82], "pelvis": [-1.0, 0.1, -0.06], "spine": [-0.3, 0.3, -0.08], "neck": [1.15, -0.05], "handL": [0.46, 0.22, 0.08], "elbowL": [0, 0.3, -1], "shL": [0.04, 0.03], "toeL": [-0.7, 0.12], "handR": [0.22, 0.25, 0.06] } },
+    { "t": 215, "set": { "handL": [0.4, 0.22, 0.15] } },
+    { "t": 400, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 170, "recover": 330 },
+  "contacts": { "L": [[0, 400]], "R": [[0, 400]] }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "stepBack",
+  "ref": "guard",
+  "note": "Stepping back out of it: rear foot first, the lead foot after it, then back into range the same way.",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 120, "set": { "root": [-0.12, 0.85], "footR": [-0.48, 0.122, 0.13], "footL": [0.2, 0.07, -0.07], "spine": [-0.15, 0.2, 0] } },
+    { "t": 300, "set": { "root": [-0.12, 0.855], "footR": [-0.48, 0.122, 0.13], "footL": [0.2, 0.07, -0.07], "spine": [-0.15, 0.21, 0] } },
+    { "t": 520, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 150 },
+  "contacts": { "L": [[0, 60], [160, 330], [420, 520]], "R": [[0, 10], [110, 400], [500, 520]] }
+}

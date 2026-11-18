@@ -1,0 +1,12 @@
+{
+  "id": "idleTired",
+  "ref": "guard",
+  "loop": true,
+  "note": "The stance when the tank is empty (a loop, laid over the guard): hands sagging, shoulders slumped, the chest and shoulders heaving with each breath, chin up.",
+  "keys": [
+    { "t": 0, "set": { "handL": [0.4, 0.12, -0.04], "handR": [0.22, 0.1, 0.06], "spine": [-0.15, 0.3, 0], "neck": [0.6, -0.08], "root": [-0.01, 0.85] } },
+    { "t": 800, "set": { "handL": [0.4, 0.14, -0.04], "handR": [0.22, 0.12, 0.06], "spine": [-0.15, 0.26, 0], "neck": [0.6, -0.14], "root": [-0.01, 0.855], "shL": [0.01, 0.04], "shR": [0, 0.04] } },
+    { "t": 1600, "set": { "handL": [0.4, 0.12, -0.04], "handR": [0.22, 0.1, 0.06], "spine": [-0.15, 0.3, 0], "neck": [0.6, -0.08], "root": [-0.01, 0.85], "shL": [0.01, 0.025], "shR": [0, 0.025] } }
+  ],
+  "contacts": { "L": [[0, 1600]], "R": [[0, 1600]] }
+}

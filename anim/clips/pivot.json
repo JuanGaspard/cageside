@@ -1,0 +1,12 @@
+{
+  "id": "pivot",
+  "ref": "guard",
+  "note": "Footwork: a pivot on the ball of the lead foot. The knees soften, the rear foot swings round low to where the new angle has it.",
+  "keys": [
+    {"t": 0, "pose": "guard", "tan": "flat"},
+    {"t": 90, "set": {"root": [0, 0.84], "footR": [-0.33, 0.15, 0.13], "toeR": [-0.8, 0.5], "toeL": [-0.3, 0.1]}},
+    {"t": 200, "set": {"root": [0, 0.842], "footR": [-0.33, 0.145, 0.13], "spine": [-0.15, 0.26, 0]}},
+    {"t": 320, "pose": "guard", "tan": "flat"}
+  ],
+  "contacts": {"R": [[0, 50], [270, 320]]}
+}

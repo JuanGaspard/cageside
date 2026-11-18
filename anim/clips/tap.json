@@ -1,0 +1,15 @@
+{
+  "id": "tap",
+  "ref": "botGuard",
+  "note": "The tap: the free hand slaps three times, quick, on him or the mat (laid over whatever hold he's caught in).",
+  "keys": [
+    { "t": 0, "pose": "botGuard", "tan": "flat" },
+    { "t": 110, "pose": "botGuard", "add": { "handR": [0.06, 0.14, 0.04] } },
+    { "t": 200, "pose": "botGuard", "add": { "handR": [0.04, -0.04, 0.04] } },
+    { "t": 290, "pose": "botGuard", "add": { "handR": [0.06, 0.14, 0.04] } },
+    { "t": 380, "pose": "botGuard", "add": { "handR": [0.04, -0.04, 0.04] } },
+    { "t": 470, "pose": "botGuard", "add": { "handR": [0.06, 0.14, 0.04] } },
+    { "t": 560, "pose": "botGuard", "add": { "handR": [0.04, -0.04, 0.04] } },
+    { "t": 800, "pose": "botGuard", "tan": "flat" }
+  ]
+}

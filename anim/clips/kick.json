@@ -1,0 +1,19 @@
+{
+  "id": "kick",
+  "ref": "guard",
+  "note": "Rear roundhouse (rough, Phase 2): weight onto the lead foot, knee up and pointed at the target, the shin swung out round the knee and through, then back the same way. Every kick height borrows it; the aim swings the leg onto the target about the hip. The knee is placed (kneeAtR), not left to the bend direction: folded tight, that whips it round.",
+  "aim": { "foot": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 80, "set": { "root": [0.1, 0.87], "toeL": [0.2, 0.15], "pelvis": [-0.2, 0.05, -0.08], "handR": [0.1, 0.05, 0.15], "footR": [-0.22, 0.2, 0.12], "toeR": [-0.4, 0.8], "kneeAtR": [0.2, 0.55, 0.18, 0.35] } },
+    { "t": 200, "pose": "chamber", "set": { "kneeAtR": [0.78, 1.0, 0.16, 1], "footR": [0.42, 0.9, 0.3] } },
+    { "t": 265, "set": { "kneeAtR": [0.8, 1.0, 0.1, 1], "footR": [0.8, 0.95, 0.52] } },
+    { "t": 330, "pose": "kick", "tan": "flat", "set": { "kneeAtR": [0.7, 0.98, 0.0, 1], "kneeR": [0.15, 0.45, -0.9] } },
+    { "t": 400, "set": { "footR": [0.9, 0.95, 0.02], "kneeAtR": [0.68, 0.97, 0.02, 1] } },
+    { "t": 450, "set": { "footR": [0.8, 0.92, 0.45], "kneeAtR": [0.78, 0.98, 0.12, 1], "kneeR": [0.7, 0.8, -0.1], "handR": [-0.12, -0.04, 0.24], "elbowR": [-0.8, -0.65, 0.3] } },
+    { "t": 520, "pose": "chamber", "set": { "footR": [0.35, 0.45, 0.15], "root": [0.2, 0.9], "kneeAtR": [0.55, 0.75, 0.18, 0.6], "handR": [0.08, 0.12, 0.14], "elbowR": [-0.45, -0.9, 0.3] } },
+    { "t": 640, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 330, "recover": 560 },
+  "contacts": { "L": [[0, 640]], "R": [[0, 45], [590, 640]] }
+}

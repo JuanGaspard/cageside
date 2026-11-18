@@ -1,0 +1,13 @@
+{
+  "id": "snapUp",
+  "ref": "guard",
+  "note": "Hit from underneath (an uppercut, a knee): the chin goes up and the body rises onto the toes with it.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 55, "set": { "neck": [0.6, -0.55], "spine": [-0.15, 0.06, 0], "root": [-0.02, 0.88], "handL": [0.38, 0.2, -0.06], "handR": [0.2, 0.18, 0.08] } },
+    { "t": 180, "set": { "neck": [0.6, -0.2], "spine": [-0.15, 0.18, 0], "root": [-0.02, 0.86] } },
+    { "t": 420, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 420]], "R": [[0, 420]] }
+}

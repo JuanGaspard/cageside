@@ -1,0 +1,13 @@
+{
+  "id": "snapBack",
+  "ref": "guard",
+  "note": "Hit straight in the face, lightly: the head snaps back off the neck, the chest a little after it, and it all comes back.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 45, "set": { "neck": [0.6, -0.28], "spine": [-0.15, 0.17, 0], "root": [-0.025, 0.86], "handL": [0.38, 0.25, -0.04] } },
+    { "t": 140, "set": { "neck": [0.6, -0.08], "spine": [-0.15, 0.22, 0], "root": [-0.02, 0.86] } },
+    { "t": 300, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 300]], "R": [[0, 300]] }
+}

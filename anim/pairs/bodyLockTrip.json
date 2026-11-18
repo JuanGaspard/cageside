@@ -1,0 +1,35 @@
+{
+  "id": "bodyLockTrip",
+  "note": "The body-lock trip from the clinch. top: the man taking him down; bot: the man taken down. Chest to chest, he locks his hands round the waist with his head on the chest, and the other man pushes on his head; he steps his lead foot behind the man's heel and drives through with the chest, the man tips back over the leg with the tripped foot coming up, lands on his backside, and he follows him down onto his knees.",
+  "from": ["clinch"],
+  "to": ["guard", "half", "side"],
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 250, "note": "the lock: hands round the waist, head on the chest; he pushes on the head, hips back",
+      "top": { "pose": "clinch", "set": { "root": [0.1, 0.84], "pelvis": [0, 0.25, 0], "spine": [0, 0.15, 0], "neck": [0, 0.3] } },
+      "bot": { "pose": "clinch", "set": { "root": [-0.05, 0.84], "pelvis": [0, 0.15, 0], "spine": [0, 0.1, 0] } } },
+    { "t": 500, "note": "the foot behind his heel, the chest driving through; he tips back over it",
+      "top": { "set": { "root": [0.22, 0.78], "pelvis": [0, 0.4, 0], "spine": [0, 0.2, 0], "footL": [0.55, 0.07, -0.05], "kneeL": [1, 0, -0.3] } },
+      "bot": { "set": { "root": [-0.15, 0.7], "pelvis": [0, -0.35, 0], "spine": [0, 0, 0], "neck": [0, 0.45],
+        "footR": [0.1, 0.25, 0.12], "kneeR": [1, 0.3, 0.2], "handL": [0, 0.05, -0.38], "handR": [0, 0.05, 0.38], "elbowL": [0, 0, -1], "elbowR": [0, 0, 1] } } },
+    { "t": 750, "note": "he lands on his backside, legs up; down onto the knees after him",
+      "top": { "set": { "root": [0.25, 0.42], "pelvis": [0, 0.85, 0], "spine": [0, 0.3, 0], "neck": [0, -0.6],
+        "footL": [-0.15, 0.06, -0.18], "toeL": [3.14, 0.3], "kneeL": [1, -0.5, -0.3], "footR": [-0.3, 0.06, 0.2], "toeR": [3.14, 0.3], "kneeR": [1, -0.5, 0.3] } },
+      "bot": { "set": { "root": [-0.12, 0.17], "pelvis": [0, -0.95, 0], "spine": [0, -0.15, 0], "neck": [0, 0.65],
+        "footL": [0.5, 0.38, -0.12], "footR": [0.48, 0.42, 0.14], "toeL": [0, 0.6], "toeR": [0, 0.6], "kneeL": [0.3, 1, -0.5], "kneeR": [0.3, 1, 0.5],
+        "handL": [-0.05, 0, -0.38], "handR": [-0.05, 0, 0.38] } } },
+    { "t": 950, "top": { "mix": 0.8, "add": { "root": [0.04, -0.04], "pelvis": [0, 0.35, 0] } }, "bot": { "mix": 0.75, "add": { "neck": [0, 0.25] } } },
+    { "t": 1200, "top": { "mix": 1, "add": { "root": [0, -0.02] } }, "bot": { "mix": 1 } },
+    { "t": 1500, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "grips": [
+    { "who": "top", "eff": "handL", "to": ["P", "W", 0.6], "out": [-1, 0, 0], "add": [0, 0, -0.06], "t": [80, 800] },
+    { "who": "top", "eff": "handR", "to": ["P", "W", 0.6], "out": [-1, 0, 0], "add": [0, 0, 0.06], "t": [80, 800] },
+    { "who": "bot", "eff": "handL", "to": ["Nt", "Hd", 0.3], "out": [1, 0, 0], "t": [100, 450] }
+  ],
+  "place": {
+    "top": [[0, 0, 0, 0, 0], [250, 0.05, 0.05, 0, 0], [500, 0.35, 0.2, 0, 0], [750, 0.75, 0.12, 0, 0], [950, 0.95, 0.03, 0, 0], [1500, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [250, 0.03, 0, 0, 0], [500, 0.3, 0.05, 0, 0], [750, 0.85, 0.03, 0, 0], [950, 0.97, 0, 0, 0], [1500, 1, 0, 0, 0]]
+  },
+  "land": { "top": { "at": 0.63, "root": -0.0012, "spine": 0.002 }, "bot": { "at": 0.5, "root": -0.0018, "spine": -0.003 } }
+}

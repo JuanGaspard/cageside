@@ -1,0 +1,14 @@
+{
+  "id": "roll",
+  "ref": "guard",
+  "note": "Rolling under a hook: down from the knees in a U, the head passing under the blow from one side to the other, and back up behind it. (Played either way round.)",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 90, "set": { "root": [-0.01, 0.8], "spine": [-0.15, 0.42, 0.18], "pelvis": [-0.6, 0.15, 0.05], "neck": [0.6, -0.2] } },
+    { "t": 170, "set": { "root": [0, 0.74], "spine": [-0.15, 0.55, 0], "pelvis": [-0.6, 0.2, 0], "neck": [0.6, -0.35], "handL": [0.32, 0.26, -0.05], "handR": [0.18, 0.28, 0.05] } },
+    { "t": 260, "set": { "root": [0, 0.79], "spine": [-0.15, 0.42, -0.18], "pelvis": [-0.6, 0.15, -0.05], "neck": [0.6, -0.2] } },
+    { "t": 440, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 170 },
+  "contacts": { "L": [[0, 440]], "R": [[0, 440]] }
+}

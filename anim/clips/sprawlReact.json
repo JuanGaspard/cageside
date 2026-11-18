@@ -1,0 +1,13 @@
+{
+  "id": "sprawlReact",
+  "ref": "guard",
+  "note": "Stopping a shot: the feet kicked back and the hips down as the man arrives, chest over his back; the weight comes down onto him and stays there a moment; then back up to the stance as he backs out. A second in all (the first version was down in 180 ms and up again 400 ms later, at whatever length the shot had).",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 200, "pose": "sprawl" },
+    { "t": 460, "pose": "sprawlHeavy", "tan": "flat" },
+    { "t": 700, "pose": "sprawlHeavy", "tan": "flat" },
+    { "t": 1000, "pose": "guard", "tan": "flat" }
+  ],
+  "contacts": { "L": [[0, 60], [200, 760], [940, 1000]], "R": [[0, 60], [200, 760], [940, 1000]] }
+}

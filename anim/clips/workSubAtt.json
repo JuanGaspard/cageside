@@ -1,0 +1,12 @@
+{
+  "id": "workSubAtt",
+  "ref": "guard",
+  "loop": true,
+  "note": "Putting a submission on, working it: arches and squeezes, eases, squeezes again (a faster beat than the positions).",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 600, "pose": "guard", "add": { "spine": [0, -0.08, 0], "neck": [0, 0.05] } },
+    { "t": 1200, "pose": "guard", "add": { "spine": [0, 0.04, 0] } },
+    { "t": 1800, "pose": "guard" }
+  ]
+}

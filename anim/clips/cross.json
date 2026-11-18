@@ -1,0 +1,16 @@
+{
+  "id": "cross",
+  "ref": "guard",
+  "note": "Rear straight. Loads by turning further away, then the hips and chest turn through square, the rear heel pivots up, the lead hand comes back to the chin.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 45, "set": { "pelvis": [-0.72, 0.07, 0], "spine": [-0.2, 0.22, 0], "handR": [0.17, 0.19, 0.08], "root": [-0.02, 0.845] } },
+    { "t": 105, "set": { "pelvis": [-0.15, 0.09, 0], "spine": [0.15, 0.2, 0], "neck": [0, 0.04], "handR": [0.5, 0.24, 0.04], "handL": [0.24, 0.26, -0.05], "toeR": [-0.45, 0.6], "footR": [-0.33, 0.15, 0.12], "root": [0.06, 0.865], "shR": [0.03, 0.02] } },
+    { "t": 150, "pose": "cross", "tan": "flat" },
+    { "t": 190, "set": { "handR": [0.77, 0.24, 0] } },
+    { "t": 360, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 150, "recover": 310 },
+  "contacts": { "L": [[0, 360]], "R": [[0, 360]] }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "knockedDown",
+  "ref": "guard",
+  "transition": true,
+  "note": "Knocked down: the legs go out from under him, the head goes back, and he falls back onto the canvas (until Phase 6's physics takes falls over).",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 183, "mix": 0.15, "add": { "root": [-0.08, -0.16], "spine": [0, -0.2, 0], "neck": [0, -0.4], "handL": [0, -0.15, 0], "handR": [0, -0.15, 0] } },
+    { "t": 391, "mix": 0.65, "add": { "pelvis": [0, -0.3, 0], "root": [-0.06, 0] } },
+    { "t": 600, "pose": "@to", "tan": "flat" }
+  ],
+  "contacts": { "L": [[0, 130]], "R": [[0, 130]] }
+}

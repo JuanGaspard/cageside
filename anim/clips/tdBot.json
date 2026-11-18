@@ -1,0 +1,16 @@
+{
+  "id": "tdBot",
+  "ref": "guard",
+  "transition": true,
+  "note": "Taken down (from wherever he was into his place underneath): the knees buckle and he folds over the man in on his hips, then goes back fast, hands out behind him to break it, chin tucked; he hits the mat (the weight goes into it) and the legs come up into guard.",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 200, "mix": 0.05, "add": { "root": [-0.04, -0.12], "spine": [0, 0.25, 0], "neck": [0, 0.2] } },
+    { "t": 450, "mix": 0.35, "add": { "root": [-0.12, -0.05], "pelvis": [0, -0.4, 0], "spine": [0, -0.1, 0], "neck": [0, 0.4], "handL": [-0.15, -0.2, -0.2], "handR": [-0.15, -0.2, 0.2] } },
+    { "t": 640, "mix": 0.85, "add": { "root": [-0.03, -0.02], "neck": [0, 0.5], "handL": [-0.1, -0.1, -0.2], "handR": [-0.1, -0.1, 0.2] } },
+    { "t": 820, "mix": 1, "add": { "neck": [0, 0.15] } },
+    { "t": 1100, "pose": "@to", "tan": "flat" }
+  ],
+  "contacts": { "L": [[0, 160]], "R": [[0, 220]] },
+  "land": { "at": 0.6, "root": -0.0016, "spine": -0.003 }
+}

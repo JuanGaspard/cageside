@@ -1,0 +1,15 @@
+{
+  "id": "gnpPunch",
+  "ref": "mount",
+  "note": "Ground punch from the top: the hand comes off its hold up round the outside to cock by the ear (not up through the shoulder, which no arm can do), then drives down outside the shoulder into the face, and goes back to its hold.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "mount", "tan": "flat" },
+    { "t": 70, "set": { "handR": [0.2, 0, 0.42], "elbowR": [-0.3, 0.3, 1], "spine": [0.08, 0.1, 0] } },
+    { "t": 130, "set": { "handR": [-0.05, 0.4, 0.35], "elbowR": [-0.5, 1, 0.6], "spine": [0.15, 0.08, 0], "pelvis": [0.1, 0.18, 0] } },
+    { "t": 180, "set": { "handR": [0.2, 0.05, 0.22], "elbowR": [0, 0.3, 1], "spine": [0.18, 0.2, 0], "pelvis": [0.12, 0.2, 0] } },
+    { "t": 220, "pose": "gnp", "tan": "flat" },
+    { "t": 420, "pose": "mount", "tan": "flat" }
+  ],
+  "events": { "impact": 220, "recover": 380 }
+}

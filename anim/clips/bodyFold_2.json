@@ -1,0 +1,13 @@
+{
+  "id": "bodyFold_2",
+  "ref": "guard",
+  "note": "Hit in the body, the other way: he gives ground from it, the rear elbow clamping down over the liver.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 80, "set": { "spine": [-0.1, 0.45, 0.1], "neck": [0.55, -0.12], "root": [-0.08, 0.83], "handR": [0.12, 0.06, 0.12], "elbowR": [0, -1, 0.2], "handL": [0.34, 0.18, -0.06] } },
+    { "t": 260, "set": { "spine": [-0.12, 0.38, 0.06], "neck": [0.58, -0.06], "root": [-0.08, 0.84], "handR": [0.14, 0.1, 0.1] } },
+    { "t": 560, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 560]], "R": [[0, 560]] }
+}

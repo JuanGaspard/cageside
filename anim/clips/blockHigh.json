@@ -1,0 +1,14 @@
+{
+  "id": "blockHigh",
+  "ref": "guard",
+  "note": "Covering up high: both gloves to the forehead, elbows in front, chin tucked, sitting down into it; the blow pushes him back a touch.",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 80, "set": { "handL": [0.24, 0.36, -0.08], "handR": [0.18, 0.36, 0.08], "elbowL": [0.3, -1, -0.2], "elbowR": [0.3, -1, 0.2], "neck": [0.6, 0.25], "spine": [-0.15, 0.3, 0], "root": [0, 0.84] } },
+    { "t": 120, "set": { "handL": [0.24, 0.36, -0.08], "handR": [0.18, 0.36, 0.08], "elbowL": [0.3, -1, -0.2], "elbowR": [0.3, -1, 0.2], "neck": [0.6, 0.2], "spine": [-0.15, 0.27, 0], "root": [-0.025, 0.835] } },
+    { "t": 220, "set": { "handL": [0.24, 0.35, -0.08], "handR": [0.18, 0.35, 0.08], "elbowL": [0.3, -1, -0.2], "elbowR": [0.3, -1, 0.2], "neck": [0.6, 0.2], "spine": [-0.15, 0.28, 0], "root": [-0.02, 0.84] } },
+    { "t": 380, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 120 },
+  "contacts": { "L": [[0, 380]], "R": [[0, 380]] }
+}

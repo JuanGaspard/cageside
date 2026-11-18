@@ -1,0 +1,15 @@
+{
+  "id": "sweptOver",
+  "ref": "guard",
+  "transition": true,
+  "note": "Swept, the man on top going over: his posture is broken first, pulled down; then he tips to one side, a hand going out to catch it, goes over, and lands on his back, the head lagging and the weight going into the mat.",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 400, "mix": 0, "add": { "spine": [0, 0.3, 0], "neck": [0, 0.2], "root": [0.04, -0.05] } },
+    { "t": 650, "mix": 0.08, "add": { "pelvis": [0, 0.2, -0.6], "spine": [0, 0, -0.3], "root": [0, 0.05], "handL": [0, -0.15, -0.25] } },
+    { "t": 950, "mix": 0.55, "add": { "pelvis": [0, -0.3, -0.4], "root": [0, 0.02] } },
+    { "t": 1150, "mix": 0.98, "add": { "neck": [0, 0.25] } },
+    { "t": 1500, "pose": "@to", "tan": "flat" }
+  ],
+  "land": { "at": 0.75, "root": -0.0016, "spine": -0.002 }
+}

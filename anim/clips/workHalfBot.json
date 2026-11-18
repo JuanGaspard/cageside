@@ -1,0 +1,13 @@
+{
+  "id": "workHalfBot",
+  "ref": "guard",
+  "loop": true,
+  "note": "Underneath in half guard, working: turns in to him against the crossface, frames, turns back.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 750, "pose": "guard", "add": { "pelvis": [0, 0, 0.15], "spine": [0, 0, 0.1] } },
+    { "t": 1500, "pose": "guard", "add": { "root": [0.02, 0] } },
+    { "t": 2250, "pose": "guard", "add": { "pelvis": [0, 0, -0.1] } },
+    { "t": 3000, "pose": "guard" }
+  ]
+}

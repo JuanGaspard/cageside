@@ -1,0 +1,15 @@
+{
+  "id": "check",
+  "ref": "guard",
+  "note": "Checking a leg kick: the weight goes back, the lead knee comes up and turns out so the kick meets shin, then the foot goes back down where it was.",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 60, "set": { "root": [-0.04, 0.86], "footL": [0.27, 0.15, -0.09], "kneeAtL": [0.32, 0.6, -0.15, 0.6], "toeL": [-0.5, 0.3] } },
+    { "t": 150, "tan": "flat", "set": { "root": [-0.06, 0.87], "footL": [0.22, 0.3, -0.14], "kneeAtL": [0.38, 0.72, -0.22, 1], "toeL": [-0.8, 0.5], "kneeL": [1, 0.2, -0.8], "spine": [-0.15, 0.2, 0.05], "handL": [0.38, 0.24, -0.06] } },
+    { "t": 240, "set": { "root": [-0.05, 0.87], "footL": [0.24, 0.26, -0.12], "kneeAtL": [0.36, 0.68, -0.2, 1], "toeL": [-0.7, 0.45], "kneeL": [1, 0.2, -0.8], "spine": [-0.15, 0.2, 0.05] } },
+    { "t": 330, "set": { "root": [-0.02, 0.86], "footL": [0.29, 0.1, -0.08], "kneeAtL": [0.3, 0.5, -0.12, 0.4], "toeL": [-0.4, 0.1] } },
+    { "t": 420, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 150 },
+  "contacts": { "L": [[0, 40], [340, 420]], "R": [[0, 420]] }
+}

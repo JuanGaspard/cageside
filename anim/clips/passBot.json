@@ -1,0 +1,14 @@
+{
+  "id": "passBot",
+  "ref": "guard",
+  "transition": true,
+  "note": "Underneath, the position changing (passed, mounted, or getting the guard back): he frames and turns onto a hip to escape, keeps turning as the man comes round, and is flattened back as it happens (a little past flat, then settling).",
+  "keys": [
+    { "t": 0, "pose": "@from", "tan": "flat" },
+    { "t": 300, "mix": 0, "add": { "pelvis": [0, 0, 0.3], "spine": [0, 0, 0.15], "root": [-0.03, 0] } },
+    { "t": 700, "mix": 0.35, "add": { "pelvis": [0, 0, 0.35], "spine": [0, 0, 0.2], "root": [-0.05, 0.03] } },
+    { "t": 1100, "mix": 0.9, "add": { "pelvis": [0, 0, -0.1], "spine": [0, 0, -0.05] } },
+    { "t": 1500, "pose": "@to", "tan": "flat" }
+  ],
+  "land": { "at": 0.75, "root": -0.0006 }
+}

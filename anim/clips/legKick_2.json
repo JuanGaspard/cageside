@@ -1,0 +1,19 @@
+{
+  "id": "legKick_2",
+  "ref": "guard",
+  "note": "Low kick, the quick one: barely a chamber, straight off the back foot into the thigh and back.",
+  "aim": { "foot": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 60, "set": { "root": [0.07, 0.86], "toeL": [0.2, 0.12], "pelvis": [-0.25, 0.05, -0.05], "footR": [-0.2, 0.17, 0.12], "toeR": [-0.4, 0.7], "kneeAtR": [0.15, 0.48, 0.18, 0.35] } },
+    { "t": 150, "pose": "chamber", "set": { "kneeAtR": [0.68, 0.7, 0.2, 1], "footR": [0.42, 0.5, 0.34], "root": [0.2, 0.89] } },
+    { "t": 200, "set": { "footR": [0.75, 0.52, 0.42], "kneeAtR": [0.72, 0.7, 0.12, 1] } },
+    { "t": 240, "pose": "kick", "tan": "flat", "set": { "footR": [1.0, 0.52, 0], "kneeAtR": [0.65, 0.74, 0.02, 1], "kneeR": [0.15, 0.45, -0.9], "pelvis": [1.0, -0.05, -0.55], "spine": [-0.75, -0.2, 0.2] } },
+    { "t": 300, "set": { "footR": [0.88, 0.45, 0.04], "kneeAtR": [0.63, 0.72, 0.05, 1] } },
+    { "t": 350, "set": { "footR": [0.7, 0.55, 0.38], "kneeAtR": [0.7, 0.72, 0.14, 1], "kneeR": [0.7, 0.8, -0.1], "handR": [-0.12, -0.04, 0.24], "elbowR": [-0.8, -0.65, 0.3] } },
+    { "t": 400, "pose": "chamber", "set": { "footR": [0.3, 0.4, 0.15], "root": [0.16, 0.88], "kneeAtR": [0.5, 0.62, 0.18, 0.6], "handR": [0.08, 0.12, 0.14], "elbowR": [-0.45, -0.9, 0.3] } },
+    { "t": 500, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 240, "recover": 420 },
+  "contacts": { "L": [[0, 500]], "R": [[0, 40], [455, 500]] }
+}

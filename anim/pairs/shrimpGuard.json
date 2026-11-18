@@ -1,0 +1,27 @@
+{
+  "id": "shrimpGuard",
+  "note": "The guard got back from underneath (from side control, half guard or the mount). top: the man on top; bot: the man underneath. He frames on the neck and the hip and shrimps his hips out, turns in on his side, gets a knee in between, then the other, and the legs go round; the man on top is pushed back up into the guard.",
+  "from": ["side", "half", "mount"],
+  "to": ["guard"],
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 350, "note": "frames on, hips out, turned in on his side",
+      "top": { "set": { "spine": [0, 0.05, 0] } },
+      "bot": { "set": { "root": [-0.12, 0.13], "pelvis": [0.7, -1.4, 0], "spine": [0, -0.1, 0.2], "footL": [0.3, 0.07, -0.2], "footR": [0.25, 0.1, 0.2], "kneeL": [0.2, 1, -0.3], "kneeR": [0.4, 1, 0.5] } } },
+    { "t": 700, "note": "a knee in between; he's pushed back up",
+      "top": { "mix": 0.4, "add": { "root": [-0.04, 0.06] } },
+      "bot": { "mix": 0.4, "add": { "pelvis": [0.3, 0, 0] } } },
+    { "t": 1000, "top": { "mix": 0.8 }, "bot": { "mix": 0.8 } },
+    { "t": 1250, "top": { "mix": 1, "add": { "root": [0, -0.02] } }, "bot": { "mix": 1 } },
+    { "t": 1500, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "grips": [
+    { "who": "bot", "eff": "handL", "to": ["N", "Nt", 0.3], "out": [1, 0, 0], "t": [100, 900] },
+    { "who": "bot", "eff": "handR", "to": ["P", "W", 0.3], "out": [1, 0, 0], "t": [100, 800] }
+  ],
+  "place": {
+    "top": [[0, 0, 0, 0, 0], [350, 0.05, 0, 0, 0], [700, 0.4, -0.05, 0, 0], [1000, 0.82, 0, 0, 0], [1500, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [350, 0.1, 0, 0, 0], [700, 0.5, 0, 0, 0], [1500, 1, 0, 0, 0]]
+  },
+  "land": { "top": { "at": 0.83, "root": -0.0008 } }
+}

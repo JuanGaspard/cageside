@@ -1,0 +1,17 @@
+{
+  "id": "spinning",
+  "ref": "guard",
+  "note": "Spinning back fist: the rear foot steps across behind, the hips and chest turn away (rear shoulder back first), the head whips round ahead of the body to spot him, and the rear arm unfolds as it comes round, landing with the back of the fist when the chest faces the lead side; on round, a whole turn, back into the stance. The lead foot pivots on its ball all the way. (Yaws run past a full turn: the end is the guard turned once round.)",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 90, "set": { "pelvis": [-1.4, 0.08, 0], "spine": [-0.35, 0.22, 0], "neck": [0.55, 0.02], "handL": [0.25, 0.23, 0.31], "handR": [0.06, 0.22, 0.2], "footR": [-0.2, 0.14, -0.05], "toeR": [-1.5, 0.3], "toeL": [-1.3, 0.1], "root": [0.04, 0.85] } },
+    { "t": 135, "set": { "pelvis": [-2.3, 0.08, 0], "spine": [-0.5, 0.21, 0], "neck": [-0.2, 0.02], "handL": [-0.15, 0.23, 0.37], "handR": [-0.15, 0.22, 0.15], "footR": [-0.1, 0.16, -0.18], "toeR": [-2.4, 0.2], "toeL": [-2.35, 0.1], "root": [0.06, 0.855] } },
+    { "t": 180, "set": { "pelvis": [-3.2, 0.08, 0], "spine": [-0.6, 0.2, 0], "neck": [-0.8, 0.02], "handL": [-0.39, 0.23, 0.08], "handR": [0.1, 0.27, -0.3], "footR": [0, 0.07, -0.3], "toeR": [-3.4, 0], "toeL": [-3.35, 0.1], "root": [0.08, 0.86] } },
+    { "t": 300, "tan": "flat", "set": { "pelvis": [-4.3, 0.1, 0], "spine": [-0.4, 0.2, 0], "neck": [-1.55, 0.04], "handR": [0.62, 0.3, -0.02], "elbowR": [0, -1, 0], "shR": [0.06, 0.03], "handL": [-0.15, 0.3, -0.2], "footR": [0, 0.07, -0.3], "toeR": [-4.3, 0], "toeL": [-4.25, 0.1], "root": [0.12, 0.86] } },
+    { "t": 380, "set": { "pelvis": [-5.2, 0.08, 0], "spine": [-0.45, 0.22, 0], "neck": [-0.8, 0.02], "handR": [0.45, 0.3, 0.3], "elbowR": [-0.3, -1, 0.3], "shR": [0, 0.025], "handL": [0, 0.28, -0.25], "footR": [-0.1, 0.12, -0.1], "toeR": [-5.4, 0.3], "toeL": [-5.2, 0.1], "root": [0.08, 0.86] } },
+    { "t": 620, "pose": "guard", "tan": "flat", "set": { "pelvis": [-6.883, 0.08, 0], "toeR": [-7.083, 0.35], "toeL": [-6.583, 0] } }
+  ],
+  "events": { "impact": 300, "recover": 540 },
+  "contacts": { "L": [[0, 620]], "R": [[0, 40], [180, 340], [560, 620]] }
+}

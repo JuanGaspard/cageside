@@ -1,0 +1,14 @@
+{
+  "id": "blockHigh_2",
+  "ref": "guard",
+  "note": "Covering up high, the other way: a high guard, gloves at the temples and forearms in front, taken on the arms with a lean back.",
+  "keys": [
+    { "t": 0, "pose": "guard", "tan": "flat" },
+    { "t": 80, "set": { "handL": [0.2, 0.36, -0.12], "handR": [0.14, 0.36, 0.13], "elbowL": [0.6, -1, -0.3], "elbowR": [0.6, -1, 0.3], "neck": [0.6, 0.18], "spine": [-0.15, 0.2, 0], "root": [-0.01, 0.85] } },
+    { "t": 120, "set": { "handL": [0.2, 0.36, -0.12], "handR": [0.14, 0.36, 0.13], "elbowL": [0.6, -1, -0.3], "elbowR": [0.6, -1, 0.3], "neck": [0.6, 0.15], "spine": [-0.15, 0.14, 0], "root": [-0.04, 0.85] } },
+    { "t": 220, "set": { "handL": [0.2, 0.35, -0.12], "handR": [0.14, 0.35, 0.13], "elbowL": [0.6, -1, -0.3], "elbowR": [0.6, -1, 0.3], "neck": [0.6, 0.16], "spine": [-0.15, 0.18, 0], "root": [-0.03, 0.85] } },
+    { "t": 380, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 120 },
+  "contacts": { "L": [[0, 380]], "R": [[0, 380]] }
+}

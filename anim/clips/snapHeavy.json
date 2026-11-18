@@ -1,0 +1,13 @@
+{
+  "id": "snapHeavy",
+  "ref": "guard",
+  "note": "Hit straight in the face, hard: the head goes back, the body follows, the weight goes onto the heels and the hands come apart for a moment before he gathers himself.",
+  "keys": [
+    { "t": 0, "pose": "guard" },
+    { "t": 60, "set": { "neck": [0.6, -0.5], "spine": [-0.15, 0.08, 0.04], "root": [-0.06, 0.84], "handL": [0.34, 0.14, -0.1], "handR": [0.16, 0.12, 0.1], "elbowL": [-0.2, -1, -0.6], "elbowR": [-0.3, -1, 0.6] } },
+    { "t": 180, "set": { "neck": [0.6, -0.25], "spine": [-0.15, 0.14, 0.02], "root": [-0.08, 0.83], "handL": [0.36, 0.18, -0.08], "handR": [0.18, 0.17, 0.08] } },
+    { "t": 560, "pose": "guard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 },
+  "contacts": { "L": [[0, 560]], "R": [[0, 560]] }
+}

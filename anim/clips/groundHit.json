@@ -1,0 +1,12 @@
+{
+  "id": "groundHit",
+  "ref": "botGuard",
+  "note": "Underneath, hit: the head knocked to the side against the mat, the arms flinching, and back.",
+  "keys": [
+    { "t": 0, "pose": "botGuard" },
+    { "t": 50, "pose": "botGuard", "add": { "neck": [0.35, -0.12], "spine": [0.06, 0, 0.05], "handL": [-0.05, 0.06, 0.04], "handR": [-0.05, 0.06, -0.04] } },
+    { "t": 170, "pose": "botGuard", "add": { "neck": [0.18, -0.04], "spine": [0.03, 0, 0.02] } },
+    { "t": 420, "pose": "botGuard", "tan": "flat" }
+  ],
+  "events": { "impact": 0 }
+}

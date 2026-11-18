@@ -1,0 +1,44 @@
+{
+  "id": "backRoll",
+  "note": "Taking the back from the mount or side control, as the man underneath turns away to escape (the roll in footage 6765428, 7.5 to 9.5 s). top: the man taking the back, who ends underneath with the man lying back on him; bot: the man whose back is taken. He turns onto his side, away; the man on top rides him, chest on his back, hands into the seatbelt, slides down behind him onto a hip, puts a hook in, and rolls back onto his back taking him along, turning half round as he goes.",
+  "from": ["mount", "side"],
+  "to": ["back"],
+  "turn": { "top": 1 },
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 350, "note": "he turns away onto his side (turned about his spine: the pelvis's yaw; its roll would swing him round flat on the mat), the knees falling together to that side; ridden, chest on his back",
+      "top": { "set": { "root": [0, 0.38], "pelvis": [0, 0.9, 0], "spine": [0, 0.2, 0], "neck": [0, -0.3] } },
+      "bot": { "set": { "pelvis": [1.1, -1.25, 0], "spine": [0.35, -0.05, 0], "neck": [0.3, 0.3],
+        "handL": [0.1, 0.15, -0.3], "handR": [0.1, 0.2, -0.22], "elbowL": [-1, 0, -0.5], "elbowR": [-1, 0, 0.5],
+        "footL": [0.3, 0.07, -0.15], "footR": [0.28, 0.2, -0.08], "kneeL": [0.2, 0.3, -1], "kneeR": [0.2, 0.4, -1], "toeL": [0.6, 0], "toeR": [0.6, 0] } } },
+    { "t": 520, "note": "off the top onto one hip beside him, sat on it with both legs folded to that side (a side-sit: one out to each side, tilted like this, would be the splits)",
+      "top": { "set": { "root": [0, 0.3], "pelvis": [0, 0.1, 0.8], "spine": [0, 0.2, 0.1], "neck": [0, 0],
+        "footL": [-0.05, 0.07, -0.45], "footR": [0.12, 0.07, -0.22], "toeL": [3.14, 0.3], "toeR": [3.14, 0.3], "kneeL": [0, 0, 0], "kneeR": [0, 0, 0] } },
+      "bot": { "set": { "pelvis": [1.35, -1.1, 0], "spine": [0.3, -0.1, 0] } } },
+    { "t": 700, "note": "down behind him on a hip, the seatbelt on, a hook going in; he's on his side",
+      "top": { "set": { "root": [0, 0.2], "pelvis": [0, -0.9, 0.7], "spine": [0, -0.1, 0.3], "neck": [0, 0.4],
+        "footL": [0.45, 0.12, -0.18], "footR": [0.42, 0.12, 0.2], "toeL": [0, 0.3], "toeR": [0, 0.3], "kneeL": [0.2, 1, -0.4], "kneeR": [0.2, 1, 0.4] } },
+      "bot": { "set": { "root": [0, 0.2], "pelvis": [1.4, -1.0, 0], "spine": [0.3, -0.1, 0] } } },
+    { "t": 1050, "note": "the roll back, taking him over onto his chest (he turns from his side onto his back on top of him: about his spine, the yaw, not swung round on the mat)",
+      "top": { "mix": 0.75, "add": { "pelvis": [0, 0, 0.4] } },
+      "bot": { "mix": 0.7, "add": { "pelvis": [0.45, 0, 0], "root": [0, 0.08] } } },
+    { "t": 1350, "top": { "mix": 1 }, "bot": { "mix": 1 } },
+    { "t": 1700, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "grips": [
+    { "who": "top", "eff": "handL", "to": ["N", "Ch", 0.3], "out": [1, 0, 0], "t": [250, 1800] },
+    { "who": "top", "eff": "handR", "to": ["Ch", "W", 0.4], "out": [1, 0, 0], "t": [350, 1800] },
+    { "who": "top", "eff": "footL", "to": ["hpL", "knL", 0.6], "t": [800, 1800] },
+    { "who": "top", "eff": "footR", "to": ["hpR", "knR", 0.6], "t": [1000, 1800] }
+  ],
+  "place": {
+    "top": [[0, 0, 0, 0, 0], [350, 0.05, 0, 0, 0], [700, 0.45, 0, -0.25, 0], [1050, 0.85, 0, -0.1, 0], [1350, 1, 0, 0, 0], [1700, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [700, 0.2, 0, 0.05, 0], [1050, 0.8, 0, 0, 0], [1700, 1, 0, 0, 0]]
+  },
+  "land": { "top": { "at": 0.75, "root": -0.001 }, "bot": { "at": 0.72, "root": -0.0014, "spine": -0.002 } },
+  "deny": { "at": 420, "hold": 280, "back": 750,
+    "note": "stopped as he turns away: he turns back square under him (the yaw back), elbows tight to his sides, and the man on top settles back where he was",
+    "top": { "add": { "root": [0, 0.02] } },
+    "bot": { "add": { "pelvis": [-0.55, 0, 0] } } },
+  "revAt": 330, "revNote": "caught as the man on top shifts his weight to follow the turn: the bridge throws him over the shoulder"
+}

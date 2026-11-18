@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion Tracer</title>
+<!-- Cageside's motion tracer (ANIMATION_PLAN.md, Phase 3). Open it from the dev server
+     (py tools/devserver.py, then http://localhost:8765/trace.html). It runs MediaPipe's pose tracker
+     (tools/mediapipe/) over the reference footage in anim/footage/, maps what it finds onto the game's own
+     figure, and turns a stretch of it into a clip (anim/clips/), which the studio can then clean up. -->
+<style>
+:root { --bg: #0b0f15; --line: #263040; --ink: #dfe6f0; --soft: #8b97a8; --red: #ff4b3e; --gold: #ffd23c; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.4 system-ui, -apple-system, Segoe UI, sans-serif; }
+header, .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+header { padding: 8px 12px; border-bottom: 1px solid var(--line); }
+header h1 { font-size: 14px; margin: 0 10px 0 0; letter-spacing: .06em; text-transform: uppercase; }
+select, input, button { background: #1a2130; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font: inherit; }
+button { cursor: pointer; } button.on { border-color: var(--red); }
+#status { color: var(--soft); margin-left: auto; }
+main { padding: 8px; }
+.views { display: grid; grid-template-columns: minmax(0, 960fr) minmax(0, 420fr); gap: 8px; }
+canvas { display: block; width: 100%; background: #05070a; border-radius: 6px; }
+#tl { margin: 8px 0; }
+.row { margin: 6px 0; }
+.help { color: var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Motion Tracer</h1>
+  <select id="vid" aria-label="Footage"></select>
+  <button id="track">Track</button>
+  <span id="prog" class="help"></span>
+  <label>Fighter <select id="who"><option value="0">1 (yellow)</option><option value="1">2 (cyan)</option></select></label>
+  <button id="play">Play</button>
+  <span id="status">Loading…</span>
+</header>
+<main>
+  <div class="views"><canvas id="cv" width="960" height="540"></canvas><canvas id="fig" width="420" height="540"></canvas></div>
+  <canvas id="tl" width="1390" height="64"></canvas>
+  <div class="row">
+    <button id="setIn" title="I">In</button><button id="setOut" title="O">Out</button><button id="setHit" title="M">Impact</button>
+    <label>Strikes with <select id="limb"><option value="">nothing</option><option value="handL">lead hand</option><option value="handR">rear hand</option><option value="footL">lead foot</option><option value="footR">rear foot</option><option value="kneeL">lead knee</option><option value="kneeR">rear knee</option><option value="elbowL">lead elbow</option><option value="elbowR">rear elbow</option></select></label>
+    <label>Detail <select id="tol"><option value="0.5">fine</option><option value="1" selected>normal</option><option value="2">coarse</option></select></label>
+    <label>Clip id <input id="cid" value="traced"></label>
+    <button id="save">Save clip</button>
+    <span id="info" class="help"></span>
+  </div>
+  <div class="row help">Space play · ←/→ frame · I / O set the range · M the impact · the figure on the right is the tracked fighter on the game's skeleton (ghost: the saved clip's keys)</div>
+</main>
+<iframe id="game" src="cageside.html" hidden title="game"></iframe>
+<script type="module">
+import { FilesetResolver, PoseLandmarker } from './tools/mediapipe/1.1.1/vision_bundle.mjs';
+const $ = (s) => document.querySelector(s);
+const status = (m) => { $('#status').textContent = m; };
+const T = { index: [], entry: null, fps: 25, n: 0, tracks: null, f: 0, inF: 0, outF: 0, hitF: null, who: 0, playing: false, an: null, clip: null };
+let FIG = null, ANIM = null, landmarker = null, BODY = null;
+const video = document.createElement('video');
+video.muted = true; video.playsInline = true; video.preload = 'auto';
+const cv = $('#cv'), cx = cv.getContext('2d'), fg = $('#fig'), fx = fg.getContext('2d'), tl = $('#tl'), tx = tl.getContext('2d');
+
+// MediaPipe's 33 points: the ones used here
+const P = { nose: 0, earL: 7, earR: 8, shL: 11, shR: 12, elL: 13, elR: 14, wrL: 15, wrR: 16, piL: 17, piR: 18, ixL: 19, ixR: 20, hpL: 23, hpR: 24, knL: 25, knR: 26, anL: 27, anR: 28, heL: 29, heR: 30, toL: 31, toR: 32 };
+const BONES = [[11, 12], [11, 13], [13, 15], [12, 14], [14, 16], [11, 23], [12, 24], [23, 24], [23, 25], [25, 27], [24, 26], [26, 28], [27, 29], [29, 31], [27, 31], [28, 30], [30, 32], [28, 32], [7, 8], [0, 7], [0, 8]];
+
+// ---------------------------------------------------------------- loading
+// (the game may have finished loading before this script ran)
+const game = $('#game');
+if (game.contentWindow && game.contentWindow.MMA && game.contentDocument.readyState === 'complete') init();
+else game.addEventListener('load', init);
+async function init() {
+  if (FIG) return;
+  const G = game.contentWindow.MMA.fightview;
+  FIG = G.figure; ANIM = G.anim;
+  BODY = FIG.body({ height: 1.8 / 0.0254, reach: 1.8 / 0.0254, weight: 175 });
+  T.index = await (await fetch('/anim/footage/index.json', { cache: 'no-store' })).json();
+  for (const e of T.index) $('#vid').add(new Option(e.id + ' · ' + e.what, e.id));
+  await loadVideo(T.index[0].id);
+  requestAnimationFrame(tick);
+}
+async function loadVideo(id) {
+  T.entry = T.index.find((e) => e.id === id);
+  video.src = '/anim/footage/' + T.entry.file;
+  await new Promise((r) => { video.onloadeddata = r; });
+  T.fps = T.entry.fps; T.n = Math.floor(video.duration * T.fps) - 1;
+  T.f = 0; T.inF = 0; T.outF = Math.min(T.n, Math.round(T.fps * 2)); T.hitF = null; T.an = null; T.clip = null;
+  T.tracks = null;
+  try { const r = await fetch('/anim/tracks/' + id + '.json', { cache: 'no-store' }); if (r.ok) T.tracks = await r.json(); } catch (e) { /* not tracked yet */ }
+  status(T.tracks ? 'Tracked earlier: pick a stretch' : 'Not tracked yet: press Track');
+  await seek(0);
+}
+function seek(f) {
+  T.f = Math.max(0, Math.min(T.n, f));
+  return new Promise((r) => {
+    const t = (T.f + 0.5) / T.fps;
+    if (Math.abs(video.currentTime - t) < 1e-3) return r();
+    const done = () => { video.removeEventListener('seeked', done); r(); };
+    video.addEventListener('seeked', done);
+    video.currentTime = t;
+    setTimeout(done, 1500);
+  });
+}
+
+// ---------------------------------------------------------------- tracking
+async function makeLandmarker() {
+  const files = await FilesetResolver.forVisionTasks('/tools/mediapipe/1.1.1/wasm');
+  const opts = (delegate) => ({ baseOptions: { modelAssetPath: '/tools/mediapipe/models/pose_landmarker_heavy.task', delegate }, runningMode: 'VIDEO', numPoses: 2,
+    minPoseDetectionConfidence: 0.5, minPosePresenceConfidence: 0.5, minTrackingConfidence: 0.5 });
+  try { return await PoseLandmarker.createFromOptions(files, opts('GPU')); } catch (e) { return PoseLandmarker.createFromOptions(files, opts('CPU')); }
+}
+const r4 = (v) => Math.round(v * 1e4) / 1e4;
+const hipC = (p) => [(p.img[23][0] + p.img[24][0]) / 2, (p.img[23][1] + p.img[24][1]) / 2];
+async function track() {
+  landmarker = landmarker || await makeLandmarker();
+  const out = [[], []];
+  let last = [null, null];
+  const t0 = performance.now();
+  for (let f = 0; f <= T.n; f++) {
+    await seek(f);
+    const r = landmarker.detectForVideo(video, Math.round(f * 1000 / T.fps));
+    const found = (r.landmarks || []).map((lm, i) => ({ img: lm.map((p) => [r4(p.x), r4(p.y), r4(p.z), r4(p.visibility || 0)]), world: r.worldLandmarks[i].map((p) => [r4(p.x), r4(p.y), r4(p.z)]) }));
+    // who's who: whichever way round keeps each one nearest where they were (left to right at the start)
+    let pair = [found[0] || null, found[1] || null];
+    if (found.length === 2) {
+      const d = (p, q) => (q ? Math.hypot(hipC(p)[0] - hipC(q)[0], hipC(p)[1] - hipC(q)[1]) : 0.5);
+      if (!last[0] && !last[1]) pair = hipC(found[0])[0] <= hipC(found[1])[0] ? [found[0], found[1]] : [found[1], found[0]];
+      else if (d(found[0], last[0]) + d(found[1], last[1]) > d(found[1], last[0]) + d(found[0], last[1])) pair = [found[1], found[0]];
+    } else if (found.length === 1 && last[1] && (!last[0] || Math.hypot(hipC(found[0])[0] - hipC(last[1])[0], hipC(found[0])[1] - hipC(last[1])[1]) < Math.hypot(hipC(found[0])[0] - hipC(last[0])[0], hipC(found[0])[1] - hipC(last[0])[1]))) pair = [null, found[0]];
+    out[0].push(pair[0]); out[1].push(pair[1]);
+    last = [pair[0] || last[0], pair[1] || last[1]];
+    if (f % 10 === 0) { $('#prog').textContent = 'tracking ' + f + ' / ' + T.n + ' (' + Math.round((performance.now() - t0) / (f + 1)) + ' ms a frame)'; draw(); await new Promise((r) => setTimeout(r)); }
+  }
+  T.tracks = out;
+  const r = await fetch('/anim/tracks/' + T.entry.id + '.json', { method: 'PUT', body: JSON.stringify(out) });
+  $('#prog').textContent = 'tracked ' + (T.n + 1) + ' frames in ' + Math.round((performance.now() - t0) / 1000) + ' s' + (r.ok ? ', saved' : ', not saved (' + r.status + ')');
+  return out;
+}
+
+// ---------------------------------------------------------------- smoothing (One Euro, run both ways so it doesn't lag)
+function oneEuro(xs, fps, minCut = 1.6, beta = 0.25, dCut = 1.0) {
+  const alpha = (cut) => { const tau = 1 / (2 * Math.PI * cut), te = 1 / fps; return 1 / (1 + tau / te); };
+  const run = (arr) => {
+    const out = []; let x = null, dx = 0;
+    for (const v of arr) {
+      if (x == null) { x = v; out.push(v); continue; }
+      const d = (v - x) * fps; dx = dx + alpha(dCut) * (d - dx);
+      x = x + alpha(minCut + beta * Math.abs(dx)) * (v - x); out.push(x);
+    }
+    return out;
+  };
+  const a = run(xs), b = run(xs.slice().reverse()).reverse();
+  return a.map((v, i) => (v + b[i]) / 2);
+}
+// one fighter's points over a stretch of frames, gaps filled from the nearest frame either side, smoothed.
+// Who's who is settled here, frame by frame: whichever of the poses found is nearest where he just was
+// (the tracker sometimes swaps them, or sees a heavy bag as a second man).
+function series(person, from, to) {
+  const near = (p, q) => Math.hypot(hipC(p)[0] - hipC(q)[0], hipC(p)[1] - hipC(q)[1]);
+  let cur = null;
+  for (let f = from; f <= to && !cur; f++) cur = T.tracks[person][f];
+  const raw = [];
+  for (let f = from; f <= to; f++) {
+    const cands = [T.tracks[0][f], T.tracks[1][f]].filter(Boolean);
+    const best = cur && cands.length ? cands.reduce((a, b) => (near(a, cur) <= near(b, cur) ? a : b)) : null;
+    const ok = best && near(best, cur) < 0.12;
+    raw.push(ok ? best : null);
+    if (ok) cur = best;
+  }
+  const firstGood = raw.find((p) => p);
+  if (!firstGood) return null;
+  let prev = firstGood;
+  const filled = raw.map((p) => (p ? (prev = p) : prev));
+  const sm = (key) => {
+    const out = filled.map((p) => p[key].map((q) => q.slice()));
+    for (let j = 0; j < 33; j++) for (let c = 0; c < (key === 'img' ? 2 : 3); c++) {
+      const s = oneEuro(filled.map((p) => p[key][j][c]), T.fps);
+      s.forEach((v, i) => { out[i][j][c] = v; });
+    }
+    return out;
+  };
+  // how well the legs are seen (the median, over the stretch, of the knees' and ankles' visibility)
+  const vis = raw.filter(Boolean).map((p) => Math.min(p.img[25][3], p.img[26][3], p.img[27][3], p.img[28][3])).sort((a, b) => a - b);
+  return { img: sm('img'), world: sm('world'), seen: raw.map((p) => !!p), legs: vis.length ? vis[vis.length >> 1] : 0 };
+}
+
+// ---------------------------------------------------------------- onto the game's figure
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const mul = (a, k) => [a[0] * k, a[1] * k, a[2] * k], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const len = (a) => Math.hypot(a[0], a[1], a[2]), mid = (a, b) => mul(add(a, b), 0.5);
+const unit = (a) => { const l = len(a) || 1; return mul(a, 1 / l); };
+const offLine = (p, a, b) => { const u = unit(sub(b, a)); const v = sub(p, a); return sub(v, mul(u, dot(v, u))); };
+// The tracked fighter, frame by frame, as the game's pose channels. Which way he faces and which side
+// leads are read off the footage (the feet when they're seen, the shoulders when they aren't); his size is
+// scaled to the game's 1.80 m figure by his trunk, which is always in the picture; the hips and shoulders'
+// turn, the lean and the head come straight from the tracked points; the fists and feet are placed from
+// the game's own shoulders and hips, so a long-armed fighter's punch still lands where it should. Where the
+// hips go comes from the feet: a planted foot doesn't move, so when it moves against the hips, the hips
+// moved (which also keeps a moving camera out of it). When the legs are out of the picture the clip leaves
+// them alone: the game's stance and its footwork have them.
+function analyse(person, from, to) {
+  const S = series(person, from, to);
+  if (!S) return null;
+  const n = S.img.length, legs = S.legs > 0.5;
+  let fs = 0, ms = 0, torso = 0;
+  for (let i = 0; i < n; i++) {
+    const g = S.img[i], w = S.world[i];
+    fs += (g[0][0] - (g[7][0] + g[8][0]) / 2) + (legs ? 0.5 * ((g[31][0] - g[29][0]) + (g[32][0] - g[30][0])) : 0);
+    ms += legs ? g[27][0] - g[28][0] : g[11][0] - g[12][0];
+    torso += len(sub(mid(w[11], w[12]), mid(w[23], w[24])));
+  }
+  const f = fs >= 0 ? 1 : -1, m = f * ms > 0 ? 1 : -1, k = 0.49 / (torso / n);
+  const L = m > 0 ? { sh: 11, el: 13, wr: 15, pi: 17, ix: 19, hp: 23, kn: 25, an: 27, he: 29, to: 31, ear: 7 } : { sh: 12, el: 14, wr: 16, pi: 18, ix: 20, hp: 24, kn: 26, an: 28, he: 30, to: 32, ear: 8 };
+  const R = m > 0 ? { sh: 12, el: 14, wr: 16, pi: 18, ix: 20, hp: 24, kn: 26, an: 28, he: 30, to: 32, ear: 8 } : { sh: 11, el: 13, wr: 15, pi: 17, ix: 19, hp: 23, kn: 25, an: 27, he: 29, to: 31, ear: 7 };
+  const ourArm = BODY.upper + BODY.fore;
+  const out = [], toes = { L: [], R: [] };
+  let prevYaw = null, rootX = 0, prevRel = null;
+  const unwrap = (a, b) => { if (b == null) return a; while (a - b > Math.PI) a -= 2 * Math.PI; while (a - b < -Math.PI) a += 2 * Math.PI; return a; };
+  for (let i = 0; i < n; i++) {
+    const w = S.world[i];
+    const B = (j) => [f * w[j][0] * k, -w[j][1] * k, f * m * -w[j][2] * k];
+    const hc = mid(B(23), B(24)), sc = mid(B(11), B(12));
+    const fist = (s) => add(B(s.wr), mul(sub(mid(B(s.pi), B(s.ix)), B(s.wr)), 0.6));
+    const low = (s) => Math.min(B(s.he)[1], B(s.to)[1]), lowest = Math.min(low(L), low(R));
+    const rel = { L: B(L.to)[0] - hc[0], R: B(R.to)[0] - hc[0] };
+    if (legs && prevRel) {
+      const down = [['L', L], ['R', R]].filter(([, s]) => low(s) < lowest + 0.03).map(([sd]) => sd);
+      rootX -= down.reduce((a, sd) => a + rel[sd] - prevRel[sd], 0) / down.length;
+    }
+    prevRel = rel;
+    const root = legs ? [rootX, hc[1] - lowest + 0.025] : FIG.STANCE.root.slice();
+    const lh = sub(B(R.hp), B(L.hp)), ls = sub(B(R.sh), B(L.sh)), le = sub(B(R.ear), B(L.ear)), up = sub(sc, hc);
+    const yawP = unwrap(Math.atan2(lh[0], lh[2]), prevYaw && prevYaw[0]), yawC = unwrap(Math.atan2(ls[0], ls[2]), yawP), yawH = unwrap(Math.atan2(le[0], le[2]), yawC);
+    prevYaw = [yawP];
+    const lean = Math.atan2(up[0], up[1]), rollP = Math.atan2(-lh[1], Math.hypot(lh[0], lh[2])), rollC = Math.atan2(-ls[1], Math.hypot(ls[0], ls[2]));
+    const hu = sub(mid(B(7), B(8)), sc), headP = Math.atan2(hu[0], hu[1]);
+    const pose = Object.assign({}, FIG.STANCE, { root, pelvis: [yawP, lean * 0.4, rollP], spine: [yawC - yawP, lean * 0.6, rollC - rollP], neck: [yawH - yawC, headP - lean], shL: [0, 0], shR: [0, 0] });
+    // the game's own skeleton in that posture, to hang the limbs from
+    const J = FIG.solve(pose, BODY).pt, Rc = FIG.rot(yawC, lean, rollC);
+    const at = (p) => add(sub(p, hc), [root[0], root[1], 0]);
+    for (const [side, s] of [['L', L], ['R', R]]) {
+      const theirArm = len(sub(B(s.sh), B(s.el))) + len(sub(B(s.el), fist(s)));
+      const hand = add(J['sh' + side], mul(sub(fist(s), B(s.sh)), ourArm / Math.max(theirArm, 0.2)));
+      pose['hand' + side] = sub(hand, J.Ch);
+      const pe = unit(offLine(B(s.el), B(s.sh), fist(s)));
+      pose['elbow' + side] = [dot(pe, Rc[0]), dot(pe, Rc[1]), dot(pe, Rc[2])];
+      if (legs) {
+        pose['foot' + side] = add(J['hp' + side], sub(B(s.an), B(s.hp)));
+        pose['knee' + side] = unit(offLine(B(s.kn), B(s.hp), B(s.an)));
+        const d = sub(B(s.to), B(s.he));
+        toes[side].push(Math.atan2(-d[1], Math.hypot(d[0], d[2])));
+        pose['toe' + side] = [Math.atan2(-d[2], d[0]), 0];
+      }
+      pose['_toe' + side] = at(B(s.to)); pose['_heel' + side] = at(B(s.he)); pose['_end' + side] = { hand: at(fist(s)), foot: at(B(s.an)), knee: at(B(s.kn)), elbow: at(B(s.el)), from: at(B(s.sh)), hip: at(B(s.hp)) };
+    }
+    out.push(pose);
+  }
+  // a flat foot reads as tilted (the heel point sits up the back of the heel): take the flattest it gets as flat
+  if (legs) for (const side of ['L', 'R']) {
+    const flat = Math.min(...toes[side]);
+    out.forEach((p, i) => { p['toe' + side][1] = Math.max(-0.4, toes[side][i] - flat); });
+  }
+  // feet on the floor: low and not moving (with the legs unseen, the game's own feet stay planted)
+  const contacts = { L: [], R: [] };
+  for (const side of legs ? ['L', 'R'] : []) {
+    const on = out.map((p, i) => {
+      const lo = Math.min(p['_toe' + side][1], p['_heel' + side][1]);
+      const q = out[Math.max(0, i - 1)], v = Math.abs(p['_toe' + side][0] - q['_toe' + side][0]) * T.fps;
+      return lo < 0.07 && v < 0.7;
+    });
+    const ranges = [];
+    let start = null;
+    on.forEach((o, i) => { if (o && start == null) start = i; if ((!o || i === on.length - 1) && start != null) { const end = o ? i + 1 : i; if (end - start >= 3) ranges.push([start, end]); start = null; } });
+    contacts[side] = ranges;
+  }
+  return { poses: out, f, m, k, contacts, from, to, legs };
+}
+// the frame a strike reaches furthest (where it lands)
+function suggestImpact(an, limb) {
+  if (!limb) return null;
+  const side = limb.slice(-1), kind = limb.slice(0, -1);
+  let best = -1, at = null;
+  an.poses.forEach((p, i) => {
+    const e = p['_end' + side], end = e[kind === 'elbow' ? 'elbow' : kind === 'knee' ? 'knee' : kind], from = kind === 'hand' || kind === 'elbow' ? e.from : e.hip;
+    const d = end[0] - from[0] + (kind === 'foot' || kind === 'knee' ? 0.5 * (end[1] - from[1]) : 0);
+    if (d > best) { best = d; at = i; }
+  });
+  return at;
+}
+
+// ---------------------------------------------------------------- down to key poses, and a clip
+const WEIGHT = { root: 1 / 0.02, pelvis: 1 / 0.06, spine: 1 / 0.06, neck: 1 / 0.1, handL: 1 / 0.025, handR: 1 / 0.025, elbowL: 1 / 0.3, elbowR: 1 / 0.3,
+  footL: 1 / 0.025, footR: 1 / 0.025, kneeL: 1 / 0.3, kneeR: 1 / 0.3, toeL: 1 / 0.12, toeR: 1 / 0.12, shL: 0, shR: 0, kneeAtL: 0, kneeAtR: 0 };
+function makeClip(an, opts) {
+  const fps = T.fps, n = an.poses.length, ms = (i) => Math.round(i * 1000 / fps);
+  const vecs = an.poses.map((p) => ANIM.vec(p));
+  const wv = new Float64Array(ANIM.NCH);
+  for (const [ch, c] of ANIM.CH) for (let i = 0; i < c; i++) wv[ANIM.AT[ch] + i] = WEIGHT[ch];
+  const round = (p) => { const o = {}; for (const [ch] of ANIM.CH) o[ch] = p[ch].map((v) => Math.round(v * 1000) / 1000); return o; };
+  const refPose = round(ANIM.poseOf(vecs[0]));
+  const build = (keys) => {
+    const ks = keys.map((i, q) => ({ t: ms(i), set: round(ANIM.poseOf(vecs[i])), tan: q === 0 ? 'flat' : 'auto' }));
+    // back to where it started, so it can be laid over any stance
+    ks.push({ t: ms(n - 1) + 120, set: refPose, tan: 'flat' });
+    return ks;
+  };
+  let keys = [0, n - 1];
+  for (let guard = 0; guard < 24; guard++) {
+    const C = ANIM.compile({ id: 'x', refPose, keys: build(keys) });
+    let worst = 0, at = -1;
+    for (let i = 0; i < n; i++) {
+      const v = ANIM.sample(C, ms(i));
+      let e = 0;
+      for (let j = 0; j < ANIM.NCH; j++) e = Math.max(e, Math.abs(v[j] - vecs[i][j]) * wv[j]);
+      if (e > worst && !keys.includes(i)) { worst = e; at = i; }
+    }
+    if (worst <= opts.tol || at < 0) break;
+    keys.push(at); keys.sort((a, b) => a - b);
+  }
+  const contacts = {};
+  for (const side of ['L', 'R']) {
+    contacts[side] = an.contacts[side].map(([a, b]) => [ms(a), b >= n ? ms(n - 1) + 120 : ms(b)]);
+    if (!contacts[side].length) delete contacts[side];
+  }
+  const clip = { id: opts.id, ref: 'guard', note: 'Traced from Pexels ' + T.entry.id + ' (' + T.entry.what + '), frames ' + an.from + ' to ' + an.to + ', fighter ' + (T.who + 1) + '; ' + keys.length + ' keys.',
+    refPose, traced: { footage: T.entry.id, from: an.from, to: an.to, fighter: T.who + 1, facing: an.f, southpaw: an.m < 0 }, keys: build(keys), events: {}, contacts };
+  if (opts.limb) { clip.aim = { [opts.limb.slice(0, -1)]: opts.limb.slice(-1) }; }
+  if (opts.hit != null) { clip.events.impact = ms(opts.hit - an.from); clip.events.recover = Math.round(clip.events.impact + (ms(n - 1) - clip.events.impact) * 0.8); }
+  return clip;
+}
+function format(c) {
+  const lines = ['{'], order = Object.keys(c);
+  order.forEach((k, i) => {
+    const end = i < order.length - 1 ? ',' : '';
+    if (k === 'keys') lines.push('  "keys": [\n' + c.keys.map((q) => '    ' + JSON.stringify(q)).join(',\n') + '\n  ]' + end);
+    else lines.push('  ' + JSON.stringify(k) + ': ' + JSON.stringify(c[k]) + end);
+  });
+  return lines.join('\n') + '\n}\n';
+}
+async function saveClip() {
+  const id = $('#cid').value.trim();
+  if (!/^[\w-]+$/.test(id)) { status('The id can only have letters, digits, _ and -'); return null; }
+  if (!T.tracks) { status('Track the footage first'); return null; }
+  const an = analyse(T.who, Math.min(T.inF, T.outF), Math.max(T.inF, T.outF));
+  if (!an) { status('That fighter is not in this stretch'); return null; }
+  const limb = $('#limb').value, hit = T.hitF != null ? T.hitF : (limb ? an.from + suggestImpact(an, limb) : null);
+  T.hitF = hit;
+  const clip = makeClip(an, { id, limb, hit, tol: +$('#tol').value });
+  T.clip = ANIM.compile(clip); T.clipFrom = an.from;
+  const r = await fetch('/anim/clips/' + id + '.json', { method: 'PUT', body: format(clip) });
+  status(r.ok ? 'Saved ' + id + ' (' + (clip.keys.length - 1) + ' keys); it is in the game and the studio' : 'Saving failed: ' + r.status);
+  return clip;
+}
+
+// ---------------------------------------------------------------- drawing
+function draw() {
+  const W = cv.width, H = cv.height, vw = video.videoWidth || 16, vh = video.videoHeight || 9;
+  const sc = Math.min(W / vw, H / vh), ox = (W - vw * sc) / 2, oy = (H - vh * sc) / 2;
+  cx.fillStyle = '#000'; cx.fillRect(0, 0, W, H);
+  if (video.readyState >= 2) cx.drawImage(video, ox, oy, vw * sc, vh * sc);
+  if (T.tracks) for (const who of [0, 1]) {
+    const p = T.tracks[who][T.f];
+    if (!p) continue;
+    const pt = (j) => [ox + p.img[j][0] * vw * sc, oy + p.img[j][1] * vh * sc];
+    cx.strokeStyle = who === 0 ? '#ffd23c' : '#40e0ff'; cx.lineWidth = who === T.who ? 3 : 1.5; cx.globalAlpha = who === T.who ? 1 : 0.6;
+    for (const [a, b] of BONES) { cx.beginPath(); cx.moveTo(...pt(a)); cx.lineTo(...pt(b)); cx.stroke(); }
+    cx.globalAlpha = 1;
+  }
+  cx.fillStyle = '#ff0'; cx.font = 'bold 14px system-ui';
+  cx.fillText('frame ' + T.f + ' / ' + T.n + '   ' + (T.f / T.fps).toFixed(2) + ' s', 10, 20);
+  drawFig(); drawTimeline();
+}
+function drawFig() {
+  const W = fg.width, H = fg.height, floor = H - 50, ppm = 190, X = (m) => W / 2 - 40 + m * ppm, Y = (m) => floor - m * ppm;
+  fx.fillStyle = '#0b0f15'; fx.fillRect(0, 0, W, H); fx.fillStyle = '#2b313c'; fx.fillRect(0, floor, W, H - floor);
+  if (!T.tracks || !FIG) return;
+  const lo = Math.min(T.inF, T.outF), hi = Math.max(T.inF, T.outF);
+  if (!T.an || T.an.who !== T.who || T.an.from !== lo || T.an.to !== hi) { T.an = analyse(T.who, lo, hi); if (T.an) T.an.who = T.who; }
+  const an = T.an;
+  if (!an || T.f < lo || T.f > hi) { fx.fillStyle = '#8b97a8'; fx.fillText('The figure shows the stretch between In and Out', 12, 20); return; }
+  const figs = [];
+  if (T.clip && T.clipFrom === lo) {
+    const v = ANIM.sample(T.clip, (T.f - lo) * 1000 / T.fps), g = Object.assign(FIG.place(FIG.solve(ANIM.poseOf(v), BODY), 0, 1, false), { b: BODY, dir: 1, side: 'b' });
+    const off = document.createElement('canvas'); off.width = W; off.height = H; FIG.draw(off.getContext('2d'), [g], X, Y, ppm, 0);
+    fx.globalAlpha = 0.35; fx.drawImage(off, 0, 0); fx.globalAlpha = 1;
+  }
+  const g = Object.assign(FIG.place(FIG.solve(an.poses[T.f - lo], BODY), 0, 1, false), { b: BODY, dir: 1, side: 'a' });
+  figs.push(g);
+  FIG.draw(fx, figs, X, Y, ppm, 0);
+  for (const side of ['L', 'R']) {
+    const on = an.contacts[side].some(([a, b]) => T.f - lo >= a && T.f - lo < b);
+    if (on) { fx.fillStyle = '#5fd38d'; fx.fillRect(X(g.pt['to' + side][0]) - 10, floor + 3, 20, 4); }
+  }
+  fx.fillStyle = '#8b97a8'; fx.font = '12px system-ui';
+  fx.fillText((an.f > 0 ? 'faces right' : 'faces left') + ', ' + (an.m > 0 ? 'orthodox' : 'southpaw') + ', scale ' + an.k.toFixed(2), 12, 20);
+}
+const TX = (f) => 10 + f / Math.max(1, T.n) * (tl.width - 20);
+function drawTimeline() {
+  tx.fillStyle = '#0b0f15'; tx.fillRect(0, 0, tl.width, tl.height);
+  if (T.tracks) for (const who of [0, 1]) {
+    tx.fillStyle = who === 0 ? 'rgba(255,210,60,0.6)' : 'rgba(64,224,255,0.6)';
+    T.tracks[who].forEach((p, f) => { if (p) tx.fillRect(TX(f), 6 + who * 10, Math.max(1, TX(1) - TX(0)), 8); });
+  }
+  const lo = Math.min(T.inF, T.outF), hi = Math.max(T.inF, T.outF);
+  tx.fillStyle = 'rgba(255,75,62,0.25)'; tx.fillRect(TX(lo), 0, TX(hi) - TX(lo), tl.height);
+  if (T.hitF != null) { tx.fillStyle = '#ffd23c'; tx.fillRect(TX(T.hitF) - 1, 0, 3, tl.height); }
+  tx.fillStyle = '#ff4b3e'; tx.fillRect(TX(T.f) - 1, 0, 2, tl.height);
+  tx.fillStyle = '#8b97a8'; tx.font = '11px system-ui'; tx.fillText('in ' + lo + '  out ' + hi + (T.hitF != null ? '  impact ' + T.hitF : ''), 12, 56);
+}
+
+// ---------------------------------------------------------------- controls
+$('#vid').addEventListener('change', () => loadVideo($('#vid').value));
+$('#track').addEventListener('click', async () => { $('#track').disabled = true; try { await track(); } catch (e) { status('Tracking failed: ' + e.message); } $('#track').disabled = false; draw(); });
+$('#who').addEventListener('change', () => { T.who = +$('#who').value; T.an = null; draw(); });
+$('#play').addEventListener('click', () => { T.playing = !T.playing; $('#play').classList.toggle('on', T.playing); });
+$('#setIn').addEventListener('click', () => { T.inF = T.f; T.clip = null; draw(); });
+$('#setOut').addEventListener('click', () => { T.outF = T.f; T.clip = null; draw(); });
+$('#setHit').addEventListener('click', () => { T.hitF = T.f; draw(); });
+$('#save').addEventListener('click', saveClip);
+tl.addEventListener('mousedown', (e) => { const r = tl.getBoundingClientRect(), x = (e.clientX - r.left) * tl.width / r.width; seek(Math.round((x - 10) / (tl.width - 20) * T.n)).then(draw); });
+window.addEventListener('keydown', (e) => {
+  if (e.target.matches('input, select')) return;
+  if (e.key === ' ') { e.preventDefault(); $('#play').click(); }
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') seek(T.f + (e.key === 'ArrowRight' ? 1 : -1)).then(draw);
+  else if (e.key === 'i' || e.key === 'I') $('#setIn').click();
+  else if (e.key === 'o' || e.key === 'O') $('#setOut').click();
+  else if (e.key === 'm' || e.key === 'M') $('#setHit').click();
+});
+let lastStep = 0;
+async function tick(now) {
+  if (T.playing && now - lastStep > 1000 / T.fps) { lastStep = now; await seek(T.f >= Math.max(T.inF, T.outF) ? Math.min(T.inF, T.outF) : T.f + 1); }
+  draw();
+  requestAnimationFrame(tick);
+}
+// for driving from the console (and the tests)
+window.TR = { T, loadVideo, seek, track, analyse, makeClip, saveClip, suggestImpact, draw, series };
+</script>
+</body>
+</html>
