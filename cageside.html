@@ -958,7 +958,7 @@ body.advancing .primary-cta:not(.red) { background: linear-gradient(180deg, #5a6
 .fc-card header b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; }
 .fc-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
 .fc-rec { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.fc-gauges { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.fc-gauges { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
 .fc-g { position: relative; display: grid; justify-items: center; }
 .fc-g > svg, .fc-g > b { grid-area: 1 / 1; }
 .fc-g > svg { width: 100%; max-width: 66px; aspect-ratio: 1 / 1; }
@@ -988,19 +988,18 @@ body.advancing .primary-cta:not(.red) { background: linear-gradient(180deg, #5a6
 .fc-stats td.b { text-align: right; }
 .fc-stats td.lead { font-weight: 900; color: var(--ink-strong); }
 .fc-stats tbody tr + tr { border-top: 1px solid rgba(127, 127, 127, 0.16); }
-.fc-mom { padding: 8px 12px 10px; }
-.fc-mom h3 { margin: 0 0 6px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.fc-mom h3 span { text-transform: none; letter-spacing: 0; font-weight: 600; }
-.fc-mom svg { display: block; width: 100%; height: 84px; border-radius: 6px; background: rgba(127, 127, 127, 0.06); }
-.fc-mom .mid { stroke: rgba(127, 127, 127, 0.45); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.fc-mom .rd { stroke: rgba(127, 127, 127, 0.3); stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
-.fc-mom .up { fill: rgba(215, 40, 29, 0.42); }
-.fc-mom .dn { fill: rgba(31, 95, 214, 0.42); }
-.fc-mom .ln { fill: none; stroke: var(--ink); stroke-width: 1.3; vector-effect: non-scaling-stroke; }
-.fc-mom-k { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; font-size: 11px; font-weight: 800; }
-.fc-mom-k .a { color: #d7281d; }
-.fc-mom-k .b { color: #2f6fe0; }
-.fc-mom-k .rds { flex: 1; display: flex; justify-content: space-around; color: var(--muted); font-weight: 700; }
+/* his name opens his stats, in the card, while the fight runs */
+.fc-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-weight: 700;
+  background: none; border: 0; padding: 0; text-align: left; color: inherit; font-family: inherit; cursor: pointer; }
+.fc-name:hover, .fc-name:focus-visible { text-decoration: underline; }
+.fc-sheet { margin-top: 8px; border-top: 1px solid rgba(127, 127, 127, 0.25); padding-top: 6px; }
+.fc-sheet-note { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.fc-sheet-g { font-size: 10px; font-weight: 900; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin: 6px 0 3px; }
+.fc-sa { display: grid; grid-template-columns: 84px 1fr 28px; align-items: center; gap: 6px; font-size: 11px; line-height: 1.5; }
+.fc-sa > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fc-sa > i { height: 5px; border-radius: 3px; background: rgba(127, 127, 127, 0.22); overflow: hidden; }
+.fc-sa > i > b { display: block; height: 100%; border-radius: 3px; background: var(--c); }
+.fc-sa > em { font-style: normal; font-variant-numeric: tabular-nums; text-align: right; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .fc-g .val { transition: none; } }
 
 /* ===================================================================================================
@@ -8315,7 +8314,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
         // recovery while not working
         const bodyDrag = clamp(1 - s.body / 160, 0.35, 1);
         // little comes back inside a round (most of it comes back on the stool); an empty man still sucks in some air
-        const rec = Math.max(s.energy < 12 ? 0.35 : 0, TUNE.rec * (s._acted ? 0.35 : 1) * (0.65 + 0.65 * s.a.cardio + 0.5 * s.a.recovery) * bodyDrag);
+        // (and inside a round, a shade less than it was: breathing back a quarter of a tank over five minutes
+        // of working is generous, and the stool is no longer there to bail him out)
+        const rec = Math.max(s.energy < 12 ? 0.3 : 0, TUNE.rec * (s._acted ? 0.35 : 1) * (0.55 + 0.55 * s.a.cardio + 0.42 * s.a.recovery) * bodyDrag / this.wc.tire);
         s.energy = Math.min(s.maxEnergy, s.energy + rec);
         if (s.rocked > 0) {
           s.beenHurt = true;
@@ -9186,8 +9187,13 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // halfway through it is easier to turn over. Stopped, it's denied (he's back where he started, and it
   // cost him more than the man who stopped it) or, now and then, reversed: the man underneath comes up on
   // top. (`movedPass`: the fight view acts out the attempt, stopped or turned round where it was caught.)
+  // (taking the back is not the next rung of a ladder. A man gives up his back by turning away from
+  // something — scrambling out, or escaping from under punches — so it is what happens when he rolls, not
+  // the routine step up from the mount. And from side control it is not a pass anyone makes: you go to the
+  // mount or to knee-on-belly from there, so `side > back` is gone. Measured over 240 fights, back takes
+  // were a quarter of every position advanced on the mat)
   const PASS_MINOR = { guard: 'half', half: 'side', side: 'mount', mount: 'back' };
-  const PASS_MAJOR = { guard: 'side', half: 'mount', side: 'back' };
+  const PASS_MAJOR = { guard: 'side', half: 'mount' };
   Fight.prototype.movedPass = function (s, from, to, out, major, sweep) {
     if (this.motion) this.motion.push({ by: s.side, key: 'pass', from, to, out, major: !!major, sweep: !!sweep });
   };
@@ -9201,7 +9207,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // (the major one: the better he is on top, the bolder; on a hurt man, who can't stop it, more so)
     const major = !!PASS_MAJOR[from] && rng.chance(clamp(0.08 + 0.3 * T.a.topGame + (Bt.rocked ? 0.25 : 0), 0.05, 0.6));
     const to = major ? PASS_MAJOR[from] : PASS_MINOR[from];
-    if (rng.chance(clamp(sigmoid(3 * score - 0.4) + (Bt.rocked ? 0.3 : 0), 0.05, 0.9) * (major ? 0.8 : 1))) {
+    let pLand = clamp(sigmoid(3 * score - 0.4) + (Bt.rocked ? 0.3 : 0), 0.05, 0.9) * (major ? 0.8 : 1);
+    // he has to turn away for it, so it goes with how much he is scrambling and how much trouble he is in
+    if (to === 'back') pLand *= clamp(0.15 + 0.45 * Bt.a.scramble + (Bt.rocked ? 0.25 : 0), 0.12, 0.75);
+    if (rng.chance(pLand)) {
       this.gpos = to; this.stall = 0;
       this.movedPass(T, from, to, 'land', major);
       this.call(to === 'back' ? 'back' : to === 'mount' ? 'mount' : major ? 'passMajor' : 'pass', T, Bt, to === 'back' || to === 'mount' || major ? 2 : 1, 'pos');
@@ -9500,15 +9509,22 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     this.advice[side] = { took: took.length, missed: missed.length, listen };
     const focus = orders.focus || 'recover';
     s.morale = 0; s.iqBonus = 0;
-    let rec = TUNE.corner * (22 + 14 * s.a.cardio + 22 * s.a.recovery) - s.body * 0.08;
-    if (focus === 'recover') rec += 14;
+    // A minute on the stool gives a man some air back, not a new tank. It used to hand back a median of 21
+    // and up to 45: heavyweights went from 62 to 95 and from 26 to 71 between rounds, which is not something
+    // that happens to anyone, least of all a heavyweight. It scales with the weight class now — the same
+    // `tire` that says how fast they empty says how little comes back.
+    let rec = TUNE.corner * (11 + 8 * s.a.cardio + 13 * s.a.recovery) / this.wc.tire - s.body * 0.08;
+    if (focus === 'recover') rec += 7;
     if (focus === 'fireup') { rec -= 2; s.morale = 0.18; }
     if (focus === 'instruct') s.iqBonus = (0.05 + 0.2 * (c ? c.read : 0.5)) * listen; // a good coach's instructions, if he hears them
-    s.energy = Math.min(s.maxEnergy, s.energy + Math.max(8, rec));
-    s.head = Math.max(0, s.head * 0.85 - (8 + 8 * s.a.heart + 18 * s.a.recovery)); // the minute clears the head a fair bit
-    for (let i = 0; i < 2; i++) { s.leg[i] = Math.max(0, s.leg[i] - 10 * s.a.recovery); s.arm[i] = Math.max(0, s.arm[i] - 8 * s.a.recovery); }
+    s.energy = Math.min(s.maxEnergy, s.energy + Math.max(5, rec));
+    // and damage does not wash out in a minute either: the head clears a little, the legs and the body
+    // barely. (The head was losing 15% of itself plus up to 30 points flat every round — a man beaten half
+    // senseless in the first came out clear-headed in the second.)
+    s.head = Math.max(0, s.head * 0.94 - (3 + 4 * s.a.heart + 8 * s.a.recovery));
+    for (let i = 0; i < 2; i++) { s.leg[i] = Math.max(0, s.leg[i] - 4 * s.a.recovery); s.arm[i] = Math.max(0, s.arm[i] - 3.5 * s.a.recovery); }
     s.legs = Math.max(s.leg[0], s.leg[1]);
-    s.body = Math.max(0, s.body - 8 * s.a.recovery);
+    s.body = Math.max(0, s.body - 3.5 * s.a.recovery);
     s.rocked = 0; s.unanswered = 0;
     const cm = s.cutman / 5;
     const cutFix = focus === 'cut' ? 2 + 3.5 * cm : 0.4 + 1 * cm;
@@ -17888,17 +17904,39 @@ defences|Johnny Eblen|3`,
   function injuries(s) { const l = injuryList(s); return l.length ? l.map((x) => x[0]).join(', ') : 'None'; }
 
   // ---- the fighters' panel: four gauges each, then the numbers, then who has the fight's momentum
-  const GAUGES = [['cons', 'Head'], ['core', 'Body'], ['legs', 'Legs'], ['en', 'Gas']];
+  // (a leg at a time: the engine has always hurt them separately — leg kicks mostly land on the lead leg —
+  // but the panel showed the worse of the two as one "Legs" gauge, so a chopped lead leg and a fresh rear
+  // one read the same as two half-dead ones)
+  const GAUGES = [['cons', 'Head'], ['core', 'Body'], ['ll', 'L leg'], ['rl', 'R leg'], ['en', 'Gas']];
   const RING = 2 * Math.PI * 19;
   const gaugeTone = (v) => (v >= 65 ? 'ok' : v >= 40 ? 'mid' : v >= 20 ? 'low' : 'crit');
   function sideSkeleton() {
-    const card = (s, k) => '<section class="panel fc-card ' + k + '"><header><span class="fc-dot"></span><b>' + esc(F.fullName(s.f)) + '</b><span class="fc-rec">' + esc(s.f.am ? 'Am. ' + ((s.f.amateur && s.f.amateur.w) || 0) + '-' + ((s.f.amateur && s.f.amateur.l) || 0) : F.recordStr(s.f)) + '</span></header>' +
+    // (his name opens his stats: the attributes as you've scouted them, without leaving the fight)
+    const card = (s, k) => '<section class="panel fc-card ' + k + '"><header><span class="fc-dot"></span>' +
+      '<button class="fc-name" data-act="fvwho" data-k="' + k + '" aria-expanded="false" title="See his stats">' + esc(F.fullName(s.f)) + '</button>' +
+      '<span class="fc-rec">' + esc(s.f.am ? 'Am. ' + ((s.f.amateur && s.f.amateur.w) || 0) + '-' + ((s.f.amateur && s.f.amateur.l) || 0) : F.recordStr(s.f)) + '</span></header>' +
       '<div class="fc-gauges">' + GAUGES.map(([g, l]) => '<div class="fc-g ok" data-g="' + g + '"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="trk" cx="24" cy="24" r="19"/><circle class="val" cx="24" cy="24" r="19" stroke-dasharray="' + RING.toFixed(1) + '" stroke-dashoffset="0" transform="rotate(-90 24 24)"/></svg>' +
-        '<b>100</b><span>' + l + '</span><i class="dl" aria-hidden="true"></i></div>').join('') + '</div><div class="fc-chips"></div></section>';
+        '<b>100</b><span>' + l + '</span><i class="dl" aria-hidden="true"></i></div>').join('') + '</div><div class="fc-chips"></div><div class="fc-sheet-wrap"></div></section>';
     return card(L(), 'a') + card(R(), 'b') +
-      '<section class="panel fc-stats"><table><thead><tr><th class="a">' + esc(L().f.last) + '</th><th></th><th class="b">' + esc(R().f.last) + '</th></tr></thead><tbody></tbody></table></section>' +
-      '<section class="panel fc-mom"><h3>Momentum <span>· who\'s doing the damage, half a minute at a time</span></h3><svg viewBox="0 0 300 84" preserveAspectRatio="none" aria-hidden="true"></svg>' +
-      '<div class="fc-mom-k"><span class="a">▲ ' + esc(L().f.last) + '</span><span class="rds">' + Array.from({ length: FV.fight.rounds }, (_, i) => '<span>R' + (i + 1) + '</span>').join('') + '</span><span class="b">' + esc(R().f.last) + ' ▼</span></div></section>';
+      '<section class="panel fc-stats"><table><thead><tr><th class="a">' + esc(L().f.last) + '</th><th></th><th class="b">' + esc(R().f.last) + '</th></tr></thead><tbody></tbody></table></section>';
+  }
+  // His stats, as you've scouted them: the same attributes the rest of the game shows, grouped, without
+  // having to leave the fight.
+  function statSheet(f) {
+    const sc = (W.scouted ? W.scouted(f) : null) || { attrs: f.attrs, blur: 0 };
+    const A = sc.attrs || f.attrs;
+    let h = '<div class="fc-sheet">';
+    if (sc.blur > 1.2) h += '<div class="fc-sheet-note">Scouted estimate — you haven\'t seen enough of him.</div>';
+    for (const g of D.ATTR_GROUPS) {
+      const rows = g.attrs.filter(([k]) => A[k] != null);
+      if (!rows.length) continue;
+      h += '<div class="fc-sheet-g">' + esc(g.name) + '</div>';
+      for (const [k, name] of rows) {
+        const v = A[k], pc = Math.max(0, Math.min(100, Math.round(100 * (v - 1) / 19)));
+        h += '<div class="fc-sa"><span>' + esc(name) + '</span><i><b style="width:' + pc + '%"></b></i><em>' + (Math.round(v * 10) / 10) + '</em></div>';
+      }
+    }
+    return h + '</div>';
   }
   function statRows() {
     const a = L().stats, b = R().stats;
@@ -17913,31 +17951,6 @@ defences|Johnny Eblen|3`,
       ['Control', U.fmtClock(a.ctrl), U.fmtClock(b.ctrl), a.ctrl - b.ctrl],
     ];
     return rows.map(([l, x, y, d]) => '<tr><td class="a' + (d > 0 ? ' lead' : '') + '">' + x + '</td><th>' + l + '</th><td class="b' + (d < 0 ? ' lead' : '') + '">' + y + '</td></tr>').join('');
-  }
-  // Damage, takedowns and control, half a minute at a time: above the line is red's, below is blue's.
-  const momScore = (x) => x.dmg + 14 * x.tdLand + 0.12 * x.ctrl + 18 * x.kd + 6 * x.subAtt;
-  function sample() {
-    const f = FV.fight;
-    if (!f) return;
-    FV.mom = FV.mom || [];
-    FV.mom.push({ t: (f.round - 1) * E.ROUND_SECS + Math.min(E.ROUND_SECS, f.elapsed()), a: momScore(L().stats), b: momScore(R().stats) });
-  }
-  function momentumPath() {
-    const f = FV.fight, m = FV.mom || [];
-    const total = f.rounds * E.ROUND_SECS, W0 = 300, H0 = 84, mid = H0 / 2;
-    const win = 10; // moments: half a minute
-    const pts = m.map((p, i) => { const q = m[Math.max(0, i - win)]; return [p.t, (p.a - q.a) - (p.b - q.b)]; });
-    const top = Math.max(24, ...pts.map((p) => Math.abs(p[1])));
-    const x = (t) => (W0 * t / total).toFixed(1), y = (v) => (mid - (mid - 4) * v / top).toFixed(1);
-    let line = '';
-    pts.forEach(([t, v], i) => { line += (i ? 'L' : 'M') + x(t) + ' ' + y(v); });
-    const last = pts.length ? pts[pts.length - 1][0] : 0;
-    const area = pts.length ? line + 'L' + x(last) + ' ' + mid + 'L' + x(pts[0][0]) + ' ' + mid + 'Z' : '';
-    let h = '<defs><clipPath id="momUp"><rect x="0" y="0" width="300" height="' + mid + '"/></clipPath><clipPath id="momDn"><rect x="0" y="' + mid + '" width="300" height="' + mid + '"/></clipPath></defs>';
-    for (let r = 1; r < f.rounds; r++) h += '<line class="rd" x1="' + x(r * E.ROUND_SECS) + '" x2="' + x(r * E.ROUND_SECS) + '" y1="0" y2="' + H0 + '"/>';
-    h += '<line class="mid" x1="0" x2="300" y1="' + mid + '" y2="' + mid + '"/>';
-    if (area) h += '<path class="up" clip-path="url(#momUp)" d="' + area + '"/><path class="dn" clip-path="url(#momDn)" d="' + area + '"/><path class="ln" d="' + line + '"/>';
-    return h;
   }
   function updateSide() {
     const box = $('#fvleft');
@@ -17968,11 +17981,15 @@ defences|Johnny Eblen|3`,
       const inj = injuryList(s);
       card.querySelector('.fc-chips').innerHTML = inj.length ? inj.map(([t, sev]) => '<span class="fc-chip s' + sev + '">' + esc(t) + '</span>').join('') : '<span class="fc-chip none">No damage of note</span>';
       card.classList.toggle('hurt', !!s.rocked);
+      // his stats, if his name has been clicked (built once, not every frame)
+      const wrap = card.querySelector('.fc-sheet-wrap'), open = FV.who === k;
+      const nameBtn = card.querySelector('.fc-name');
+      if (nameBtn) nameBtn.setAttribute('aria-expanded', String(open));
+      if (open && wrap.dataset.on !== '1') { wrap.innerHTML = statSheet(s.f); wrap.dataset.on = '1'; }
+      else if (!open && wrap.dataset.on === '1') { wrap.innerHTML = ''; wrap.dataset.on = ''; }
     });
     const tb = box.querySelector('.fc-stats tbody');
     if (tb) tb.innerHTML = statRows();
-    const mom = box.querySelector('.fc-mom svg');
-    if (mom) mom.innerHTML = momentumPath();
   }
   function logLines(events) {
     return events.map((e) => {
@@ -18069,8 +18086,7 @@ defences|Johnny Eblen|3`,
     FV.feed = [];
     FV.sub = 0;
     FV.cam = null; // a new fight, new figures
-    FV.mom = [];
-    sample();
+    FV.who = null;
     // the broadcast graphic shows the rankings they walked in with
     FV.hudRank = {};
     for (const x of [mine, opp]) { const r = W.rankOf(x); FV.hudRank[x.id] = r === 0 ? 'C' : r ? '#' + r : ''; }
@@ -18118,7 +18134,6 @@ defences|Johnny Eblen|3`,
     FV.sub = 0;
     const evs = f.step();
     const delay = camMotion(f.motion);
-    sample();
     // the words and the meters arrive with the blow, not before it: they wait for the moment it lands
     const present = () => {
       if (FV.fight !== f) return;
@@ -18150,7 +18165,7 @@ defences|Johnny Eblen|3`,
     FV.sub = 0;
     const evs = [];
     let guard = 0;
-    while (!f.over && !f.betweenRounds && guard++ < 400) { evs.push(...f.step()); sample(); }
+    while (!f.over && !f.betweenRounds && guard++ < 400) evs.push(...f.step());
     pushEvents(evs);
     updateRing();
     if (f.over) endFight(); else toCorner();
@@ -19229,9 +19244,12 @@ defences|Johnny Eblen|3`,
       topGuard: pose({ root: [0, 0.3], pelvis: [0, 0.3, 0], spine: [0, 0.25, 0], neck: [0, -0.25], shL: [0, 0], shR: [0, 0],
         handL: [0.38, -0.25, -0.12], handR: [0.32, -0.22, 0.14], elbowL: [-0.3, -1, -0.5], elbowR: [-0.3, -1, 0.5],
         footL: [-0.28, 0.06, -0.17], footR: [-0.3, 0.06, 0.19], toeL: [Math.PI, 0.1], toeR: [Math.PI, 0.1], kneeL: [1, -0.3, -0.35], kneeR: [1, -0.3, 0.35] }),
+      // (a closed guard closes. The knee poles were splayed to 1.4 a side, so the legs hung open round him
+      // instead of squeezing, and the ankles finished 26 cm apart when a closed guard crosses them — the
+      // legs were draped over the man rather than wrapped round him)
       botGuard: pose({ root: [0, 0.22], pelvis: [0, -1.0, 0], spine: [0, -0.5, 0], neck: [0, 0.7], shL: [0, 0], shR: [0, 0],
         handL: [0.42, 0.42, -0.1], handR: [0.36, 0.38, 0.12], elbowL: [-1, 0, -0.8], elbowR: [-1, 0, 0.8],
-        footL: [0.62, 0.42, -0.08], footR: [0.6, 0.44, 0.08], toeL: [0, 0.8], toeR: [0, 0.8], kneeL: [0.2, 0.8, -1.4], kneeR: [0.2, 0.8, 1.4] }),
+        footL: [0.64, 0.4, -0.03], footR: [0.62, 0.42, 0.03], toeL: [0, 0.8], toeR: [0, 0.8], kneeL: [0.2, 0.85, -0.95], kneeR: [0.2, 0.85, 0.95] }),
       // half guard: on top, chest down on his chest, a hand round his head and one at his hip, the rear leg
       // trapped between his and the lead knee up by his hip; underneath, turned a little onto his side, the
       // legs wrapped round that one leg
@@ -19260,7 +19278,9 @@ defences|Johnny Eblen|3`,
         handL: [0.38, 0.32, -0.06], handR: [0.36, 0.28, 0.06], elbowL: [-1, 0, -0.8], elbowR: [-1, 0, 0.8],
         footL: [0.56, 0.36, -0.2], footR: [0.56, 0.36, 0.2], toeL: [0, 0.6], toeR: [0, 0.6], kneeL: [0.3, 1, -1], kneeR: [0.3, 1, 1] }),
       botBack: pose({ root: [0, 0.14], pelvis: [0, -1.02, 0], spine: [0, -0.15, 0], neck: [0, 0.35], shL: [0, 0], shR: [0, 0],
-        handL: [0.25, 0.25, -0.06], handR: [0.25, 0.25, 0.06], elbowL: [-1, -0.5, -1], elbowR: [-1, -0.5, 1],
+        // (elbows down at his sides: with them poled behind him, fighting the hands put his shoulders past
+        // what a shoulder does, and the man on his back is already lying on both of them)
+        handL: [0.25, 0.25, -0.06], handR: [0.25, 0.25, 0.06], elbowL: [-0.2, -0.9, -0.9], elbowR: [-0.2, -0.9, 0.9],
         footL: [0.56, 0.07, -0.22], footR: [0.52, 0.07, 0.22], toeL: [0, 0], toeR: [0, 0], kneeL: [0.2, 1, -0.3], kneeR: [0.2, 1, 0.3] }),
     };
     // underneath the mount: flat, the feet planted to bridge, the hands up on his hips
@@ -19278,7 +19298,10 @@ defences|Johnny Eblen|3`,
       // side; straight on, the heads were 8 cm into each other)
       rncAtt: from('topBack', { spine: [0, 0.05, -0.3], neck: [0, 0.65], handR: [0.4, 0.42, -0.04], handL: [0.3, 0.5, 0.1],
         elbowR: [-1, 0.3, 1], elbowL: [-1, 0.6, -1] }),
-      rncDef: from('botBack', { spine: [0, -0.3, 0.25], neck: [0, -0.25], handL: [0.22, 0.35, -0.04], handR: [0.22, 0.35, 0.04], elbowL: [-1, -1, -1], elbowR: [-1, -1, 1] }),
+      // (the elbows down and out at his sides, not back behind him. Fighting the choking arm with the elbow
+      // poles pointing backwards wrenched both shoulders 0.6 to 0.8 rad past where a shoulder goes, and held
+      // them there for most of the hold — over a hundred frames of it going into the choke alone)
+      rncDef: from('botBack', { spine: [0, -0.3, 0.25], neck: [0, -0.25], handL: [0.22, 0.35, -0.04], handR: [0.22, 0.35, 0.04], elbowL: [-0.15, -1, -0.85], elbowR: [-0.15, -1, 0.85] }),
       // guillotine from the guard: the arm round his neck, arched back, the legs locked round him; his head
       // is pulled down onto the chest and his hands post on the mat
       guilloAtt: from('botGuard', { pelvis: [0, -0.9, 0], spine: [0, -0.1, 0.05], neck: [0, 0.45], handL: [0.3, 0.3, 0.06], handR: [0.32, 0.28, -0.02],
@@ -20531,7 +20554,8 @@ defences|Johnny Eblen|3`,
       // from halfway down, clear of the shoulder and hip they hang from; the forearm and shin all along.
       function selfOut(M) {
         const S = shapesOf(M), own = { rings: S.rings, caps: S.caps.filter((c) => !c.lim), head: S.head };
-        for (let i = 0; i < 4; i++) for (let sg = 0; sg < 2; sg++) {
+        for (let i = 0; i < 4; i++) {
+        for (let sg = 0; sg < 2; sg++) {
           const b = bone(M, i, sg), A = M.P[b.A], B = M.P[b.B];
           let best = null, bu = 0, bd = 0;
           for (const u of sg ? [0, 0.33, 0.66, 1] : [0.55, 0.8, 1]) {
@@ -20539,7 +20563,7 @@ defences|Johnny Eblen|3`,
             if (v) { const d = len(v); if (d > bd) { bd = d; best = v; bu = u; } }
           }
           if (best) shove(M, b, bu, best);
-        }
+        } }
       }
       // nothing of his limbs under the mat
       function floor(M) {
@@ -21332,7 +21356,8 @@ defences|Johnny Eblen|3`,
   const HOLD = {
     topGuard: [{ eff: 'handL', to: ['W', 'Ch', 0.3], out: FRONT }, { eff: 'handR', to: ['P', 'W', 0.5], out: FRONT }],
     // (the ankles crossed behind his back; a collar tie behind his neck and a grip on his wrist)
-    botGuard: [{ eff: 'footL', to: ['P', 'W', 0.6], out: BACK, add: [0, 0, 0.04] }, { eff: 'footR', to: ['P', 'W', 0.6], out: BACK, add: [0, 0, -0.04] },
+    // (the ankles crossed behind his back, not resting either side of it: a hand's width apart, not four)
+    botGuard: [{ eff: 'footL', to: ['P', 'W', 0.55], out: BACK, add: [0, 0, 0.02] }, { eff: 'footR', to: ['P', 'W', 0.55], out: BACK, add: [0, 0, -0.02] },
       { eff: 'handL', to: ['N', 'Nt', 0.5], out: BACK }, { eff: 'handR', to: ['elL', 'fiL', 0.3] }],
     // (the arm under his head; the legs round the trapped leg, one over and one under)
     topHalf: [{ eff: 'handL', to: ['N', 'Hd', 0.4], out: BACK }, { eff: 'handR', to: ['P', 'W', 0.5], out: FRONT }],
@@ -22453,6 +22478,7 @@ defences|Johnny Eblen|3`,
     fvskip: () => skipRound(),
     fvfinish: () => finishNow(),
     fvlog: () => { FV.logOpen = !FV.logOpen; const b = document.querySelector('[data-act="fvlog"]'); if (b) b.textContent = FV.logOpen ? 'Fighters' : 'Fight log'; const l = $('#fvleft'); if (l) l.innerHTML = ''; updateRing(); },
+    fvwho: (d) => { FV.who = FV.who === d.k ? null : d.k; updateSide(); },
     fvfocus: (d) => { FV.focus = d.k; document.querySelectorAll('[data-act="fvfocus"]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.k === FV.focus))); },
     fvnext: () => nextRound(),
     fvtowel: () => MMA.ui.confirm('Throw in the towel?', 'Your fighter loses by TKO (corner stoppage). Sometimes it saves a career.', 'Stop the fight', () => {
@@ -22580,7 +22606,7 @@ defences|Johnny Eblen|3`,
     ring: [
       ['.fcam', 'The fight cam', 'Cage level, side-on: red is your fighter. Every strike thrown is acted out (a burst where it lands, a flash on the guard, a streak where it misses), and the fence stands where the cage really is. The little map in the corner shows where in the octagon they are. A ring of light around a head means he\'s rocked.'],
       ['.fc-card', 'How they\'re holding up', 'Head, body, legs and gas tank for each fighter. Any clean shot can end it, but the lower the head or body gets, the likelier a knockout or stoppage; at zero it\'s over. Injuries show underneath.'],
-      ['.fc-mom', 'Momentum', 'Who is doing the damage, half a minute at a time: above the line is red\'s, below is blue\'s. Judges score damage first, then control, then aggression.'],
+      ['.fc-name', 'His stats', 'Click either man\'s name to see his attributes as you\'ve scouted them, without leaving the fight.'],
       ['.ring-ctrl', 'Controls', 'Pause (or Space), skip to the end of the round, or switch to the fight log. Click the speed in the corner to change it.'],
     ],
     spectate: [
