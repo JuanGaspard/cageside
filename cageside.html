@@ -18612,11 +18612,20 @@ defences|Johnny Eblen|3`,
     // from 1.4 m finished 49 cm short of him and from 2 m nearly a metre short: hands only reach from punching
     // range, so throwing them is what brings the two together, whatever range the fight is being fought at.
     // (hands only: a landing kick used to count here too, which cancelled the standing-off below)
-    if (FV.fig2 && p.out.some((m) => /jab|cross|hook|uppercut|overhand|Punch|elbow|spinning/.test(m.key))) cam.closeUntil = Math.max(cam.closeUntil || 0, now + p.end);
-    // and a kick wants room: a body or head kick thrown from punching distance has the shin arriving where the
-    // knee would be. The kicker makes the space as he chambers it, so they stand off for as long as it lasts.
-    // (a leg or calf kick is thrown from where they are, as it is in a fight)
-    if (FV.fig2 && p.out.some((m) => /^(body|head)Kick$/.test(m.key))) cam.wideUntil = Math.max(cam.wideUntil || 0, now + p.end + 220);
+    // Every blow has a distance it works at, and it is a band, not a floor: a hand reaches from punching range,
+    // a round kick needs the shin's length of room, a low kick sits between the two, a knee is close. Thrown
+    // from further than the top of its band the limb simply finishes short of him.
+    // (two flags before this — close for hands, wide for round kicks — left low kicks with no band at all, so
+    // they fell through to the range spacing and were thrown from up to 2.4 m. Measured over a round, kicks
+    // landed at a median 1.59 m and up to 2.25, and punches up to 2.04: no maximum anywhere.)
+    if (FV.fig2) for (const m of p.out) {
+      const b = /^(body|head)Kick$/.test(m.key) ? [1.48, 1.8] : /Kick/.test(m.key) ? [1.24, 1.62]
+        : /knee/i.test(m.key) ? [0.7, 1.02]
+        : /jab|cross|hook|uppercut|overhand|Punch|elbow|spinning/.test(m.key) ? [1.02, 1.3] : null;
+      if (!b) continue;
+      // (from a little before it starts — the space is made during the wind-up — until just after it lands)
+      (cam.bands = cam.bands || []).push({ lo: b[0], hi: b[1], t0: now + m.at - 200, t1: now + m.at + m.dur + 140 });
+    }
     // when the first blow lands: that is when the commentary and the meters should show it
     const first = p.out.find((m) => m.land || m.blocked || m.mv.limb === 'shoot');
     if (!first || (FV.speed || 1) >= 8) return 0;
@@ -22010,7 +22019,7 @@ defences|Johnny Eblen|3`,
     let bob = 0;
     if (fw.cyc) {
       const c = fw.cyc, u = Math.min(1, (vnow - c.t0) / c.dur), e = u * u * (3 - 2 * u);
-      fw.x = c.x0 + c.dx * e; fw.z = c.z0 + c.dz * e; fw.th = c.th0 + c.dth * e;
+      fw.x = c.x0 + c.dx * e; fw.z = c.z0 + c.dz * e;
       if (!c.clip) bob = -0.018 * Math.sin(Math.PI * u) * Math.min(1, c.len / 0.2 + 0.3);
       if (u >= 1) fw.cyc = null;
     }
@@ -22044,7 +22053,7 @@ defences|Johnny Eblen|3`,
         // the weight shift: he leans onto the front or back foot and the hips go with it, slowly, so what's
         // left over builds instead of being quietly swallowed before it's worth a step
         const k = 1 - Math.exp(-dt / 900);
-        fw.x += dx * k; fw.z += dz * k; fw.th += dth * k * 2.6;
+        fw.x += dx * k; fw.z += dz * k;
       }
     } else if (!fw.cyc) {
       // (throwing something he doesn't take a step — he plants to hit — but he doesn't freeze either: the
@@ -22053,8 +22062,15 @@ defences|Johnny Eblen|3`,
       // (a drift, not a catch-up: closing the gap here instead of letting it build means he never has enough
       // of one left to take a step with when he's free again, and the movement went slower, not smoother)
       const k = 1 - Math.exp(-dt / 1400);
-      fw.x += (target[0] - fw.x) * k; fw.z += (target[1] - fw.z) * k; fw.th += wrapA(heading - fw.th) * k * 2.5;
+      fw.x += (target[0] - fw.x) * k; fw.z += (target[1] - fw.z) * k;
     }
+    // Facing is continuous, whatever the feet are doing, and it is the one thing that never waits. Turning the
+    // stance on the balls of the feet costs a fighter nothing and he does it constantly to keep his man in
+    // front of him. It used to be carried by the step: the heading was read once as the step began and
+    // interpolated to, so through a step or a punch he was aimed where the other man had been, not where he
+    // is. Measured over a round, the error ran a median of 21 degrees while he was busy against 9 standing,
+    // and tying it to the step threshold held him up to 22 degrees off until a step was worth taking.
+    fw.th += wrapA(heading - fw.th) * (1 - Math.exp(-dt / (fw.cyc ? 130 : busy ? 210 : 150)));
     // between steps a light fighter stays up on his toes, bouncing
     if (!fw.cyc && !busy) bob += (0.004 + 0.012 * a.footwork) * gas * Math.sin(vnow / 165 + (fig.isL ? 0 : 1.7)) * (s.rocked ? 0 : 1);
     const c = fw.cyc, walkEnd = c && c.clip ? { ax: c.x0 + c.dx, az: c.z0 + c.dz, th: c.th0 + c.dth } : null;
@@ -22070,8 +22086,14 @@ defences|Johnny Eblen|3`,
     const c = cam.c3 || (cam.c3 = { mx: mid.x * UNIT_M, mz: mid.y * UNIT_M, ang: Math.atan2(uy, ux) });
     const { xa, xb, za, zb, ya, yb, topA } = lineup2(st, sep, ground), view = { st, ground, topA, vnow, dt };
     const flip = FV.mySide === 'a' ? 0 : Math.PI;
+    // How far off square the picture shows him. The engine turns a man as he's circled and squares him up again
+    // at its own rate, about a fifth of a radian a moment, so being off-square persists for seconds at a time.
+    // Showing half a radian of that had them visibly not facing each other for half the fight — measured, the
+    // facing error ran a median of 19 degrees and over 20 degrees for half of all frames. A fighter loses his
+    // man rarely and briefly, so the picture shows a fraction of it: enough to read as being turned, not as
+    // two men who can't find each other.
     const off = (fig, ideal) => {
-      const s = fig.s, want = ground || st.pos === 'clinch' || s.face == null ? 0 : clampN(wrapA(s.face + flip - ideal), -0.5, 0.5);
+      const s = fig.s, want = ground || st.pos === 'clinch' || s.face == null ? 0 : clampN(wrapA(s.face + flip - ideal), -0.22, 0.22);
       fig.off3 = (fig.off3 || 0) + (want - (fig.off3 || 0)) * k;
       return fig.off3;
     };
@@ -22141,13 +22163,23 @@ defences|Johnny Eblen|3`,
           // over: the cadence was right and he still wasn't going anywhere)
           rest.fa += rest.dir * (0.27 + 0.36 * Math.random()) * amp;
           if (Math.abs(rest.fa) > 1.2) { rest.fa = clampN(rest.fa, -1.2, 1.2); rest.dir = -rest.dir; }  // round as far as he goes, then back
-          rest.fi = clampN(rest.fi + (Math.random() - 0.5) * 0.56 * amp, -0.4, 0.4);
+          // (the in-and-out moves each man along his own radius, so the gap between them changes by twice it.
+          // At 0.4 the two of them opened and closed by 80 cm on their own, on top of whatever spacing the
+          // fight asked for — which is how a leg kick came to be thrown from three metres. Small, and nothing
+          // at all while a blow is in the air, where the distance is the point.)
+          // (the in-and-out moves each man along his own radius, so the gap between them changes by twice it.
+          // At 0.4 the two of them opened and closed by 80 cm on their own, on top of whatever spacing the
+          // fight asked for — which is how a leg kick came to be thrown from three metres.)
+          rest.fi = clampN(rest.fi + (Math.random() - 0.5) * 0.3 * amp, -0.13, 0.13);
         }
         // The offset jumps to where the beat wants it and stays there: it's where he's going, not where he is,
         // and the step is what takes him. (Easing it instead spread one beat's ground over about 400 ms, which
         // the stepper broke into two or three short steps — the cadence came out at five a second with the
         // same stubby 16 cm stride. Jumped, one beat is one step.)
-        rest.ang = rest.fa; rest.io = rest.fi;
+        rest.ang = rest.fa;
+        // (circling carries on through a blow — it doesn't change the gap — but the in-and-out gives way at
+        // once while one is in the air, since the distance is the whole point of it)
+        rest.io = cam.actNow ? rest.io * Math.exp(-dt / 120) : rest.fi;
         // 1 at the fence: circling can't walk a man into it, so near the fence it gives way (which is what
         // running out of room is). The octagon, not a circle, or the corners read as off the mat.
         const fr = (x, z) => { let m = 0; for (let i = 0; i < 8; i++) { const an = i * Math.PI / 4; m = Math.max(m, x * Math.cos(an) + z * Math.sin(an)); } return m / (Math.cos(Math.PI / 8) * UNIT_M); };
@@ -22238,7 +22270,13 @@ defences|Johnny Eblen|3`,
     const dtReal = Math.max(0, Math.min(64, now - cam.last)); cam.last = now;
     // the picture's clock: held still for a beat on a heavy blow, slow on a knockdown; the sparks and the
     // shake keep real time, and the camera and the figures keep the picture's
-    const rate = now < (cam.stopUntil || 0) ? 0 : now < (cam.slowUntil || 0) ? (cam.slowK || 0.4) : 1;
+    // Paused means paused: the picture's clock stops with the fight's. The engine stopped but the picture did
+    // not, so the two of them carried on circling, shifting their weight and taking steps on a frozen round
+    // clock. Nothing drives off `dt` or `vnow` while it is zero — footwork, the spacing spring, the restless
+    // feet, a clip half played — and `warp` swallows the real time, so everything picks up where it left off.
+    // (camForceLive is the tests driving the picture on their own clock with the engine paused.)
+    const frozen = FV.paused && !FV.camForceLive;
+    const rate = frozen || now < (cam.stopUntil || 0) ? 0 : now < (cam.slowUntil || 0) ? (cam.slowK || 0.4) : 1;
     const dt = dtReal * rate;
     cam.warp = (cam.warp || 0) + (dtReal - dt);
     const vnow = now - cam.warp;
@@ -22270,20 +22308,27 @@ defences|Johnny Eblen|3`,
     const ground = st.pos === 'ground';
     const dm = d * UNIT_M;
     // (the new figure holds its hands further out, so it stands a little further off)
-    const g2 = FV.fig2 ? 1 : 0, closing = g2 && vnow < (cam.closeUntil || 0), wide = g2 && vnow < (cam.wideUntil || 0);
+    // what's in the air, and how much room it needs (camMotion sets the bands). Where a hand and a kick overlap
+    // in a combination the kick wins, since it is the one that needs the space.
+    const g2 = FV.fig2 ? 1 : 0;
+    if (cam.bands && cam.bands.length) cam.bands = cam.bands.filter((b) => vnow < b.t1);
+    let act = null;
+    for (const b of cam.bands || []) if (vnow >= b.t0 && (!act || b.lo > act.lo)) act = b;
+    cam.actNow = act;   // the restless feet read it too: they don't work in and out through a blow
     // (the pocket band was 1.22 to 1.38 m whatever the engine's own spacing was — the two of them pinned a
     // fixed arm's length apart all fight, with every kick thrown from punching range. It now follows the
     // engine further before it clamps, and a kick stands them off: see `wideUntil` in camMotion)
     // (what's being thrown decides it: hands bring them together, a kick stands them off, and with nothing in
     // the air they sit at whatever the engine's own spacing is, between punching and kicking range)
+    // (with nothing in the air they sit at the engine's own spacing, between punching and kicking range; the
+    // range band's top is what they drift to while measuring each other, and nothing is thrown from there)
     cam.sep.t = f.betweenRounds ? 3.2 : ground ? 0 : st.pos === 'clinch' ? 0.72 + 0.06 * g2
-      : wide ? Math.max(1.72, Math.min(2.1, dm))
-      : closing ? Math.max(1.06, Math.min(1.3, dm))
-      : f.range === 'outside' ? Math.max(1.6 + 0.25 * g2, Math.min(2.3 + 0.2 * g2, dm))
+      : act ? Math.max(act.lo, Math.min(act.hi, dm))
+      : f.range === 'outside' ? Math.max(1.5 + 0.2 * g2, Math.min(1.72 + 0.12 * g2, dm))
       : Math.max(0.95 + 0.27 * g2, Math.min(1.1 + 0.4 * g2, dm));
-    // (standing off for a kick happens inside the kick's own wind-up, a quarter of a second, so that spring is
-    // stiffer: at the ordinary rate the body kick landed before the space had opened)
-    for (let r = dt; r > 0; r -= 8) springStep(cam.sep, Math.min(8, r) / 1000, (wide ? 70 : 22) * tp * tp);
+    // (closing or standing off happens inside the blow's own wind-up, a quarter of a second, so that spring is
+    // stiffer whenever one is in the air: at the ordinary rate the kick landed before the space had opened)
+    for (let r = dt; r > 0; r -= 8) springStep(cam.sep, Math.min(8, r) / 1000, (act ? 70 : 22) * tp * tp);
     const glide = 1 - Math.exp(-dt / (380 / tp));
     cam.fl += (-toFence(mid, { x: -ux, y: -uy }) * UNIT_M - cam.fl) * glide;
     cam.fr += (toFence(mid, { x: ux, y: uy }) * UNIT_M - cam.fr) * glide;

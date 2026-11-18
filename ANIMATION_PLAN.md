@@ -1462,6 +1462,59 @@ its own terms — but it is a preference, not a result, and the knee turning mid
 - Still open: knees turning mid-roll (above), the wall walk's shoulder (11.4), `into: armbar` (10.6), and half
   guard's bottom arm. None of them dominates, so the next one is a judgement call rather than an obvious target.
 
+### Striking distance, and facing
+
+Two faults, both mine, and both from earlier rounds of this work.
+
+**No maximum on striking distance.** There were two spacing flags — close for hands, wide for round kicks —
+and a low kick matched neither, so it fell through to the range spacing and was thrown from wherever they
+happened to be. Measured over a round: kicks landed at a median 1.59 m and up to 2.25, punches up to 2.04,
+with a jab landing at 1.98 and a leg kick at 2.25. Nothing capped it.
+
+Every blow now carries a band, a floor *and* a ceiling, because thrown from beyond the top of it the limb
+simply finishes short of him: hands 1.02–1.3, low kicks 1.24–1.62, round kicks 1.48–1.8, knees 0.7–1.02. The
+band opens just before the wind-up and the spacing spring is stiff while one is in the air.
+
+The other half of it was the restless footwork. The in-and-out moves each man along his own radius, so the
+gap between them changed by *twice* it — at ±0.4 m they opened and closed by 80 cm on their own, on top of
+whatever the fight asked for. That is how a leg kick came to be thrown from three metres. It is ±0.13 now
+and gives way entirely while a blow is in the air.
+
+| at impact | before | after |
+|---|---|---|
+| punch | median 1.44, max **2.78** | median 1.50, max **1.81** |
+| low kick | median 1.59, max **2.46** | median 1.48, max **1.82** |
+| round kick | — | median 1.78, max **1.99** |
+| strikes landed past 1.9 m | common | **1 of 77** |
+
+**Losing the man in front of them.** Two causes. The picture showed up to half a radian of the engine's
+off-square, and the engine squares a man up at its own rate — about a fifth of a radian per three-second
+moment — so being turned persisted for seconds. And facing was carried by the step: the heading was read
+once as a step began and interpolated to, so through a step or a punch he was aimed where the other man had
+been. Tying it to the step threshold also held him up to 22 degrees off until a step was worth taking.
+
+Facing is now continuous and never waits — turning the stance on the balls of the feet costs a fighter
+nothing — and the picture shows a fraction of the engine's off-square rather than all of it. The error ran a
+median of 19.5 degrees and over 20 degrees for **half of all frames**; it is now a median of 11.5 standing
+and 12 while busy, over 20 degrees for 14% and 23%. Most of what is left is the deliberate blading, which is
+right. Being badly turned is now rare and brief, which is when it happens.
+
+Footwork is unchanged by it: median stride 0.30 m, 2% under 8 cm, 3.3 steps a second each, no double kicks.
+
+**Pause now stops the fighters.** The engine stopped when you paused but the picture did not, so the two of
+them carried on circling, shifting their weight and taking steps on a frozen round clock. The picture's clock
+already had a way to stop — it is what holds the frame for a beat on a heavy blow — so pausing uses it.
+Nothing that runs off `dt` or `vnow` advances while it is zero: footwork, the spacing spring, the restless
+feet, a clip half played. `warp` swallows the real time that passes, so everything picks up mid-stride where
+it left off. Measured through pause, resume and pause again: movement is exactly 0 while paused, and the same
+as before on resume.
+
+**A measuring failure worth recording.** The dev server was still serving the old session folder, so the first
+three rounds of "fixes" this session were measured against a build that did not contain them. The numbers
+moved anyway — run-to-run variance between fights is large enough to look like progress — and I reported
+improvements that had not happened. Check what the server is actually serving before trusting a number: fetch
+the page and grep it for the change.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
