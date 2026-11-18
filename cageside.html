@@ -1786,16 +1786,18 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
 
   const STRIKES = {
     // base damage, accuracy mod, energy cost, target, skill, ranges it's natural at
-    jab: { name: 'jab', dmg: 2.5, acc: 0.18, cost: 0.6, target: 'head', skill: 'boxing', ranges: { outside: 1.4, pocket: 1.4, clinch: 0.1 } },
-    cross: { name: 'straight right', dmg: 6, acc: 0.02, cost: 1.1, target: 'head', skill: 'boxing', ranges: { outside: 0.8, pocket: 1.3, clinch: 0.1 } },
-    hook: { name: 'hook', dmg: 7, acc: -0.06, cost: 1.3, target: 'head', skill: 'boxing', ranges: { outside: 0.2, pocket: 1.2, clinch: 0.4 } },
+    // (the weights at `outside` had the kicks adding to more than the hands, which is not how anyone fights at
+    // range: the jab is the most thrown strike in the sport. Hands lead here now, kicks are about a third)
+    jab: { name: 'jab', dmg: 2.5, acc: 0.18, cost: 0.6, target: 'head', skill: 'boxing', ranges: { outside: 2.2, pocket: 1.4, clinch: 0.1 } },
+    cross: { name: 'straight right', dmg: 6, acc: 0.02, cost: 1.1, target: 'head', skill: 'boxing', ranges: { outside: 1.2, pocket: 1.3, clinch: 0.1 } },
+    hook: { name: 'hook', dmg: 7, acc: -0.06, cost: 1.3, target: 'head', skill: 'boxing', ranges: { outside: 0.3, pocket: 1.2, clinch: 0.4 } },
     uppercut: { name: 'uppercut', dmg: 7, acc: -0.1, cost: 1.3, target: 'head', skill: 'boxing', ranges: { outside: 0.05, pocket: 0.6, clinch: 0.6 } },
-    overhand: { name: 'overhand', dmg: 9, acc: -0.16, cost: 1.8, target: 'head', skill: 'boxing', ranges: { outside: 0.3, pocket: 0.6, clinch: 0 } },
-    bodyPunch: { name: 'hook to the body', dmg: 5, acc: 0.02, cost: 1.1, target: 'body', skill: 'boxing', ranges: { outside: 0.1, pocket: 1, clinch: 0.4 } },
-    legKick: { name: 'leg kick', dmg: 5, acc: 0.08, cost: 1.2, target: 'legs', skill: 'kicking', ranges: { outside: 1.4, pocket: 0.6, clinch: 0 } },
-    calfKick: { name: 'calf kick', dmg: 5.5, acc: 0.1, cost: 1.1, target: 'legs', skill: 'kicking', ranges: { outside: 0.9, pocket: 0.8, clinch: 0 } },
-    bodyKick: { name: 'body kick', dmg: 7, acc: -0.02, cost: 1.7, target: 'body', skill: 'kicking', ranges: { outside: 1, pocket: 0.3, clinch: 0 } },
-    headKick: { name: 'head kick', dmg: 10.5, acc: -0.26, cost: 2.4, target: 'head', skill: 'kicking', ranges: { outside: 0.45, pocket: 0.12, clinch: 0 } },
+    overhand: { name: 'overhand', dmg: 9, acc: -0.16, cost: 1.8, target: 'head', skill: 'boxing', ranges: { outside: 0.35, pocket: 0.6, clinch: 0 } },
+    bodyPunch: { name: 'hook to the body', dmg: 5, acc: 0.02, cost: 1.1, target: 'body', skill: 'boxing', ranges: { outside: 0.2, pocket: 1, clinch: 0.4 } },
+    legKick: { name: 'leg kick', dmg: 5, acc: 0.08, cost: 1.2, target: 'legs', skill: 'kicking', ranges: { outside: 0.42, pocket: 0.25, clinch: 0 } },
+    calfKick: { name: 'calf kick', dmg: 5.5, acc: 0.1, cost: 1.1, target: 'legs', skill: 'kicking', ranges: { outside: 0.34, pocket: 0.3, clinch: 0 } },
+    bodyKick: { name: 'body kick', dmg: 7, acc: -0.02, cost: 1.7, target: 'body', skill: 'kicking', ranges: { outside: 0.55, pocket: 0.25, clinch: 0 } },
+    headKick: { name: 'head kick', dmg: 10.5, acc: -0.26, cost: 2.4, target: 'head', skill: 'kicking', ranges: { outside: 0.28, pocket: 0.1, clinch: 0 } },
     knee: { name: 'knee', dmg: 7, acc: 0.02, cost: 1.5, target: 'head', skill: 'clinch', ranges: { outside: 0, pocket: 0.1, clinch: 1.2 } },
     bodyKnee: { name: 'knee to the body', dmg: 6, acc: 0.1, cost: 1.3, target: 'body', skill: 'clinch', ranges: { outside: 0, pocket: 0, clinch: 1.3 } },
     elbow: { name: 'elbow', dmg: 7, acc: -0.04, cost: 1.3, target: 'head', skill: 'clinch', ranges: { outside: 0, pocket: 0.15, clinch: 1 } },
@@ -8165,7 +8167,11 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       return {
         jab: (0.5 + a.boxing) * (1.25 - 0.5 * p.power) * (out ? 1.1 : 1),
         blitz: (0.25 + 0.75 * p.mentality) * (0.4 + p.power) * (0.5 + a.boxing) * (out ? 0.55 : 1.15) * (o.rocked ? 2 + 2 * a.killer : 1),
-        kick: (0.15 + 1.3 * a.kicking) * (out ? 1.5 : 0.55) * (p.targeting === 'legs' || p.targeting === 'body' ? 1.4 : 1) * (o.rocked ? 0.5 : 1),
+        // (kicking was the likeliest thing a man did at range — weighted above the jab, and a kick action throws
+        // a combination of nothing but kicks. Across 260 fights that put 35% of every landed strike into the
+        // legs, against something nearer 15% in the UFC's own numbers, and kicks at 40% of everything thrown.
+        // At range a fighter's hands still lead; the kicks come off them)
+        kick: (0.12 + 1.0 * a.kicking) * (out ? 0.5 : 0.3) * (p.targeting === 'legs' || p.targeting === 'body' ? 1.4 : 1) * (o.rocked ? 0.5 : 1),
         feint: (0.1 + 0.55 * s.offIQ()) * (o.rocked ? 0.3 : 1),
         shot: p.takedowns * (0.03 + 0.27 * a.wrestling) * (o.rocked && p.killer === 'takedown' ? 3 : 1) * (s.energy < 20 ? 0.5 : 1) * (out ? 0.75 : 1),
         tie: (p.range === 'clinch' ? 0.45 : 0.04) * (out ? 0.35 : 1),
@@ -8603,7 +8609,11 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     const range = this.pos === 'clinch' ? 'clinch' : this.range;
     // skill does most of the work; speed helps, but it's one attribute among many
     // timing helps every shot find its moment; pressure footwork helps in the pocket
-    let atk = (0.62 * skill + 0.14 * s.a.speed + 0.14 * s.iq() + 0.1 * s.a.timing + (range === 'pocket' ? 0.08 * (s.a.footwork - 0.5) : 0)) * s.ef();
+    // (tiring and taking shots tells on a man, but it tells on how much he throws far more than on whether what
+    // he throws lands — energy already limits his output through what each strike costs him. Taking `ef` off
+    // the top of his accuracy as well meant a man who fell behind missed almost everything: across rounds the
+    // share of rounds where one landed under 20% while the other landed over 45% ran 20%, 32%, 36%)
+    let atk = (0.62 * skill + 0.14 * s.a.speed + 0.14 * s.iq() + 0.1 * s.a.timing + (range === 'pocket' ? 0.08 * (s.a.footwork - 0.5) : 0)) * (0.62 + 0.38 * s.ef());
     atk *= 1 + (s.swing || 0);
     if (o.rocked) atk *= 1 + 0.4 * s.a.killer * TUNE.killer;          // killer instinct: sharper when they're hurt
     else if (o.energy < 40 || o.head > 60) atk *= 1 + 0.2 * s.a.killer * TUNE.killer; // ...or fading
@@ -8619,7 +8629,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     if (s.lead !== s.natural && !s.switcher) atk *= 0.93;
     // punches and high kicks are blocked with the arms: hurt arms block less
     const block = cls === 'punch' || (cls === 'kick' && S.target !== 'legs') ? 0.6 + 0.4 * o.armF() : 1;
-    let def = (0.52 * guard * block + 0.09 * o.a.speed + 0.2 * move + 0.1 * o.iq() + 0.09 * o.a.discipline) * o.ef() + (o.m.dodge || 0) + (s.m.telegraph || 0);
+    // (a tired, hurt man is easier to hit, and should be — it is how fights finish late — but softened a
+    // little, since the same `ef` is already cutting what he can do back)
+    let def = (0.52 * guard * block + 0.09 * o.a.speed + 0.2 * move + 0.1 * o.iq() + 0.09 * o.a.discipline) * (0.78 + 0.22 * o.ef()) + (o.m.dodge || 0) + (s.m.telegraph || 0);
     // a fighter on the move is hard to hit clean: circling off and fighting at range both lean on evasion
     if (range !== 'clinch') {
       if (o.plan.vsPressure === 'circle') def += 0.06 * o.a.evasion * o.legF();
@@ -8647,7 +8659,14 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     const edge = clamp(this.edgeOf(s, 'hit'), -0.9, 0.9);
     // power comes up from set feet; a man off balance can't defend himself properly
     if (range !== 'clinch' && o.offBalance > 0) def *= 0.88;
-    const pHit = clamp(sigmoid(logit(clamp(base, 0.05, 0.95)) + 3.2 * TUNE.amp * (atk - def) + 1.3 * edge), 0.03, 0.97);
+    // (the moment's edge used to be worth more than the whole gap in ability between the two men — up to 1.17
+    // in logit against about 0.96 — and the man winning exchanges tends to keep winning them, so it stacked
+    // fight-long instead of swinging. Across 260 fights one man landed under 20% while the other landed over
+    // 45% in a quarter of them, which is not something that happens often. The clamp comes in too: nobody
+    // lands 97% or 3% of what they throw over a fight, and per-strike extremes are what made fight-long ones)
+    // (and the gap in ability itself was worth too much: between two men a rank or two apart it was turning
+    // into a 25-point gap in accuracy over a fight. The better man should land more, not land twice as often)
+    const pHit = clamp(sigmoid(logit(clamp(base, 0.05, 0.95)) + 2.5 * TUNE.amp * (atk - def) + 0.85 * edge), 0.09, 0.9);
     s.spend(S.cost * (0.75 + 0.6 * p.power));
     o.spend(0.12 * TUNE.hitCost);
     s.stat('sigAtt', 1);
