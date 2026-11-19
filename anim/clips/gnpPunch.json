@@ -5,8 +5,11 @@
   "aim": { "hand": "R" },
   "keys": [
     { "t": 0, "pose": "mount", "tan": "flat" },
-    { "t": 70, "set": { "handR": [0.2, 0, 0.42], "elbowR": [-0.3, 0.3, 1], "spine": [0.08, 0.1, 0] } },
-    { "t": 130, "set": { "handR": [-0.05, 0.4, 0.35], "elbowR": [-0.5, 1, 0.6], "spine": [0.15, 0.08, 0], "pelvis": [0.1, 0.18, 0] } },
+    { "t": 70, "set": { "handR": [0.22, 0.02, 0.4], "elbowR": [0, 0.3, 1], "spine": [0.08, 0.1, 0] } },
+    { "t": 100, "note": "and it goes up on the outside, not round the back of the shoulder: between the two keys the upper arm swung through a frame of pointing behind him, on every punch of every flurry",
+      "set": { "handR": [0.2, 0.24, 0.44], "elbowR": [0.05, 0.6, 1], "spine": [0.12, 0.09, 0], "pelvis": [0.06, 0.18, 0] } },
+    { "t": 130, "note": "cocked up and out, not back behind him",
+      "set": { "handR": [0.12, 0.42, 0.32], "elbowR": [0, 0.9, 0.9], "spine": [0.15, 0.08, 0], "pelvis": [0.1, 0.18, 0] } },
     { "t": 180, "set": { "handR": [0.2, 0.05, 0.22], "elbowR": [0, 0.3, 1], "spine": [0.18, 0.2, 0], "pelvis": [0.12, 0.2, 0] } },
     { "t": 220, "pose": "gnp", "tan": "flat" },
     { "t": 420, "pose": "mount", "tan": "flat" }

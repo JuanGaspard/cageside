@@ -1596,6 +1596,47 @@ turned every line ending into CRLF, so `$` sat before the `\n` and never matched
 a fresh clone of its own repo. It keeps the line's own ending now, and strips `note` wherever it sits — the
 ones nested in a key's `top`/`bot` were riding along into the game (1.8 KB of them).
 
+### Ground and pound: what each position is worth, and the arm that threw it
+
+Ground and pound was one thing with one damage number scaled by the position. It is not one thing. What a man
+can throw, and what it is worth, is most of what separates these places on the mat:
+
+- **full guard** — his hips are held and his posture broken, so nothing has his weight behind it. Short
+  punches; an elbow needs an angle the guard will not give him. The least damaging top position in the sport,
+  and the reason referees stand it up.
+- **half guard** — base enough to post, drive the shoulder in and free an arm. Elbows start to work.
+- **side control** — chest to chest and square across him. The elbow is the weapon: short, heavy, landing on
+  a head that cannot move away from it. Punches have no room to travel.
+- **mount** — posture up and drop them with gravity behind. Where fights are finished.
+- **back** — no angle on the head at all; the hands go round the side of a face he cannot square up to. He is
+  there for the choke. A punch from the back is a nuisance.
+
+Measured over 300 fights, damage per landed strike:
+
+| | elbows thrown | per landed | elbow | punch |
+|---|---|---|---|---|
+| back | 8% | **1.12** | 1.94 | 1.05 |
+| full guard | 15% | 1.90 | 2.22 | 1.84 |
+| half guard | 42% | 4.30 | 5.12 | 3.68 |
+| side control | 65% | 5.54 | **6.92** | 2.89 |
+| mount | 43% | **8.03** | 9.12 | 7.18 |
+
+Back control was on 0.9 for ground and pound, near mount's 1.3 — a choking position doing nearly a mounted
+man's damage. It is a seventh of the mount now, and side control's elbows are worth 2.4 times its punches.
+The finish mix is unchanged at 49% decisions, 29% KO/TKO, 21% submission.
+
+**The arm that threw it.** Checked by firing flurries from all five positions and watching the limbs: on
+every ground punch the striker's shoulder went 0.86 rad past where a shoulder goes, held through the whole
+cock — about 120 ms of each strike. The hand was being carried *behind* the chest to cock (`handR` forward
+-0.05) with the elbow poled back, when it should go up round the outside. Cocking up and out, with a key
+added where it was swinging through the back of the shoulder, leaves a 20 to 30 ms transient at the top — one
+or two frames, where the arm is genuinely out to the side and the measure is reading a face-down torso's
+chest frame. Full guard and back control come out clean. Rendered, the strike reads correctly throughout.
+
+The legs are untouched by it: the strike clips layer over the position's own pose, so throwing from half
+guard does not pull his legs into a mount shape. (Worth saying because the clip is referenced to `mount` and
+I assumed it did until I traced the knees through one — they do not move.)
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
