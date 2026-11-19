@@ -1,11 +1,17 @@
 # Cageside fight animation: the plan
 
-Goal: fight animation as smooth and readable as Nekki's Shadow Fight 2 and Vector, inside Cageside's
-side-on fight cam, using only free tools, without changing how fights are decided.
+Goal: fight animation as smooth and readable as Nekki's Shadow Fight 2 and Vector, using only free tools.
 
-**Status:** approved 2026-10-29. Moves are hand-keyed from timing references unless reference footage
-arrives. Progress is logged at the end of this file. **2026-10-31: going 3D** (section 10, waiting on
-approval): the fight is shown in a real 3D octagon so the footwork can be seen.
+**Status, 2026-11-18.** The 3D octagon shipped and is the fight view now, not an option — section 10 was
+approved and built, and `?flat` is the only way back to the old side-on cam. Moves are hand-keyed from
+timing references. Progress is logged at the end of this file, newest last.
+
+The original goal said "without changing how fights are decided". That is no longer true, and has not been
+for a while: asked to make the fights themselves read like real ones, the work went into the engine as well
+as the picture. What has changed there, and why, is in the log — the share of strikes that are kicks, how
+far apart they are thrown from, how lopsided fights are allowed to get, what a round on the stool gives
+back, how often a man's back is taken, and what ground and pound is worth from each position. Those change
+results, not just how they look.
 
 ---
 
@@ -16,6 +22,9 @@ Both games come from Nekki, and both were animated with Nekki's in-house physics
 for Shadow Fight 2's stunts). Nekki's own team has also said that in those games "most of the animation
 process was done by hand" in 2D. So the smoothness comes from **hand-authored keyframes, checked against
 physics**, not from procedural motion. In practice that means:
+
+("What we do today" is Cageside as it stood on 2026-10-29, when this was written. Most of the right-hand
+column has since been built; the log at the end of the file is the record of it.)
 
 | Quality | What it looks like | What we do today | What we'll do |
 |---|---|---|---|
