@@ -1646,6 +1646,42 @@ The legs are untouched by it: the strike clips layer over the position's own pos
 guard does not pull his legs into a mount shape. (Worth saying because the clip is referenced to `mount` and
 I assumed it did until I traced the knees through one — they do not move.)
 
+### A man on an empty meter, and a knockout nobody threw
+
+From a Volkov–Ngannou fight: Ngannou's body meter sat on 0 for a long stretch while the fight went on, his
+gas was nearly gone, and then he fell over and was knocked out by a body shot that was never thrown. Two
+separate faults, both real.
+
+**The meter was lying.** The gauges are the engine's own numbers on a curve, and the comment above them
+claimed "zero on the screen is zero in the engine". Rounding broke that at the bottom. The body gauge is
+squared and the head's cubed, so they round down to nothing well before the fight can end on them:
+
+| | engine ends the fight at | screen already reads 0 from | how much of the fight that is |
+|---|---|---|---|
+| body | 200 damage | **186** | a dozen more body shots |
+| head | 400 damage | **331** | a seventeenth of a man's whole head durability |
+
+So a fighter genuinely could sit on an empty body meter for a long time with the fight continuing — the
+meter was wrong, not the stoppage. A gauge now shows 0 only when the engine gauge behind it is actually 0,
+and at least 1 until then. Checked against the engine across the range: 186 damage shows 1 where it showed
+0, 199 shows 1, 200 shows 0.
+
+**The knockout nobody threw.** There was a rule that ended the fight the moment a man's energy reached zero —
+`finish(opponent, 'TKO', 'Exhaustion')` — with no strike involved. On screen he simply fell over and it was
+over, and his opponent was credited with a stoppage for a shot he never threw. It is also not how fights
+end: a referee stops a fight when a man is being hit and not answering, which `refCheck` already does on
+every landed strike and which already treats an empty tank as reason to look harder; and a corner pulls him
+out between rounds, which also already exists. The rule is gone. Over 300 fights, Exhaustion finishes went
+**5 to 0**, and those fights now end by strikes or go to a decision — the method mix is unchanged at 49%
+decisions, 29% KO/TKO, 21% submission. A man who is merely exhausted keeps going and loses.
+
+The referee also watches a man being beaten to the body now, not only to the head: `refCheck` ran at the end
+of the head path only, so an exhausted fighter folding up under body shots — exactly this fight — could not
+be stopped that way.
+
+Worth noting this was partly my own doing: cutting between-round and in-round recovery the round before made
+empty tanks more common, which made a bad rule fire more often.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

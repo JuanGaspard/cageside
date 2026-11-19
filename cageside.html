@@ -8328,8 +8328,11 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     else if (this.pos === 'clinch') this.clinchTick();
     else this.groundTick();
     if (!this.over) this.settle(prevPos, prevTop);
-    // a fighter with an empty tank can't go on: the referee stops it
-    if (!this.over) for (const s of [A, B]) if (s.energy <= 0.5) { this.call('exhausted', s.opp, s, 3, 'ko'); this.finish(s.opp, 'TKO', 'Exhaustion'); break; }
+    // (An empty tank is not a stoppage on its own. This used to end the fight the moment a man's energy
+    // reached zero, crediting his opponent with a TKO for a strike nobody threw: on screen he simply fell
+    // over and it was over. A referee stops a fight when a man is being hit and not answering, which is
+    // `refCheck` on every landed strike — and it already treats an empty tank as reason to look harder —
+    // and a corner pulls him out between rounds. A man who is merely exhausted keeps going and loses.)
 
     if (!this.over) {
       for (const s of [A, B]) {
@@ -8805,6 +8808,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
         o.rocked = Math.max(o.rocked, 5);
         if (rng.chance(0.2)) return this.finish(s, 'TKO', 'Body shot');
       }
+      // (and the referee watches a man being beaten to the body too, not only to the head: an exhausted
+      // fighter folding up under body shots is one of the ways this ends, and it was reachable only through
+      // the head before)
+      this.refCheck(s);
       return;
     }
     // head: power (attack) against chin (defence)
@@ -17910,7 +17917,14 @@ defences|Johnny Eblen|3`,
 
   function vitals(s) {
     const r = Math.round;
-    const cons = r(s.consciousness()), core = r(s.core()), en = r(s.energy);
+    // The gauges are the engine's own numbers on a curve, and zero on screen is meant to be zero in the
+    // engine. Rounding broke that at the bottom: the body gauge is squared and the head's cubed, so they
+    // round down to nothing well before the fight can end on them — the body read 0 from 186 of the 200
+    // damage that ends it, the head from 331 of 400. A man sat on an empty meter for a dozen more shots
+    // while the fight went on, which reads as the meter being broken. A gauge only shows 0 now when the
+    // engine gauge behind it is actually at 0; until then it shows at least 1.
+    const low = (v, left) => (left > 0 ? Math.max(1, r(v)) : 0);
+    const cons = low(s.consciousness(), s.fog()), core = low(s.core(), s.coreLeft()), en = r(s.energy);
     const la = r(s.armHealth(0)), ra = r(s.armHealth(1)), ll = r(s.legHealth(0)), rl = r(s.legHealth(1));
     return { cons, core, en, la, ra, ll, rl, legs: Math.min(ll, rl), arms: Math.min(la, ra) };
   }
