@@ -1821,6 +1821,38 @@ switch, and single-situation numbers are only trustworthy where the situation it
 are (23, 23, then 0, 0, 0), the wall walk is not (48, 34 and 15 frames back to back, worst 0.59, 0.78, 0.66).
 Nothing here should be read as a measured improvement in the aggregate; the kick result stands on its own.
 
+### The twitching on the mat (2026-11-20)
+
+Measured as each joint's second difference frame to frame — the zigzag — against how far it actually
+travels. A joint that shimmers racks up zigzag without going anywhere.
+
+It is the contact pass. With it switched off the same held positions settle to **a third of the zigzag and
+stop varying from run to run** (side control 349 → 126 cm, and 134/126/126 across three runs instead of
+309/349/494). The pass itself is not crude about it — it plans each correction as a body would, with
+acceleration limits, braking so it arrives rather than overshoots, and a speed cap. The trouble is what it
+is planning *towards*. Twelve rounds of pushing two bodies apart is a discrete, order-dependent business:
+with nothing moving at all, the target chatters by a few millimetres every frame, and the planner faithfully
+follows every millimetre.
+
+So the target is now smoothed over `CFG.calm` (45 ms) before the planner follows it — on the target, not on
+the output, so a limb still follows the pose exactly and only the push-out is calmed.
+
+| held positions | raw target | smoothed |
+|---|---|---|
+| zigzag, median | 356 | **148** |
+| zigzag, mean | 1006 | **174** |
+| zigzag, worst | 3528 | **361** |
+| overlap, mean | 0.44 cm | **0.25 cm** |
+| overlap, worst | 2.4 cm | 3.5 cm |
+
+The spikes are the point: it is the blow-ups, not the median, that read as twitching, and they are what goes.
+Average overlap gets *better*, because a target that is not chattering is one the planner can actually reach.
+
+It costs something during fast movement, and this is the honest trade: through the techniques, mean overlap
+goes 0.59 cm to 1.06 cm, because a smoothed correction lags while bodies are moving quickly and limbs sit a
+little deeper meanwhile. The worst moment improves, 19.9 cm to 14.9. Half a centimetre on average through
+a transition, against the mat no longer shimmering while they hold a position.
+
 ### The arm that went round, and the knockdowns nobody saw (2026-11-20)
 
 **The ground-and-pound arm.** Two separate faults, both measured as the total angle the upper arm sweeps

@@ -20389,7 +20389,9 @@ defences|Johnny Eblen|3`,
       // easily than that, its end planted, moves him the more; fall: how quickly a lift is let go of, ms)
       const CFG = { letGo: 120, limbRate: 6, trunkRate: 3, limbAcc: 300, trunkAcc: 150, iters: 12, rootApart: true, outLast: false, trunkMem: true,
         drawn: true, trunkSurf: true, limbRootApart: true, rootShare: 1, rootNear: true, trunkShare: 0.3, bodyMem: true, fall: 40, settle: true, accLo: 0.5, self: true, stack: true,
-        fold: true, hipRead: true, hipRate: 4, kneeRate: 8, twistRate: 10, speedCap: 7.5 };
+        fold: true, hipRead: true, hipRate: 4, kneeRate: 8, twistRate: 10, speedCap: 7.5, calm: 45 };
+      // (calm: how long, ms, the push's own target is smoothed over before the planner follows it — 0 to
+      // follow it raw, as it used to)
       // (fold: a limb folded tight kept as pushed rather than put back round the line from root to end; hipRead:
       // the hip's limit only as far as the thigh's fold can be read; hipRate, kneeRate: how quickly, rad/s, the
       // hip's and the knee's limits are taken up and let go of as shown (0: at once); twistRate: the same for the
@@ -20830,6 +20832,7 @@ defences|Johnny Eblen|3`,
         } else { sa.ctMem = null; sb.ctMem = null; }
         for (const [g, st, R] of [[ga, sa, X], [gb, sb, Y]]) {
           const raw = g.pt, was = st.ct || { T: [0, 0, 0] }, wasV = st.ctV || {}, vel = {}, k = Math.exp(-dt / CFG.letGo), h = Math.max(dt, 1);
+          const wantWas = st.ctWant || {}, wantNow = {};
           // (each point's correction moves towards where the push wants it as a body would: speeding up no
           // quicker than `acc`, braking in time to arrive rather than overshoot, never faster than `rate`; so
           // it starts and stops smoothly, and never jumps in one frame however suddenly the push changes)
@@ -20837,6 +20840,17 @@ defences|Johnny Eblen|3`,
           // settles against him; much further, it's deep in him, as quickly as `acc`. Gently throughout, it was
           // left in him twice as much; quickly throughout, every small adjustment showed as a flick)
           const plan = (key, want, rate, accHi) => {
+            // (the push's own target, smoothed. Twelve rounds of pushing bodies apart is a discrete,
+            // order-dependent thing: with nothing moving at all, `want` still chatters by a few millimetres
+            // from frame to frame, and the planner below faithfully follows every millimetre of it. That is
+            // the twitching on the mat — with the pass switched off the same held positions settle to a
+            // third of the frame-to-frame zigzag and stop varying run to run. Smoothed here rather than on
+            // the output, so the limb still follows the pose exactly and only the push-out is calmed.)
+            if (CFG.calm) {
+              const w0 = wantWas[key];
+              if (w0) want = add(w0, mul(sub(want, w0), 1 - Math.exp(-dt / CFG.calm)));
+              wantNow[key] = want.slice();
+            }
             const base = decayed(was, key, dt), d = sub(want, base), dist = len(d), v0 = wasV[key] || [0, 0, 0];
             const acc = accHi * (CFG.accLo + (1 - CFG.accLo) * clampN((dist - 0.03) / 0.1, 0, 1));
             const vw = dist > 1e-7 ? mul(d, Math.min(rate, Math.sqrt(2 * acc * dist)) / dist) : [0, 0, 0];
@@ -20876,6 +20890,7 @@ defences|Johnny Eblen|3`,
           for (const p of MOVED) st.ctRaw[p] = raw[p].slice();
           st.ct = most > 2e-4 || on ? c : null;
           st.ctV = st.ct ? vel : null;
+          st.ctWant = st.ct ? wantNow : null;
           const dbg = CONTACT.dbg && { who: R.who, raw: {}, plan: {}, shown: null, T: c.T.slice() };
           if (dbg) { for (const k of ['knL', 'knR', 'anL', 'anR', 'toL', 'toR', 'hpL', 'hpR']) dbg.raw[k] = raw[k].slice(); for (const k of MOVED) dbg.plan[k] = R.P[k].slice(); CONTACT.dbg.push(dbg); }
           if (most < 1e-5) { st.ctHip = st.ctAn = st.ctTw = st.ctAnk = null; continue; }
