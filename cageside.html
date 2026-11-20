@@ -7424,7 +7424,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // single shots, scrambles and close rounds, as they do for real.
   const FORM_SD = 0.06;
   // the engine's balance knobs (these are the values the game ships with; the simulator can change them)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.66, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1 };
+  // (shock 1.66 -> 1.45: the combinations got longer and the action came in flurries, so a hurt man now eats
+  // three shots where he used to eat one, and the finish rate went from 29% of fights to 38% on its own.
+  // The pace is what was wanted; the knockouts following from it were not)
+  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1 };
   // Weight classes fight differently: heavyweights hit far harder, throw less and tire sooner; the small men
   // throw more, hit softer and go to decision more often (as in the UFC's own numbers).
   const WEIGHT = {
@@ -8323,6 +8326,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     }
 
     const prevPos = this.pos, prevTop = this.top;
+    this.heatTick();
     if (this.subLock) this.subTick();
     else if (this.pos === 'stand') this.standTick();
     else if (this.pos === 'clinch') this.clinchTick();
@@ -8384,9 +8388,39 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   };
 
   // ------------------------------------------------------------------ standing
+  // The fight's own rhythm. A round is not an even drip of exchanges: there are feeling-out spells where
+  // almost nothing is thrown and short, sharp flurries where both men let go, and it is the switching
+  // between them that reads as a fight rather than two men taking turns. One number for the pair of them,
+  // because a firefight is something two men do together — one opening up is what makes the other.
+  // (Before this, every moment of every round was as likely to have a strike in it as any other: 60% of
+  // them had none at all, evenly spread, which is the pace of a very analytical fighter and of nobody else.)
+  Fight.prototype.heatTick = function () {
+    const rng = this.rng;
+    if (this.heat == null) this.heat = 1;
+    // how long since either man last threw anything: dead air is its own pressure to engage
+    const thrown = this.A.stats.sigAtt + this.B.stats.sigAtt;
+    this.lull = this._lastAtt != null && thrown <= this._lastAtt ? (this.lull || 0) + 1 : 0;
+    this._lastAtt = thrown;
+    // it settles back towards the fight's own level, and is kicked out of it now and then
+    this.heat += (1 - this.heat) * 0.22;
+    const live = (this.A.energy + this.B.energy) / 200;
+    if (rng.chance(0.1 + 0.05 * live)) this.heat = 1.8 + rng.next() * 1.6;          // they open up
+    else if (rng.chance(0.07)) this.heat = 0.45 + rng.next() * 0.3;                  // feeling out: feints and feet
+    // nothing thrown for a while and somebody forces it — the crowd, the corner, the clock, impatience.
+    // (Without this the quiet spells ran to 19 moments, nearly a minute of two men not throwing at all.)
+    if (this.lull > 3) this.heat = Math.max(this.heat, Math.min(2.2, 1 + 0.3 * (this.lull - 3)));
+    // a hurt man is a reason for everyone to stop being careful
+    if (this.A.rocked || this.B.rocked) this.heat = Math.max(this.heat, 1.8);
+    // and the last half-minute of a round, when a man who needs it goes looking
+    if (this.tick > TICKS_PER_ROUND - 10) this.heat = Math.max(this.heat, 1.25);
+  };
   Fight.prototype.activity = function (s) {
     const p = s.plan;
-    let act = (0.16 + 0.3 * p.workRate + 0.07 * p.mentality + 0.04 * s.a.speed) * 0.88 * this.wc.pace;
+    // (the base rate comes down as the combinations get longer and the flurries busier: the same man throws
+    // about as much over a round as he did, but he throws it in bursts instead of a steady drip)
+    let act = (0.105 + 0.2 * p.workRate + 0.06 * p.mentality + 0.035 * s.a.speed) * 0.88 * this.wc.pace;
+    // the rhythm of the fight, dulled a little by a patient game plan: the careful ones join in less
+    act *= 1 + (this.heat == null ? 0 : this.heat - 1) * (0.55 + 0.45 * p.mentality);
     act *= 0.55 + 0.45 * (s.energy / 100);
     act *= 1 + s.m.output + 0.8 * (s.swing || 0);
     if (s.opp.rocked) act *= 1 + 0.35 * s.a.killer;
@@ -8615,10 +8649,17 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   Fight.prototype.combo = function (s, style) {
     const rng = this.rng, p = s.plan;
     let len = 1;
-    if (rng.chance(0.32 + 0.22 * s.a.speed + 0.08 * s.a.boxing - 0.15 * p.power)) len++;
-    if (rng.chance(0.08 + 0.15 * s.a.speed + (s.opp.rocked ? 0.3 * s.a.killer + (p.killer === 'swarm' ? 0.4 : 0) : 0))) len++;
+    if (rng.chance(0.34 + 0.22 * s.a.speed + 0.08 * s.a.boxing - 0.15 * p.power)) len++;
+    // (the third shot. At 0.08 + 0.15 of his speed it was rare to begin with, and the cap below then threw
+    // away most of what was left: three-strike combinations came out at 2% of everything thrown, and four
+    // at none. A jab-cross-hook is the most ordinary thing in the sport.)
+    if (rng.chance(0.17 + 0.26 * s.a.speed + 0.1 * s.a.boxing + (s.opp.rocked ? 0.3 * s.a.killer + (p.killer === 'swarm' ? 0.4 : 0) : 0))) len++;
+    // and a fourth, for the quick and the busy, or on a man who is already hurt
+    if (len >= 3 && rng.chance(0.1 + 0.18 * s.a.speed + 0.14 * p.workRate + (s.opp.rocked ? 0.3 : 0))) len++;
     if (s.opp.rocked && p.killer === 'swarm' && rng.chance(0.5)) len++;
-    if (style === 'light' || style === 'kick' || style === 'counter') len = Math.min(len, 2);
+    // a jab-led sequence runs to three; a counter is short but not always two; kicks don't come in fours
+    if (style === 'kick') len = Math.min(len, 2);
+    else if (style === 'light' || style === 'counter') len = Math.min(len, 3);
     if (style === 'power' && len < 2 && rng.chance(0.5)) len = 2;
     const range = this.pos === 'clinch' ? 'clinch' : this.range;
     for (let i = 0; i < len && !this.over && this.pos !== 'ground'; i++) {

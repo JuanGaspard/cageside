@@ -1682,6 +1682,50 @@ be stopped that way.
 Worth noting this was partly my own doing: cutting between-round and in-round recovery the round before made
 empty tanks more common, which made a bad rule fire more often.
 
+### Pace: bursts and lulls, and combinations that run past two
+
+The fights were being thrown at one even rate from the first bell to the last, which is the pace of a very
+analytical fighter and of nobody else. Measured over 120 fights, 797 standing minutes:
+
+- **9.4 strikes thrown per man per minute** — that part was fine; the UFC runs about 8 to 11.
+- **60% of three-second moments had no strike in them**, spread evenly across every round.
+- **Combinations: 40% single, 57% double, 2% of three, and none of four.**
+
+The last one had a cause, not a tuning problem. `combo()` capped the `light`, `kick` and `counter` styles at
+two strikes, and the jab and the kick are the two commonest things a man does — so the third shot was thrown
+away before it was rolled. A jab-cross-hook is the most ordinary sequence in the sport and it could not
+happen. The cap is now three for a jab-led or countering sequence (kicks still stop at two: nobody throws
+four), the third shot's odds went from `0.08 + 0.15 × speed` to `0.17 + 0.26 × speed + 0.1 × boxing`, and
+there is a fourth for the quick and the busy, or on a man already hurt.
+
+For the rhythm, the fight now has a **heat**: one number for the pair of them, because a firefight is
+something two men do together — one opening up is what makes the other. It settles back towards the fight's
+own level and gets kicked out of it: a flurry where both let go, a feeling-out spell of feints and feet, a
+floor when a man is hurt, a floor in the last half-minute of a round, and a floor that rises the longer
+nothing has been thrown — without that last one, quiet spells ran to 19 moments, nearly a minute of two men
+not throwing at all.
+
+| | before | after | real |
+|---|---|---|---|
+| thrown per man per minute | 9.4 | 11.2 | ~8–11 |
+| landed per man per minute | — | 4.6 | ~3.5–4.5 |
+| combinations of 3 | 2% | **15%** | — |
+| combinations of 4 | 0% | 2% | — |
+| spread of strikes per moment (sd) | 1.19 | 1.43 | — |
+| longest unbroken busy spell | — | 19 moments (57s) | — |
+
+The base action rate came down to pay for it, so a man throws about as much over a round as he did — he just
+throws it in bursts instead of a steady drip.
+
+**It cost something that had to be paid back.** Clustered flurries mean a hurt man eats three shots where he
+used to eat one, and the finish rate went from 29% of fights to 38% on its own. `TUNE.shock` is 1.45 rather
+than 1.66, which brings it to 33% KO/TKO, 25% submission, 42% decision against a real split of roughly
+30/20/50. The pace is what was wanted; the knockouts following from it were not.
+
+In the picture, punches in a combination overlap by about 100 ms — the second hand leaving as the first comes
+back, which is what makes a combination read as one thing rather than three. The kick spacing guard still
+holds: no two kicks closer than 300 ms across a whole fight.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
