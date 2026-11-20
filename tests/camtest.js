@@ -35,6 +35,15 @@ export async function setup(bout = 0, fig2 = MMA.fightview.fig2 && MMA.fightview
   // same time ours does and simply does nothing. (play/record take a copy before they patch, so they restore
   // this one, not the real one.)
   if (!performance.now.synthetic) { const fake = () => clock; fake.synthetic = true; performance.now = fake; }
+  // RANGE below is what these measures hold a joint to; FIG.ROM is what the solve actually enforces. For most
+  // joints the two differ on purpose — a knee's turn is read round the hip-to-ankle line, which is unstable
+  // folded tight, so it is given slack over the 0.85 the solve holds it to. The shoulder is the exception: it
+  // is read at exactly the limit the solve enforces, so if the two ever drift the measure silently stops
+  // matching the thing it is measuring. Say so rather than let it pass.
+  const ROM = FVX().figure && FVX().figure.ROM;
+  if (ROM && (ROM.shBack !== RANGE.shoulderBack || ROM.shOut !== 0.6)) {
+    console.warn('camtest: shoulder range drifted from the solve — FIG.ROM', ROM.shBack, ROM.shOut, 'vs RANGE', RANGE.shoulderBack, 0.6);
+  }
   const f = FVX().current();
   f.range = 'pocket';
   run(1500);
@@ -42,6 +51,12 @@ export async function setup(bout = 0, fig2 = MMA.fightview.fig2 && MMA.fightview
   for (let i = 0; fig3 && FVX().three && !FVX().three().gl && !FVX().three().failed && i < 100; i++) { run(16); await new Promise((r) => setTimeout(r, 100)); }
   return f;
 }
+// Put the synthetic clock at a known time. setup() waits for three.js by running frames until the real
+// WebGL context is up, so how many frames it burns depends on how fast the machine got there — which left
+// every run starting from a different clock and every measurement a little different from the last. Two runs
+// of the same 15 situations with the same code came out 177 frames / 95.2 and 216 / 112, which is more than
+// most of the changes being measured. Call this straight after setup() and a run is reproducible.
+export function setClock(t) { clock = t; }
 export function fight() { return FVX().current(); }
 export function run(ms) { for (let t = 0; t < ms; t += 15) { clock += 15; FVX().camFrame(clock); } }
 // the picture's clock (to start a measurement at the same moment of what runs on it: contact.js align())

@@ -1726,6 +1726,71 @@ In the picture, punches in a combination overlap by about 100 ms — the second 
 back, which is what makes a combination read as one thing rather than three. The kick spacing guard still
 holds: no two kicks closer than 300 ms across a whole fight.
 
+### A range of motion, in one place (2026-11-19)
+
+Every limit an arm or a leg is held to now lives in one table, `FIG.ROM`, instead of being spread between
+four constants in the solve and a separate table in the tests. The knee's turn was written in both places;
+the shoulder was **only** in the tests, measured but never enforced. That is why pose after pose in `POSES`
+carries a hand-written note about an upper arm going half a radian past where a shoulder goes — the
+rear-naked choke, the guillotine, the armbar, the kimura were each patched by hand, one at a time, by
+nudging an elbow pole until the complaint went away. With nothing enforcing the joint, every new move would
+have needed the same treatment, which is why this had to come before adding any.
+
+**The shoulder is held on the elbow's pole, not on the hand.** The rule is the one the tests already used:
+the upper arm stays no more than `ROM.shBack` (1.0 rad) behind hanging straight down, in the chest's own
+forward/up plane. For a given hand the bend angle is fixed by the bones, so that rule works out to a cone
+the elbow's pole has to stay inside — which is the existing `within()` helper with a limit computed each
+frame instead of a constant. An arm straight out to the side sits exactly on the boundary, so full reach
+out to the side is untouched and only the forward/back of it is held.
+
+Two other ways were built and measured first, and both were worse:
+
+- **Turning the whole arm about the shoulder** after the bend. It keeps both bone lengths and swings the
+  elbow down to the side, which is exactly what the hand-written patches did — but it moves the hand off
+  what the pose and the grip asked for and leaves the contact pass more to push out. A wash on the shoulder
+  (95.2 → 98.6 severity-weighted) while overlap went 12.4 → 16.1 and the audit's score 135.3 → 150.
+- **Holding the range again after the contact pass**, where a foot is put back in line with its knee
+  (`footInLine`). Turning an arm back there moves it into the body the push had just cleared it from:
+  severity 157.6 → 183.3, score 181.3 → 208.5, with arms that the solve had left clean (taking the back,
+  the knee-across reversal) going 0 → 0.85 and 0 → 0.72. A foot is only twisted about its own shin, which
+  can't push it into anything; an arm can't be fixed there without undoing the push.
+
+Measured over the 15 situations that had the complaint, as a switch on the same page (`ROM.shOn`):
+
+| | off | on (the pole) |
+|---|---|---|
+| shoulder, severity-weighted | 95.2 / 112 / 115.4 / 128 | **85.3 / 85.3** |
+| audit score | 135.3 / 144.4 / 162.5 / 185.6 | 145.9 / 145.9 |
+| body overlap | 12.4 / 14.5 / 14.8 / 16.6 | 15.8 / 15.7 |
+
+The armbar, the rear-naked choke and the knee-across reversal come out clean, and overlap doesn't move —
+it can't, because the hand never moves. What is left is three situations (the wall walk, taking the back,
+the head kick) where the hand itself is keyed behind the shoulder: no elbow can save those, and they are a
+pose fix rather than a solver one.
+
+**The measurements themselves were lying before this.** `setup()` waits for three.js by running frames
+until WebGL is up, so how many frames it burns depends on how fast the machine got there, and every run
+started from a different clock. Two runs of the same 15 situations with the same code gave 177 frames /
+95.2 and 216 / 112 — bigger than most of what was being measured, and the reason an earlier "−33%" here
+was nothing of the kind: it compared a 15-situation run against a 60-situation baseline. `C.setClock()`
+pins the clock, and anything below about 15% between single runs is still noise and needs repeats. (The
+pole version comes out identical run to run, which is its own small sign: it takes away the freedom the
+divergence was feeding on.)
+
+`RANGE` in the tests stays slacker than `ROM` on purpose for the measures that are noisy — a knee's turn is
+read round the hip-to-ankle line, which is unstable folded tight — but the shoulder is read at exactly the
+limit the solve enforces, and `setup()` now says so if the two ever drift apart.
+
+### The ball on the chin (2026-11-19)
+
+The jaw is a capsule from the middle of the head out to a jaw point. It sat 0.075 forward and 0.075 down,
+which is 0.106 from the head's middle, and the cap on the end of it had radius 0.045 — against a head
+outline of 0.106 in that direction, so the cap's centre landed exactly **on** the silhouette and a whole
+hemisphere of it hung clear of the face. That is the small ball stuck on the chin. It is now 0.056 forward
+and 0.046 down with the end widened to 0.06, so what shows past the head is a lens about 10 cm across and
+2.8 cm deep — the line of a jaw rather than a 2:1 dome. (The side view was already fine: its head is a
+circle of radius 0.12, which swallowed most of the same capsule.)
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

@@ -19478,7 +19478,50 @@ defences|Johnny Eblen|3`,
       if (m >= lim) return pole;
       return turn(unit(bb), u, Math.sign(a) * (m < 0.2 ? m / 0.2 * lim : lim));
     }
-    const KNEE_TURN = 0.85, ELBOW_CLEAR = 0.75, ANKLE_TURN = 1.0, HIP_OPEN = 0.75;
+    // ---- the range of motion, in one place. Every limit an arm or a leg is held to lives here, and the tests
+    // measure against these same numbers (FIG.ROM), so the solve and the tests can't drift apart. They had:
+    // the knee's turn was written here and again in the tests, and the shoulder was only ever in the tests,
+    // never enforced at all — which is why pose after pose above carries a hand-written note about an upper arm
+    // going half a radian past where a shoulder goes, each one patched by hand, one pose at a time.
+    const ROM = {
+      kneeTurn: 0.85,     // a knee bends only towards the front of its leg, give or take this
+      elbowClear: 0.75,   // an elbow never points forward and in, across the body's front
+      ankleTurn: 1.0,     // a foot points the way its knee does, give or take this
+      hipOpen: 0.75,      // a leg opens this far out to the side before the legs splay
+      shBack: 1.0,        // an arm goes this far behind straight down, and no further
+      shOn: true,         // (off: the range is still measured by the tests but not held, to compare)
+    };
+    const KNEE_TURN = ROM.kneeTurn, ELBOW_CLEAR = ROM.elbowClear, ANKLE_TURN = ROM.ankleTurn, HIP_OPEN = ROM.hipOpen;
+    // The shoulder's range, held as a limit on which WAY THE ELBOW POINTS, not on where the hand is.
+    // The rule: the upper arm stays out from behind him — no more than ROM.shBack behind hanging straight
+    // down, in the chest's own forward/up plane, which is the measure the tests use. For a given hand the
+    // bend angle is fixed by the bones, so that rule works out to a cone the elbow's pole has to stay inside,
+    // which is `within` with a limit worked out each frame instead of a constant. Nothing about the hand
+    // moves: only the elbow swings round the shoulder-to-hand line. That matters — holding the range by
+    // turning the whole arm instead (the obvious way, and the first way this was written) moves the hand off
+    // what the pose and the grip asked for, leaves the contact pass more to push out, and measured over the
+    // 15 situations that had the complaint it was a wash on the shoulder (95.2 to 98.6 severity-weighted)
+    // while overlap went 12.4 to 16.1 and the audit's score 135.3 to 150. The elbow can't make overlap worse.
+    // (An arm straight out to his side sits exactly on the boundary — `n` has no sideways part — so full
+    // reach out to the side is left alone and only the forward/back of it is held, which is the same
+    // allowance the tests make when they skip an arm that is out to the side.)
+    function shoulderPole(S, hT, pole, l1, l2, Rc) {
+      if (!ROM.shOn) return pole;
+      const d = sub(hT, S), l = len(d);
+      if (l < 1e-5) return pole;
+      const u = mul(d, 1 / l);
+      const n = add(mul(Rc[1], -Math.sin(ROM.shBack)), mul(Rc[0], Math.cos(ROM.shBack)));
+      // the bend these bones are forced into at this distance, as reach() works it out
+      const dist = clampN(l, Math.abs(l1 - l2) + 0.01, (l1 + l2) * 0.999);
+      const ca = clampN((l1 * l1 + dist * dist - l2 * l2) / (2 * l1 * dist), -1, 1), sa = Math.sqrt(1 - ca * ca);
+      if (sa < 1e-4) return pole;
+      const np = flat(n, u), L = len(np);
+      if (L < 1e-5) return pole;
+      // upper arm . n = ca*(u.n) + sa*(pole.n), so the pole needs pole.n >= T
+      const T = -ca * dot(u, n) / sa;
+      if (T <= -L) return pole;                               // any elbow at all is inside the range
+      return within(pole, u, mul(np, 1 / L), T >= L ? 0 : Math.acos(clampN(T / L, -1, 1)));
+    }
     // how far to turn a foot (pointing fw) round its shin to bring it back within ANKLE_TURN of its knee's
     // front (0 if it's within it); `front` stands in for the knee's front when the leg is straight
     function ankleFix(Hp, K, A, fw, front, s) {
@@ -19522,7 +19565,10 @@ defences|Johnny Eblen|3`,
       const N = add(Ch, app(Rc, [0, 0.19 * s, 0]));
       const Nt = add(N, app(Rh, [0, 0.08 * s, 0]));
       const Hd = add(Nt, app(Rh, [0.015 * s, 0.1 * s, 0]));
-      const pt = { P, W, Ch, N, Nt, Hd, jaw: add(Hd, app(Rh, [0.075 * s, -0.075 * s, 0])) };
+      // (the jaw kept close in under the head: out at 0.075 forward and down it stood 0.106 from the head's
+      // middle, and the 0.045 cap on the end of it had its centre right on the head's outline — a whole
+      // hemisphere of it hung clear of the face, which read as a small ball stuck on the chin rather than a jaw)
+      const pt = { P, W, Ch, N, Nt, Hd, jaw: add(Hd, app(Rh, [0.056 * s, -0.046 * s, 0])) };
       for (const [k, z] of [['L', -1], ['R', 1]]) {
         const sh = p['sh' + k] || [0, 0];
         const S = add(N, app(Rc, [sh[0] * s, (sh[1] - 0.035) * s, z * b.shoulder]));
@@ -19531,7 +19577,10 @@ defences|Johnny Eblen|3`,
         const R = p._rest || {};
         // (the elbow's point kept out of forward-and-in: its range, see within/awayFrom)
         const hT = add(Ch, mul(p['hand' + k], s)), au = unit(sub(hT, S)), inward = unit(sub(Ch, S));
-        const ePole = awayFrom(app(Rc, p['elbow' + k]), au, add(mul(app(Rc, [1, 0, 0]), 0.7), mul(inward, 0.7)), ELBOW_CLEAR);
+        // (and then held inside the shoulder's own range, which can override the clearance above where the
+        // two disagree: an elbow pointing somewhere a little awkward reads far better than an upper arm bent
+        // back behind the shoulder)
+        const ePole = shoulderPole(S, hT, awayFrom(app(Rc, p['elbow' + k]), au, add(mul(app(Rc, [1, 0, 0]), 0.7), mul(inward, 0.7)), ELBOW_CLEAR), b.upper, b.fore, Rc);
         // (an arm that isn't punching, p._punch, keeps a bend: see reach)
         const [E, F] = reach(S, hT, b.upper, b.fore, ePole, app(Rc, [-0.3, -1, z * 0.5]), 0.42, R['h' + k] || app(Rc, [0.7, -0.7, 0]), !(p._punch && p._punch[k]));
         pt['sh' + k] = S; pt['el' + k] = E; pt['fi' + k] = F; pt['wr' + k] = add(F, mul(unit(sub(E, F)), 0.06 * s));
@@ -19670,7 +19719,9 @@ defences|Johnny Eblen|3`,
       part(pt.Hd[2] + 0.003, tone(pt.Hd[2], NEAR, FAR), (c) => {
         capPath(c, P2(pt.N), P2(pt.Nt), R(0.062), R(0.056));
         const h = P2(pt.Hd); c.moveTo(h[0] + 0.098 * s * ppm, h[1]); c.ellipse(h[0], h[1], 0.098 * s * ppm, 0.116 * s * ppm, hr, 0, Math.PI * 2);
-        capPath(c, h, P2(pt.jaw), 0.07 * s * ppm, 0.045 * s * ppm);
+        // (and the end of it widened to 0.06: the part that shows past the head is now a lens 10 cm across and
+        // 2.8 cm deep instead of a 2:1 dome, so it reads as the line of a jaw)
+        capPath(c, h, P2(pt.jaw), 0.072 * s * ppm, 0.06 * s * ppm);
       });
       // each limb is one shape (no seams at the knee or elbow), shaded by how near the camera it is
       const perp = (v, axis) => { const a = unit(axis); return sub(v, mul(a, dot(v, a))); };
@@ -19740,7 +19791,7 @@ defences|Johnny Eblen|3`,
       const J = place(solve(typeof p === 'string' ? POSES[p] : p, b), x0, dir, southpaw);
       return Object.assign(J, { b, dir, side });
     }
-    return { body, solve, place, place3, draw, figure, POSES, STANCE, onBall, rot, RINGS, footInLine };
+    return { body, solve, place, place3, draw, figure, POSES, STANCE, onBall, rot, RINGS, footInLine, ROM };
   })();
 
   // the clips (written by tools/embed_clips.py from anim/clips/*.json)
@@ -21775,6 +21826,15 @@ defences|Johnny Eblen|3`,
       for (const f of [A, B]) for (const a of f.acts || []) if (a.trans && view.vnow >= a.t0 && view.vnow < a.t0 + a.dur) held = Math.min(held, a.chain ? 0 : ease(((view.vnow - a.t0) / a.dur - 0.6) / 0.35));
       ANIM.CONTACT.solve(ga, gb, A.v2, B.v2, view.dt || 16, near || view.vnow < (cam.ctUntil || 0), held);
     }
+    // (the shoulder's range is NOT held again here, after the push. It looks like the obvious place for it —
+    // it is where a foot is put back in line with its knee (footInLine) — and the arms do come out of the
+    // push behind the shoulder in the situations where the two are pressed hardest. But turning an arm back
+    // after the push moves the hand and elbow into the body the push had just cleared them from, and measured
+    // over the 15 situations that had the complaint it was worse on both counts than holding it in the solve
+    // alone: the severity-weighted total went 157.6 to 183.3 and the audit's own score 181.3 to 208.5, with
+    // arms that were clean in the solve-only pass (taking the back, the knee-across reversal) going 0 to 0.85
+    // and 0 to 0.72. A foot is only twisted about its own shin, which can't push it into anything; an arm
+    // can't be fixed here without undoing the push. It is held in the solve and left alone after it.)
     // (and nothing of a limb under the mat, whatever put it there: a sprawl's knees as posed, a leg swung down by
     // the contact pass's last step. The knee or elbow lifted to the mat with its bone's length kept, its end
     // after it, the foot going with the ankle. A safety net: lower than a limb lies as drawn, so nothing that's
