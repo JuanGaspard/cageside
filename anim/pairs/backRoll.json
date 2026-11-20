@@ -6,7 +6,7 @@
   "turn": { "top": 1 },
   "keys": [
     { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
-    { "t": 350, "note": "he turns away onto his side (turned about his spine: the pelvis's yaw; its roll would swing him round flat on the mat), the knees falling together to that side; ridden, chest on his back",
+    { "t": 350, "note": "he turns away onto his side (turned about his spine: the pelvis's yaw; its roll would swing him round flat on the mat), the knees falling together to that side; ridden, chest on his back. (His elbow poles point straight back, which looks like the same fault the kick poses had and is not: turned down and out ([-0.25, -1, +-0.6]) the shoulder got worse, not better — taking the back went from 14 frames over the range to 68, and the 15-situation total from 66 to 112. His hands are gripped and the pelvis is turning under them, so the pole that reads wrong written down is the one that comes out right. Left as keyed.)",
       "top": { "set": { "root": [0, 0.38], "pelvis": [0, 0.9, 0], "spine": [0, 0.2, 0], "neck": [0, -0.3] } },
       "bot": { "set": { "pelvis": [1.1, -1.25, 0], "spine": [0.35, -0.05, 0], "neck": [0.3, 0.3],
         "handL": [0.1, 0.15, -0.3], "handR": [0.1, 0.2, -0.22], "elbowL": [-1, 0, -0.5], "elbowR": [-1, 0, 0.5],

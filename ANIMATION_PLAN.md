@@ -1781,6 +1781,46 @@ divergence was feeding on.)
 read round the hip-to-ankle line, which is unstable folded tight — but the shoulder is read at exactly the
 limit the solve enforces, and `setup()` now says so if the two ever drift apart.
 
+### The three that were left (2026-11-19)
+
+Of the three situations the range couldn't save, only one was what I said it was.
+
+**The kicks were real, and they are fixed.** `chamber`, `kick` and `headKick` all keyed the rear hand behind
+the chest — up to 0.35 m back — with the elbow poled straight back as well (`[-1, -0.5, 0.3]`). That put the
+upper arm 1.6 rad behind hanging straight down: 92 degrees of shoulder extension against the 60 or so a
+shoulder has. The clip's own note says the rear arm "swings down and back to balance it", and the second
+half of that was doing the damage: a rear arm dropping for balance goes **down past the hip**, not backwards
+horizontally. Keyed lower and less far back (and the recovery key in `headKick.json` with it), the head kick
+goes from 23 frames over the range to **0**, and the body kick and leg kick from about 20 each to **0** —
+stable across three page loads, where before it was 23 twice.
+
+**`within()` had a plain bug.** It hardcoded 2.6 as the angle where a limit lets go again, which is right for
+the fixed narrow limits it was written for (a knee at 0.85). The shoulder works out limits per frame and they
+run close to pi, and with `lim` above `far` the last branch of `hold()` hands back *more* than `lim` — so for
+exactly the poles pointing backwards, the ones that needed holding, the limit returned them unchanged and did
+nothing at all. `within` now takes the release angle, and the shoulder passes one that starts after its limit.
+
+**The wall walk and taking the back were not what I claimed.** I said the hand itself was keyed behind the
+shoulder and no elbow could save them. For the head kick that was true. For these two the hand often sits at
+0 to −1.25 while the arm is at −1.0 to −1.6 — the *elbow* is behind the hand, not the hand behind the body.
+Two fixes aimed at that, both built and measured and both reverted:
+
+- Holding `reach()`'s fallback direction to the range as well (it leans back, `[-0.3, -1, ...]`, and is
+  unheld, which looked like the obvious remaining way round the limit). Taking the back went from 0.59 over
+  20 frames to 0.86 over 66, the wall walk from 0.25 to 0.54, and the head kick didn't move. The fallback's
+  job is to be steady when the pole has nothing to say; held per frame it stops being steady.
+- Turning the elbow poles down and out in `backRoll` and `hipBump`, the same shape of fix that worked on the
+  kicks. Taking the back went 14 frames to 68 and the 15-situation total 66 to 112. Those hands are gripped
+  and the pelvis turns under them, so the pole that reads wrong written down is the one that comes out right.
+
+**And the aggregate number can't carry weight.** Pinning the clock wasn't enough: `setup()` burns a variable
+number of frames before the pin, and the figures keep that difference. The same build measured 65.6 and 66.8
+on one pair of loads and 84.7 twice on another, with byte-identical clip data — runs cluster by how fast
+WebGL came up. So the 15-situation total is only good for within-one-page comparisons like the `ROM.shOn`
+switch, and single-situation numbers are only trustworthy where the situation itself is stable: the kicks
+are (23, 23, then 0, 0, 0), the wall walk is not (48, 34 and 15 frames back to back, worst 0.59, 0.78, 0.66).
+Nothing here should be read as a measured improvement in the aggregate; the kick result stands on its own.
+
 ### The ball on the chin (2026-11-19)
 
 The jaw is a capsule from the middle of the head out to a jaw point. It sat 0.075 forward and 0.075 down,
