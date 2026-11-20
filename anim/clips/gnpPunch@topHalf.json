@@ -1,0 +1,16 @@
+{
+  "id": "gnpPunch@topHalf",
+  "ref": "topHalf",
+  "note": "Ground punch from half guard. His chest is flat here too — its forward points straight down at the mat and its up points along the mat ahead of him — so the mount's clip, which cocks the hand 'up' in the chest's frame, sent the hand out over the man's head and swung the upper arm behind the shoulder on 5 frames of 15. With a leg trapped there is no room to posture and wind up anyway: the hand lifts off him, turns over and drives back down. The elbow stays poled down and out, where half guard already holds it.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "topHalf", "tan": "flat" },
+    { "t": 70, "set": { "handR": [0.12, -0.26, 0.26], "elbowR": [-0.25, -0.95, 0.6] }, "add": { "spine": [0, 0.04, 0] } },
+    { "t": 130, "note": "cocked: a short lift clear of him, not a wind-up",
+      "set": { "handR": [0.02, -0.2, 0.32], "elbowR": [-0.2, -0.9, 0.7] }, "add": { "spine": [0, 0.09, 0] } },
+    { "t": 180, "set": { "handR": [0.12, -0.24, 0.26], "elbowR": [-0.25, -0.95, 0.6] }, "add": { "spine": [0, 0.05, 0] } },
+    { "t": 220, "set": { "handR": [0.36, -0.3, 0.14], "elbowR": [-0.3, -1, 0.5] }, "add": { "spine": [0, -0.06, 0] } },
+    { "t": 420, "pose": "topHalf", "tan": "flat" }
+  ],
+  "events": { "impact": 220, "recover": 380 }
+}

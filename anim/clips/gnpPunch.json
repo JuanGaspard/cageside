@@ -5,12 +5,12 @@
   "aim": { "hand": "R" },
   "keys": [
     { "t": 0, "pose": "mount", "tan": "flat" },
-    { "t": 70, "set": { "handR": [0.22, 0.02, 0.4], "elbowR": [0, 0.3, 1], "spine": [0.08, 0.1, 0] } },
+    { "t": 70, "set": { "handR": [0.22, 0.02, 0.4], "elbowR": [0, -0.6, 1], "spine": [0.08, 0.1, 0] } },
     { "t": 100, "note": "and it goes up on the outside, not round the back of the shoulder: between the two keys the upper arm swung through a frame of pointing behind him, on every punch of every flurry",
-      "set": { "handR": [0.2, 0.24, 0.44], "elbowR": [0.05, 0.6, 1], "spine": [0.12, 0.09, 0], "pelvis": [0.06, 0.18, 0] } },
-    { "t": 130, "note": "cocked up and out, not back behind him",
-      "set": { "handR": [0.12, 0.42, 0.32], "elbowR": [0, 0.9, 0.9], "spine": [0.15, 0.08, 0], "pelvis": [0.1, 0.18, 0] } },
-    { "t": 180, "set": { "handR": [0.2, 0.05, 0.22], "elbowR": [0, 0.3, 1], "spine": [0.18, 0.2, 0], "pelvis": [0.12, 0.2, 0] } },
+      "set": { "handR": [0.2, 0.24, 0.44], "elbowR": [0, -0.9, 1], "spine": [0.12, 0.09, 0], "pelvis": [0.06, 0.18, 0] } },
+    { "t": 130, "note": "cocked by the ear with the elbow hanging DOWN and out under it. Poled up and out ([0, 0.9, 0.9]) the pole lay along the arm itself — hand by the ear means the arm points up and out too — so reach() read it as degenerate, fell back to `alt` (which points back and down), and the elbow swung behind him: -0.94 of the chest's forward at t=120, then a 102-degree snap in one frame as the hand dropped and the pole got its authority back. That snap, twice a punch, is the arm going round. Down and out is both perpendicular to the arm and what a cocked fist actually looks like.",
+      "set": { "handR": [0.12, 0.42, 0.32], "elbowR": [0, -1, 1], "spine": [0.15, 0.08, 0], "pelvis": [0.1, 0.18, 0] } },
+    { "t": 180, "set": { "handR": [0.2, 0.05, 0.22], "elbowR": [0, -0.6, 1], "spine": [0.18, 0.2, 0], "pelvis": [0.12, 0.2, 0] } },
     { "t": 220, "pose": "gnp", "tan": "flat" },
     { "t": 420, "pose": "mount", "tan": "flat" }
   ],

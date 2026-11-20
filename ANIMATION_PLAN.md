@@ -1821,6 +1821,66 @@ switch, and single-situation numbers are only trustworthy where the situation it
 are (23, 23, then 0, 0, 0), the wall walk is not (48, 34 and 15 frames back to back, worst 0.59, 0.78, 0.66).
 Nothing here should be read as a measured improvement in the aggregate; the kick result stands on its own.
 
+### The arm that went round, and the knockdowns nobody saw (2026-11-20)
+
+**The ground-and-pound arm.** Two separate faults, both measured as the total angle the upper arm sweeps
+during one punch (a clean shot is 200–250 degrees; a full orbit of the shoulder is 400 and over).
+
+The first is the cock. `gnpPunch` brings the fist up by the ear and poled the elbow *up and out*
+(`[0, 0.9, 0.9]`) — but with the hand by the ear the arm itself points up and out, so the pole lay along
+the limb. `reach()` reads a pole that close to the limb as degenerate and hands over to its fallback,
+which points back and down, and the elbow swung out behind him: −0.94 of the chest's forward at t=120,
+then a **102-degree snap in a single 20 ms frame** as the hand came down and the pole got its authority
+back. Twice a punch. The elbow now hangs *down and out* under the cocked fist (`[0, -1, 1]`), which is both
+perpendicular to the arm and what a cocked fist actually looks like.
+
+The second is that one clip was serving every position. A clip plays as the difference from its own `ref`,
+and that difference is measured in the chest's frame — which is upright in the mount and flat in side
+control and half guard, where the chest's forward points at the mat and its up points along the mat. The
+mount's clip cocks the hand 0.82 "up" in that frame; from half guard that is 82 cm out past his own head,
+and the arm orbited the shoulder to reach it. So `pick()` now prefers a clip keyed `<id>@<pose>` when one
+exists, and side control and half guard have their own, where the shot is short because there is nowhere
+to wind up from. (The same mechanism is what new moves should use rather than one clip stretched over
+every position.)
+
+| upper arm swept per punch | before | after |
+|---|---|---|
+| mount | 424° (124° in one frame) | **286° (41°)** |
+| side control | 391° | **274°** |
+| half guard | 587° | **281°** |
+| back | 256° | **224°** |
+
+**The guard, standing and in the clinch.** Both fists sat about 14 cm inboard of their own shoulders
+(shoulder half-width 0.19, hands keyed at −0.04 and 0.06), the rear one **15 cm across its own shoulder on
+every frame measured**, so both forearms lay diagonally across the sternum and the elbows had to wing out
+to make room. Each hand now sits in front of its own cheek (−0.11 and 0.13) and the rear fist is 8 cm
+across rather than 15. In the clinch the elbows were poled straight out sideways (`z` −1 and 1) and stood
+off his ribs like chicken wings for the whole tie-up; they are down and in now, which is what a man frames
+and fights for position with.
+
+**The knockdowns.** They were firing all along — 58 non-knockout knockdowns in 200 fights — but
+`afterKnockdown` had exactly two outcomes: a `patient` fighter waves him up, or the other man pounces to
+the mat and throws two to four ground strikes in the same breath. And `patient` never comes up in an
+auto-plan: it fired **0 times in 200 fights**. So every knockdown in the game became a grappling exchange
+instantly, which is why a drop never read as a drop. There is now a flash knockdown: how clear his head is
+on the way down, his scramble and his heart against the other man's killer instinct decide whether he
+turns, posts and is up before the other man can settle on him. It comes out at **34% of knockdowns**.
+
+Fixing that exposed a real bug underneath. The knockdown branch of `land()` never checked whether the man
+was already on the mat, while the knockout branch beside it always has — so ground-and-pound was scoring
+"knockdowns" on a man who was already down, and counting them in the stats. It went unnoticed because what
+followed only ever put him on the ground, which he already was; the moment anything stood him back up it
+crashed the ground tick outright. A man on the mat cannot be knocked down, so there it is a bad shot that
+hurts him and nothing more.
+
+| per fight | before | after | real |
+|---|---|---|---|
+| knockdowns | 0.55 (counting ground shots) | **0.39** | ~0.4 |
+| fights with one | 42% | **37%** | ~30% |
+| knockdowns ending standing | 0% | **34%** | — |
+
+The finish mix is unchanged by it: KO 21%, TKO 23%, submission 23%, decision 33%.
+
 ### The ball on the chin (2026-11-19)
 
 The jaw is a capsule from the middle of the head out to a jaw point. It sat 0.075 forward and 0.075 down,
