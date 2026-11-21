@@ -20775,6 +20775,26 @@ defences|Johnny Eblen|3`,
           for (const u of [0.5, 1]) { const p = mix(M.P[b.A], M.P[b.B], u), r = lerp(b.ra, b.rb, u); if (p[1] < r) shove(M, b, u, [0, r - p[1], 0]); }
         }
       }
+      // nor through the fence. The same as the mat, against the octagon's eight panels instead of the floor:
+      // the deepest panel wins, which in a corner is the one he is furthest through. Holding where the two of
+      // them stand is not enough on its own — a man taken down on the fence has his stance inside it and a
+      // heel a metre out, which is 31 cm through the cage, and holding the stance alone still left 19.
+      const FENCE_M = Math.cos(Math.PI / 8) * UNIT_M;
+      function fence(M) {
+        if (CFG.fence === false) return;
+        for (let i = 0; i < 4; i++) for (let sg = 0; sg < 2; sg++) {
+          const b = bone(M, i, sg);
+          for (const u of [0.5, 1]) {
+            const p = mix(M.P[b.A], M.P[b.B], u), r = lerp(b.ra, b.rb, u);
+            let worst = 0, nx = 0, nz = 0;
+            for (let k = 0; k < 8; k++) {
+              const a = k * Math.PI / 4, c = Math.cos(a), sn = Math.sin(a), d = p[0] * c + p[2] * sn - (FENCE_M - r);
+              if (d > worst) { worst = d; nx = c; nz = sn; }
+            }
+            if (worst > 0) shove(M, b, u, [-nx * worst, 0, -nz * worst]);
+          }
+        }
+      }
       // what was corrected last frame (st.ct: by how much, each moved point, and T, the whole of him) put back
       // on the pose as it comes, let go a little (back towards the pose as posed, LET_GO): pressed on, the push
       // puts it back to the surface; let go, it eases out
@@ -20808,7 +20828,7 @@ defences|Johnny Eblen|3`,
         X.who = 'a'; Y.who = 'b';
         warm(X, sa, dt); warm(Y, sb, dt);
         // (apart, each only out of himself: a few rounds)
-        if (self && !(on && !CONTACT.off)) for (let it = 0; it < 4; it++) { selfOut(X); selfOut(Y); floor(X); floor(Y); for (let i = 0; i < 4; i++) { fix(X, i); fix(Y, i); } }
+        if (self && !(on && !CONTACT.off)) for (let it = 0; it < 4; it++) { selfOut(X); selfOut(Y); floor(X); floor(Y); fence(X); fence(Y); for (let i = 0; i < 4; i++) { fix(X, i); fix(Y, i); } }
         if (on && !CONTACT.off) {
           const prev = [sa.ctMem || {}, sb.ctMem || {}], mem = [{}, {}];
           // (each round: the trunks, the limbs off each other, then out of the trunks and off the mat, which
@@ -20821,6 +20841,7 @@ defences|Johnny Eblen|3`,
             if (!CFG.outLast) limbsApart(X, Y, mem[0], prev[0]);
             if (self) { selfOut(X); selfOut(Y); }
             floor(X); floor(Y);
+            fence(X); fence(Y);
             for (let i = 0; i < 4; i++) { fix(X, i); fix(Y, i); }
           };
           for (let it = 0; it < CFG.iters; it++) round();
@@ -22349,6 +22370,19 @@ defences|Johnny Eblen|3`,
   // circles and the one pivoting pivots), pushed apart along the line between them to the spacing the
   // picture wants, and his footwork gets him there; each faces the other, give or take the angle the
   // engine says he's been left at. On the mat they're laid out along the line they went down on.
+  // How far back inside the octagon a man standing at (x, z) has to come, or null when he is already in it.
+  // CAGE_IN is how close his middle gets to a panel: his own depth, so his back stops against the fence
+  // rather than halfway through it. The deepest panel wins — in a corner that is the one he is most through.
+  const CAGE_IN = 0.3, APO_M = Math.cos(Math.PI / 8) * UNIT_M;
+  function intoCage(x, z) {
+    if (FV.cageOff) return null;   // (for measuring against: tests/camtest.js)
+    let worst = 0, nx = 0, nz = 0;
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4, c = Math.cos(a), s = Math.sin(a), d = x * c + z * s - (APO_M - CAGE_IN);
+      if (d > worst) { worst = d; nx = c; nz = s; }
+    }
+    return worst > 0 ? [-nx * worst, -nz * worst] : null;
+  }
   function fighters3({ st, sep, ground, mid, ux, uy, vnow, dt, pa, pb }) {
     const cam = FV.cam, A = cam.a, B = cam.b;
     const moment = E.SECS_PER_TICK * 1000 / (FV.speed || 1), k = 1 - Math.exp(-dt / Math.max(120, moment * 0.3));
@@ -22474,6 +22508,18 @@ defences|Johnny Eblen|3`,
       atB = stepper3(B, TB, ang + Math.PI + off(B, ang + Math.PI), vnow, dt);
       // the line they'd go down on, and its middle
       c.ang = ang; c.mx = (atA.ax + atB.ax) / 2; c.mz = (atA.az + atB.az) / 2; c.down = false; c.topA = null;
+    }
+    // ---- the cage. The engine keeps each man inside the octagon (FENCE of the apothem) and nothing the
+    // picture does afterwards knows about it: the pair is pushed apart to the spacing the camera wants, the
+    // restless feet add their own offset, a step carries him further still, and a takedown moves the middle
+    // of the mat to where they went down. Any of those can put a man through the fence — the engine's own
+    // limit leaves 3.66 m to the panel and the spacing push alone is good for another 0.8. Held here, last,
+    // where the two of them are finally standing, each on his own: the man who has run out of room stops at
+    // the fence and the other closes on him, which is what being backed onto the cage looks like. (What the
+    // bodies then do about each other is the contact pass's business, as it always was.)
+    for (const at of [atA, atB]) {
+      const v = intoCage(at.ax, at.az);
+      if (v) { at.ax += v[0]; at.az += v[1]; }
     }
     atA.thKey = atB.thKey = ground ? 'ground' : 'stand';
     view.pair = pairNow(st, c.ang);
@@ -22737,7 +22783,7 @@ defences|Johnny Eblen|3`,
     if (e.key === 'Escape' && FV.phase === 'prefight' && pcMode()) { e.preventDefault(); close(); }
   }
 
-  MMA.fightview = { active, open, openNext, spectate, close, actions, onChange, onKey, phaseKey, helpFor, current: () => FV.fight, setSpeed: (s) => { FV.speed = s; }, camEvents: (e) => camEvents(e), camMotion: (l) => camMotion(l), cam: () => FV.cam, camLive: (v) => { FV.camForceLive = v; }, camFrame: (t) => { cancelAnimationFrame(FV.raf); runClock(t); drawFrame(t); }, camStats: () => ({ running: FV.running, acc: FV.acc, sub: FV.sub, presentAt: FV.presentAt }), figure: FIG, anim: ANIM,
+  MMA.fightview = { active, open, openNext, spectate, close, actions, onChange, onKey, phaseKey, helpFor, current: () => FV.fight, setSpeed: (s) => { FV.speed = s; }, camEvents: (e) => camEvents(e), camMotion: (l) => camMotion(l), cam: () => FV.cam, camLive: (v) => { FV.camForceLive = v; }, cageOff: (v) => { FV.cageOff = v; }, camFrame: (t) => { cancelAnimationFrame(FV.raf); runClock(t); drawFrame(t); }, camStats: () => ({ running: FV.running, acc: FV.acc, sub: FV.sub, presentAt: FV.presentAt }), figure: FIG, anim: ANIM,
     fig2: (v) => { if (v != null) FV.fig2 = !!v; return FV.fig2; },
     fig3: (v) => { if (v != null) { FV.fig3 = !!v; if (v) FV.fig2 = true; } return FV.fig3; }, three: () => C3 };
 })(globalThis.MMA = globalThis.MMA || {});

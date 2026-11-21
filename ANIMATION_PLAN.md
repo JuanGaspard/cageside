@@ -1821,6 +1821,37 @@ switch, and single-situation numbers are only trustworthy where the situation it
 are (23, 23, then 0, 0, 0), the wall walk is not (48, 34 and 15 frames back to back, worst 0.59, 0.78, 0.66).
 Nothing here should be read as a measured improvement in the aggregate; the kick result stands on its own.
 
+### The cage was a drawing (2026-11-20)
+
+The engine has always kept each man inside the octagon — `place()` clamps him to `FENCE` of the apothem,
+3.66 m of the 4.25 — and nothing the picture does afterwards knew the fence was there. The pair is pushed
+apart to the spacing the camera wants (good for another 0.8 m on its own), the restless feet add their
+offset, a step carries him further, and a takedown moves the middle of the mat to wherever they went down.
+So the cage was scenery: a thing drawn around them rather than a thing they could touch.
+
+It took two parts, and the first alone was not enough.
+
+Holding where the two of them finally stand (`intoCage`, their middles kept their own depth off a panel)
+fixes ordinary footwork. It does **not** fix a takedown, because a man taken down on the fence has his
+stance comfortably inside it and a heel a metre out: of the 31 cm he was through the cage, that left 19.
+
+So the fence is now a surface in the contact pass, the octagon's eight panels exactly as the mat is already
+a floor — the deepest panel wins, which in a corner is the one he is furthest through. Limbs stop at it
+with the same bone-preserving shove that keeps them off the ground.
+
+| a takedown on the fence | through the cage |
+|---|---|
+| before | 30.7 cm, 4% of frames |
+| holding where they stand | 19.4 cm |
+| the fence as a surface too | **0 cm, 0%** |
+
+It costs nothing in the middle of the cage, where it never engages: jitter in the held positions is
+unmoved (84/151/86 against 86/162/82 with it off) and overlap shows no effect at all — three runs of the
+same measurement climbed 13.4, 16.9, 19.1 cm regardless of the flag, which is the run-order drift these
+numbers have always had rather than anything the fence does.
+
+Both halves have a switch for measuring against: `FV.cageOff` and `CFG.fence`.
+
 ### The twitching on the mat (2026-11-20)
 
 Measured as each joint's second difference frame to frame — the zigzag — against how far it actually
