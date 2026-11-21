@@ -1981,6 +1981,68 @@ and 0.046 down with the end widened to 0.06, so what shows past the head is a le
 2.8 cm deep — the line of a jaw rather than a 2:1 dome. (The side view was already fine: its head is a
 circle of radius 0.12, which swallowed most of the same capsule.)
 
+### The sprawl, and the man who was lowered onto the man he threw (2026-11-20)
+
+Two complaints, one cause each, and a new measuring tool for both: `tests/pairs.js`, which reads a
+technique for two by whether the two of them are actually on each other (chest to chest, fists to trunk,
+fists to legs) and whether they get there like bodies do (the hips' fastest fall against what the same fall
+under gravity alone would reach).
+
+**The sprawl was two men doing separate things near each other.** Every other technique for two in the game
+is a `pair` file — one clock, both men keyed together, grips on each other, a path over the mat. The sprawl
+was the one that was not: `shootStuffed` for the shooter and `sprawlReact` for the man sprawling, two single
+clips played at the same time and nothing joining them. Nothing moved them together, nothing held one
+against the other, and the contact pass does not even run standing up. Measured at the deepest point of it:
+
+| | two clips | one `pair` |
+|---|---|---|
+| the two chests at their closest | 0.76 m | **0.35 m** |
+| the sprawler's fists to his trunk | 0.43 | **0.13** |
+| the shooter's fists to the legs | 0.21 | **0.13** |
+| the sprawler's chest above his | 0.28 | **0.26–0.36** |
+| shooter's hips: fastest fall / the same fall under gravity | 64% | **122%** |
+| sprawler's hips | 71% | **107%** |
+| deepest either body is inside the other | 0.068 | 0.122 |
+
+So `anim/pairs/sprawlStuff.json`, and three things the pair machinery did not have, because every pair until
+now was announced by the position changing and this one changes nothing:
+
+- `close` in the file, and `closeRows` in the fight cam. A takedown's two men are already placed for it; a
+  shot is thrown in the middle of the striking from wherever that left them, 1.3 m apart one time and 1.5 m
+  the next. So the distance the shooter has to cover is worked out when it starts, enough to leave `gap`
+  between them, and `side` takes him in past a leg rather than down the middle — head-on, his head went
+  19 cm into the chest coming down to meet it.
+- `fig.pairAt`, set when the shot is thrown and fired when it arrives, and `rejoin`, which tells the
+  pipeline the pose has been handed over. Without it the hand-over happened in one frame: 15 to 19 joints
+  over 3 cm as the sprawl began.
+- The contact pass switched on for its length, so the chest rests on the back instead of through it.
+
+The honest cost is 12 cm of one body inside the other in the frame they collide, against 7 cm before — when
+they were never touching, which is an easy way to keep two bodies out of each other. The mean over the
+whole thing is 1.2 cm against 0.6.
+
+**The takedown was the shooter's shot and his drive both playing at once.** A shot that works is shown for a
+little under half its length and then the technique for the two of them takes it to the mat — but the shot's
+own clip went on running underneath for the other half, and a clip plays as a difference laid on top of the
+pose, so both were being added together. That was every jolt the double-leg had (14 to 25 joints over 3 cm
+in a single frame, always the same frame) and his arms doing two things either side of it. A technique for
+two now drops the shot that brought them there. It can simply go, with nothing to fade: the technique starts
+from the pose he is in, the shot included.
+
+| double-leg | before | after |
+|---|---|---|
+| jolts | 14–25, all in one frame | **0** |
+| deepest either body is inside the other | 0.099 | **0.060** |
+
+And the float in it was lateness, not speed. The man thrown hit the mat 210 ms before the man who threw him
+settled onto him: he landed, and then the other was lowered after him. The lift in the drive is higher and
+the landing key lower and earlier, so the drive has further to fall and falls steeper, and the two of them
+now arrive **85 ms** apart. His hips' peak speed is still about half of a free fall, and should be — he is
+driving forward over his feet and onto his knees, not dropping.
+
+Every other technique and attempt was measured after it: 0 to 3 jolts each, overlap in the range it has
+always been, and the held positions unmoved (mean 0.1 to 1.2 cm).
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

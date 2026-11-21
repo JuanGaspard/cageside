@@ -11,21 +11,21 @@
         "footL": [0.22, 0.06, -0.12], "toeL": [0, 0.6], "kneeL": [1, -0.6, -0.2], "footR": [-0.62, 0.1, 0.16], "toeR": [-0.4, 0.9], "kneeR": [1, -0.6, 0.3] } },
       "bot": { "pose": "guard", "set": { "root": [-0.06, 0.82], "pelvis": [-0.3, 0.4, 0], "spine": [0, 0.3, 0], "neck": [0, 0.3] } } },
     { "t": 480, "note": "the drive: the back foot up under him, chest up, through him; his knees go and he tips back, arms out",
-      "top": { "set": { "root": [0.3, 0.62], "pelvis": [0, 0.7, 0], "spine": [0, 0.2, 0], "neck": [0, -0.85],
+      "top": { "set": { "root": [0.3, 0.67], "pelvis": [0, 0.7, 0], "spine": [0, 0.2, 0], "neck": [0, -0.85],
         "footL": [0.2, 0.07, -0.16], "toeL": [0, 0.3], "kneeL": [1, 0, -0.2], "footR": [-0.12, 0.07, 0.2], "toeR": [-0.2, 0.5], "kneeR": [1, 0, 0.3] } },
       "bot": { "set": { "root": [-0.18, 0.62], "pelvis": [0, -0.35, 0], "spine": [0, 0.05, 0], "neck": [0, 0.45],
         "footL": [0.22, 0.12, -0.12], "footR": [0.1, 0.16, 0.14], "kneeL": [1, 0.3, -0.2], "kneeR": [1, 0.3, 0.2],
         "handL": [0.1, 0.05, -0.38], "handR": [0.1, 0.05, 0.38], "elbowL": [0, 0, -1], "elbowR": [0, 0, 1] } } },
-    { "t": 700, "note": "he lands on his backside, legs up, chin tucked; the shooter coming down onto his knees after him",
-      "top": { "set": { "root": [0.25, 0.42], "pelvis": [0, 0.85, 0], "spine": [0, 0.3, 0], "neck": [0, -0.6],
+    { "t": 700, "note": "he lands on his backside, legs up, chin tucked, and the shooter comes down onto his knees with him. The two of them used to arrive 200 ms apart — the man thrown hit the mat and then the man who threw him was lowered onto him, which is the floating. The lift at 480 is higher and this is lower, so the drive has further to fall and falls steeper.",
+      "top": { "set": { "root": [0.25, 0.37], "pelvis": [0, 0.85, 0], "spine": [0, 0.3, 0], "neck": [0, -0.6],
         "footL": [-0.15, 0.06, -0.18], "toeL": [3.14, 0.3], "kneeL": [1, -0.5, -0.3], "footR": [-0.3, 0.06, 0.2], "toeR": [3.14, 0.3], "kneeR": [1, -0.5, 0.3] } },
       "bot": { "set": { "root": [-0.12, 0.17], "pelvis": [0, -0.95, 0], "spine": [0, -0.15, 0], "neck": [0, 0.65],
         "footL": [0.5, 0.38, -0.12], "footR": [0.48, 0.42, 0.14], "toeL": [0, 0.6], "toeR": [0, 0.6], "kneeL": [0.3, 1, -0.5], "kneeR": [0.3, 1, 0.5],
         "handL": [0.12, 0.02, -0.36], "handR": [0.12, 0.02, 0.36] } } },
-    { "t": 900, "note": "flat on his back, the head following; the shooter's chest down on him, following through",
-      "top": { "mix": 0.8, "add": { "root": [0.04, -0.04], "pelvis": [0, 0.35, 0], "spine": [0, 0.1, 0] } },
+    { "t": 790, "note": "flat on his back, the head following; the shooter's chest down on him, following through. The timing of this key and the next is the whole weight of the finish: at 900 and 1150 the shooter's hips sank the last 58 cm at 1.5 m/s against the 3.4 the same fall under gravity alone would reach, and he came down after the man he had just thrown as though he were being lowered onto him. He gets there in two thirds of the time now, which is the half-second a double-leg finish takes in the footage.",
+      "top": { "mix": 0.88, "add": { "root": [0.04, -0.04], "pelvis": [0, 0.35, 0], "spine": [0, 0.1, 0] } },
       "bot": { "mix": 0.75, "add": { "neck": [0, 0.25] } } },
-    { "t": 1150, "top": { "mix": 1, "add": { "root": [0, -0.02], "pelvis": [0, 0.1, 0] } }, "bot": { "mix": 1, "add": { "neck": [0, 0.05] } } },
+    { "t": 920, "top": { "mix": 1, "add": { "root": [0, -0.02], "pelvis": [0, 0.1, 0] } }, "bot": { "mix": 1, "add": { "neck": [0, 0.05] } } },
     { "t": 1400, "top": "@to", "bot": "@to", "tan": "flat" }
   ],
   "grips": [
@@ -35,8 +35,8 @@
     { "who": "bot", "eff": "handR", "to": ["Ch", "N", 0.5], "out": [-1, 0, 0], "add": [0, 0, 0.1], "t": [80, 520] }
   ],
   "place": {
-    "top": [[0, 0, 0, 0, 0], [220, 0.2, 0.15, 0, 0], [480, 0.45, 0.22, 0, 0], [700, 0.75, 0.12, 0, 0], [900, 0.95, 0.03, 0, 0], [1400, 1, 0, 0, 0]],
-    "bot": [[0, 0, 0, 0, 0], [220, 0.04, 0.02, 0, 0], [480, 0.3, 0.05, 0, 0], [700, 0.8, 0.04, 0, 0], [900, 0.97, 0, 0, 0], [1400, 1, 0, 0, 0]]
+    "top": [[0, 0, 0, 0, 0], [220, 0.2, 0.15, 0, 0], [480, 0.45, 0.22, 0, 0], [700, 0.75, 0.12, 0, 0], [790, 0.95, 0.03, 0, 0], [1400, 1, 0, 0, 0]],
+    "bot": [[0, 0, 0, 0, 0], [220, 0.04, 0.02, 0, 0], [480, 0.3, 0.05, 0, 0], [700, 0.8, 0.04, 0, 0], [790, 0.97, 0, 0, 0], [1400, 1, 0, 0, 0]]
   },
-  "land": { "top": { "at": 0.64, "root": -0.0012, "spine": 0.002 }, "bot": { "at": 0.5, "root": -0.0018, "spine": -0.003 } }
+  "land": { "top": { "at": 0.565, "root": -0.0014, "spine": 0.0022 }, "bot": { "at": 0.5, "root": -0.0018, "spine": -0.003 } }
 }

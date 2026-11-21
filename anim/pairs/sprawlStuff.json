@@ -1,0 +1,35 @@
+{
+  "id": "sprawlStuff",
+  "note": "A shot stopped by a sprawl, for two. `top` is the man sprawling (he ends on top of the shot, hence the role name, though nobody goes to the mat); `bot` is the man shooting. Both start and end on their feet in their stance, so `@from` and `@to` are the same pose and this is the one technique for two that changes nothing — it is here because the two halves have to happen to each other. Played as two separate clips (shootStuffed and sprawlReact) they never touched: measured at the deepest point of the sprawl, the two chests stayed 72 cm apart and the sprawler's hands never came within 39 cm of the man under them, and both men dropped at about two thirds of gravity. So: one clock, grips on each other, a path over the mat worked out when it starts (`close` — the shot is thrown from wherever the striking left them), and the contact pass switched on for its length so the chest actually rests on the back.",
+  "from": ["stand"],
+  "to": ["stand"],
+  "keys": [
+    { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
+    { "t": 205, "note": "the level change and the penetration step. The man in front of him is only starting to read it: his hips lift the inch they do before they are thrown, which is also what gives the drop something to fall through. The timing here is what decides whether the sprawl reads as a man throwing himself down or lowering himself: the hips fall 36 cm from this key to the next, and the pose the figure shows lags the clip by about 60 ms, so over the 180 ms this key first had they bottomed out at 2.0 m/s against the 2.9 the same drop under gravity alone would reach. At 125 ms they beat it.",
+      "top": { "mix": 1, "add": { "root": [-0.02, 0.035], "pelvis": [0, 0.06, 0], "neck": [0, -0.1] } },
+      "bot": { "set": { "root": [0.02, 0.7], "pelvis": [-0.4, 0.35, 0], "spine": [-0.15, 0.3, 0], "neck": [0.5, -0.3], "handL": [0.35, 0.05, -0.1], "handR": [0.3, 0.05, 0.1] } } },
+    { "t": 330, "note": "he arrives on the hips; the feet are kicked back and the hips thrown down, the chest over his back and the hands onto it. This is the moment of contact. The sprawling pose reaches its hands well forward, which is right with a man square in front of it and wrong with one coming in past a leg (`close.side`): the left forearm went 17 cm through him. Here they are held higher and shorter and come down onto the back as the grips take hold, rather than out through where he was.",
+      "top": { "pose": "sprawl", "set": { "handL": [0.21, -0.08, -0.22], "handR": [0.21, -0.11, 0.22], "elbowL": [-0.3, 0.45, -1], "elbowR": [-0.3, 0.45, 1] } },
+      "bot": "shot" },
+    { "t": 450, "note": "the weight comes down: flattened on his knees with his head driven under the chest",
+      "top": "sprawlHeavy", "bot": "sprawled", "tan": "flat" },
+    { "t": 780, "top": "sprawlHeavy", "bot": "sprawled", "tan": "flat" },
+    { "t": 1020, "note": "he backs out from under it, hips still low; the sprawler's hips come up after him",
+      "top": { "mix": 0.45, "add": { "root": [-0.1, -0.06], "pelvis": [0, 0.3, 0] } },
+      "bot": { "mix": 0.4, "add": { "root": [-0.1, -0.12], "pelvis": [-0.2, 0.5, 0], "neck": [0.2, -0.2] } } },
+    { "t": 1350, "top": "@to", "bot": "@to", "tan": "flat" }
+  ],
+  "events": { "impact": 330 },
+  "grips": [
+    { "note": "The sprawler's hands are not laid on until he has the pose that puts his elbows out to the sides (330). Pulled on from 300, while the arm was still on its way over from the stance, the hand went to the back by the short way and the forearm cut through the chest it was reaching over: 16 cm of it, the deepest moment anywhere in the technique. The shooter's hands come off the legs early and are aimed three quarters of the way to the knee rather than halfway — the hips are going away from him, and reaching for the hip put his upper arm through the chest now lying on top of him.",
+      "who": "top", "eff": "handL", "to": ["Ch", "W", 0.25], "out": [-1, 0, 0], "add": [0, 0, -0.08], "t": [330, 980], "fade": 200 },
+    { "who": "top", "eff": "handR", "to": ["Ch", "W", 0.6], "out": [-1, 0, 0], "add": [0, 0, 0.08], "t": [330, 980], "fade": 200 },
+    { "who": "bot", "eff": "handL", "to": ["hpR", "knR", 0.75], "out": [-1, 0, 0], "t": [300, 560] },
+    { "who": "bot", "eff": "handR", "to": ["hpL", "knL", 0.75], "out": [-1, 0, 0], "t": [300, 560] }
+  ],
+  "close": { "gap": 0.42, "backs": 0.12, "side": 0.18,
+    "rows": [[0, 0, 0], [205, 0.3, 0], [330, 1, 0], [780, 1, 0], [1020, 0.78, 0.25], [1350, 0, 1]] },
+  "contacts": { "top": { "L": [[0, 130], [300, 1350]], "R": [[0, 130], [300, 1350]] },
+    "bot": { "L": [[0, 160], [330, 1350]], "R": [[0, 1350]] } },
+  "land": { "top": { "at": 0.33, "root": -0.0018, "spine": 0.0024 }, "bot": { "at": 0.36, "root": -0.0014, "spine": 0.0026 } }
+}
