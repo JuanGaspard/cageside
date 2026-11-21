@@ -2043,6 +2043,67 @@ driving forward over his feet and onto his knees, not dropping.
 Every other technique and attempt was measured after it: 0 to 3 jolts each, overlap in the range it has
 always been, and the held positions unmoved (mean 0.1 to 1.2 cm).
 
+### Three different answers to the same punch (2026-11-21)
+
+A strike that didn't land was not landed in any particular way. The engine tossed a coin for whether the
+arms took it — `rng.chance(0.45)`, flat, for everyone, whoever was in front of it — and that was all it
+knew. The picture then picked a slip, a parry, a roll or a step back of its own accord, at random. The
+commentary drew from a pool whose lines named a slip, a roll, a parry and a high guard, also at random. So
+one punch, and three unrelated answers to it, none of them anything to do with the two men.
+
+Now `Fight.defence` picks it, from a table (`DEFENCE`) of what each one answers, the attribute it runs on
+and how much of it a man does, and the picture and the commentary are told which. A hurt man covers up, a
+tired man stops moving his head, a man told to circle gives ground, a man told to counter slips and parries.
+Blocking still comes out at the 45% the coin used to give, so nothing in the balance moved:
+
+| of everything that misses | |
+|---|---|
+| blocked | 47.4% |
+| stepped away from | 15.9% |
+| checked | 8.6% |
+| parried | 8.2% |
+| slipped | 7.3% |
+| pulled back from | 7.1% |
+| rolled under | 5.5% |
+
+The point of naming it is the other half: each one leaves him somewhere. A man who slips a jab is set,
+facing, and inside the arm that has just gone past his ear; a man who steps back out of range is none of
+those things. That is `open` in the table, and `Fight.counterShot` is what it opens — one strike back
+before the hand is home, carrying the counter's edge (it finds an open target and hits harder). Not a
+combination, and a counter is never itself countered: the man who threw first is the one out of position,
+and two men countering each other forever is not a fight.
+
+And the shot met on the way in. A man who reads the level change can bring a knee up into it, before the
+takedown resolves, and what it does to him comes off the shot.
+
+| per fight, 3,100 fights each way | before | after | real |
+|---|---|---|---|
+| counters, of all strikes thrown | 7.5% | **13.2%** | 10–15% |
+| of shots met with a knee | 3.0% (the sprawl-and-brawl punish) | **9.6%** | a few a card |
+| strikes thrown per minute | 6.81 | 7.20 | — |
+| accuracy | 42.3% | 42.5% | ~45% |
+| KO/TKO | 30.5% | 32.8% | ~33% |
+| submission | 23.1% | 22.3% | ~20% |
+| decision | 46.4% | 44.9% | ~47% |
+| takedown accuracy | 43.6% | 42.4% | ~43% |
+
+Everything that moved, moved towards the real numbers. Two switches for measuring against, `TUNE.counter`
+and `TUNE.kneeOnShot`, and a new tool, `tests/counters.js`, which reads the motion list — the same stream
+the picture is fed — so what it counts is exactly what is shown.
+
+Three things fell out of it along the way:
+
+- A leg kick that missed could not be checked, because misses were never "blocked" for the legs. The only
+  checks in the fight were on kicks that landed. Now a kick that comes up against a shin costs the man who
+  threw it, as a checked kick that lands does.
+- A man could be countered in the middle of his own combination, and carry on behind his jab with his legs
+  gone. The rest of the combination doesn't happen any more if what came back hurt him.
+- A knee thrown at a shot was erased from the picture. The sprawl clears whatever the two of them are
+  throwing when it starts — an act already running is in the pose the technique starts from, so it would be
+  counted twice — but it was clearing acts that hadn't started yet as well. And the knee arrived too late:
+  it was scheduled for where the shot's own blow would have landed, by which time he is on the floor under
+  a sprawl and the knee was being thrown from on top of him. It goes in early now, while he is still coming.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

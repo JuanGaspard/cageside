@@ -7427,7 +7427,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // (shock 1.66 -> 1.45: the combinations got longer and the action came in flurries, so a hurt man now eats
   // three shots where he used to eat one, and the finish rate went from 29% of fights to 38% on its own.
   // The pace is what was wanted; the knockouts following from it were not)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1 };
+  // (`counter`: how much of a shot a man who slipped or parried fires back — Fight.counterShot. 0 turns
+  // counters off, which is how the two builds were measured against each other.)
+  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1 };
   // Weight classes fight differently: heavyweights hit far harder, throw less and tire sooner; the small men
   // throw more, hit softer and go to decision more often (as in the UFC's own numbers).
   const WEIGHT = {
@@ -7671,6 +7673,13 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     missClinch: ['{o} frames on the hips and blocks the {s}.', '{o} pins the arm and smothers the {s}.', '{o} turns his hip and the {s} hits nothing but thigh.', '{o} keeps his head tight to the chest; the {s} glances off.', '{o} controls the wrist and the {s} has no room.'],
     missSpin: ['{a} spins... and misses with the back fist. Ambitious.', '{a} goes for the spinning back fist and loses his balance.', '{o} sees the spin coming and steps away.'],
     missGnp: ['{o} ties up the arms and smothers the shots.', '{o} turns away from the punches.', '{o} blocks the shots with his forearms.', '{o} pulls {a} into his chest to stop the ground-and-pound.'],
+    defBlock: ['{o} catches the {s} on the gloves.', '{o} blocks the {s} behind a high guard.', '{o} takes the {s} on the arms.', 'The {s} thuds into {o}\'s guard.', '{o}\'s elbows are tight; the {s} finds nothing.'],
+    defParry: ['{o} parries the {s} away.', '{o} slaps the {s} down.', 'A clean parry: the {s} goes past {o}\'s shoulder.', '{o} picks the {s} off with the lead hand.'],
+    defSlip: ['{o} slips the {s}.', '{o} slips off the line and the {s} finds air.', 'The {s} goes past {o}\'s ear.', '{o} slips inside the {s}.', 'Lovely head movement: {o} slips the {s}.'],
+    defRoll: ['{o} rolls under the {s}.', '{o} ducks under the {s} and comes up on the outside.', 'The {s} sails over {o}\'s head.', '{o} shoulder-rolls the {s}.'],
+    defLean: ['{o} pulls back and the {s} misses by an inch.', '{o} leans out of the {s}.', '{o} takes his head back and the {s} is short.', 'The {s} comes up a hair short: {o} saw it.'],
+    defStep: ['{o} steps back out of the {s}.', '{o} gives ground and the {s} falls short.', '{a} reaches with the {s} and comes up short.', '{o} is gone before the {s} gets there.'],
+    kneeOnShot: ['{o} brings the knee up into the shot!', '{a} drops levels and runs his head into a knee!', '{o} times the level change and meets it with a knee!', 'Knee on the way in! {a} shot straight into it.'],
     checked: ['{o} checks the {s}, and {a} winces.', 'Checked! {a}\'s shin bangs off {o}\'s knee.', '{o} lifts the shin; the {s} is checked hard.', '{o} checks the {s} cleanly.', 'Shin on shin! {o} checks it.'],
     caught: ['{o} catches the {s}!', '{o} traps the leg!', '{o} snatches the {s} out of the air!', '{o} scoops the kick and drives forward!'],
     legBuckle: ['{o}\'s leg buckles! He can barely stand.', '{o} is limping badly; that lead leg is gone.', '{o} hops on one leg after that {s}!', '{o}\'s knee gives way under him!'],
@@ -7786,6 +7795,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   const RECENT = {};
   const CUT_LOCS = ['over the left eye', 'over the right eye', 'on the eyebrow', 'on the forehead', 'on the bridge of the nose', 'under the eye', 'along the hairline'];
   const MISS_POOL = { jab: 'missJab', spinning: 'missSpin', headKick: 'missKickHead', bodyKick: 'missKickBody', legKick: 'missKickLeg', calfKick: 'missKickLeg', knee: 'missClinch', bodyKnee: 'missClinch', elbow: 'missClinch' };
+  // and the line for what he actually did with it (Fight.defence), so the words, the picture and the
+  // engine all say the same thing about the same punch. `missPunch` used to name a slip, a roll, a parry
+  // and a high guard in the one pool and pick between them at random.
+  const DEF_POOL = { block: 'defBlock', parry: 'defParry', slip: 'defSlip', roll: 'defRoll', leanBack: 'defLean', stepBack: 'defStep', check: null };
 
   Fight.prototype.pick = function (arr) { return arr[Math.floor(this.trng.next() * arr.length)]; };
   // A fresh line from a named pool: skips the ones heard recently.
@@ -7815,8 +7828,8 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // Say a commentary line. `side` is who gets the credit (defaults to the actor).
   // What the fighters' bodies did this moment, for the fight view to act out: every strike thrown (landed,
   // blocked or slipped) and every shot at a takedown. Kept only for fights someone is watching.
-  Fight.prototype.moved = function (s, key, hand, land, target, dmg, blocked) {
-    if (this.motion) this.motion.push({ by: s.side, key, lead: hand === s.lead, land, target, dmg: dmg || 0, blocked: !!blocked });
+  Fight.prototype.moved = function (s, key, hand, land, target, dmg, blocked, def) {
+    if (this.motion) this.motion.push({ by: s.side, key, lead: hand === s.lead, land, target, dmg: dmg || 0, blocked: !!blocked, def: def || null, counter: !!s._counter });
   };
   Fight.prototype.call = function (pool, a, o, imp, kind, x, side) {
     if (this.quiet && imp < 3) return;
@@ -8670,8 +8683,12 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     else if (style === 'light' || style === 'counter') len = Math.min(len, 3);
     if (style === 'power' && len < 2 && rng.chance(0.5)) len = 2;
     const range = this.pos === 'clinch' ? 'clinch' : this.range;
+    // (a man can now be countered in the middle of his own combination — see counterShot. If what comes
+    // back hurts him, the rest of the combination does not happen: he is not still working behind a jab
+    // with his legs under him. He was already out if it finished the fight or put it on the mat.)
+    const wasRocked = !!s.rocked;
     let prev = null;
-    for (let i = 0; i < len && !this.over && this.pos !== 'ground'; i++) {
+    for (let i = 0; i < len && !this.over && this.pos !== 'ground' && !(s.rocked && !wasRocked); i++) {
       // A kick is how a combination STARTS, not the whole of it. `kick` makes pickStrike return nothing but
       // kicks, so every strike after the first was another kick too: 65% of kick combinations came out as
       // two kicks back to back, and the leg-kick pairs among them (legKick and calfKick in either order,
@@ -8684,6 +8701,70 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     }
   };
 
+  // ---------------------------------------------------------------- how a strike is not landed
+  // A strike that doesn't land is not landed in some particular way, and the engine did not know which.
+  // It tossed a coin for whether the arms took it (0.45, flat, for everyone), the picture then picked a
+  // slip, a parry, a roll or a step back of its own accord, and the commentary named a third thing: three
+  // different answers to the same punch, none of them anything to do with the man throwing it or the man
+  // in front of it. The engine picks it here, and the picture and the commentary are told what it picked.
+  //
+  // The other half of it is that each one leaves him somewhere. A man who slips a jab is set, facing, and
+  // inside the arm that has just gone past his ear; a man who steps back out of range is none of those
+  // things. `open` is how much of an answer it leaves him with, and `counterShot` below is the answer.
+  //   on:   the shapes of strike it answers
+  //   att:  the attribute it runs on
+  //   w:    how much of it a man does before his attributes are counted
+  //   clinch: one he can still use tied up (there is nowhere to slip to in there)
+  const DEFENCE = {
+    block: { on: 'straight round up body', att: 'defense', w: 1.6, open: 0.12, clinch: 1 },
+    parry: { on: 'straight up', att: 'defense', w: 0.7, open: 0.55, clinch: 1 },
+    slip: { on: 'straight', att: 'evasion', w: 1.1, open: 0.95 },
+    roll: { on: 'round', att: 'evasion', w: 1.2, open: 0.85 },
+    leanBack: { on: 'straight round up', att: 'evasion', w: 0.55, open: 0.3, clinch: 1 },
+    check: { on: 'legs', att: 'kickDef', w: 1.5, open: 0.3 },
+    stepBack: { on: 'straight round up body legs', att: 'footwork', w: 0.8, open: 0.05 },
+  };
+  const SHAPE = { jab: 'straight', cross: 'straight', hook: 'round', overhand: 'round', spinning: 'round',
+    elbow: 'round', headKick: 'round', uppercut: 'up', knee: 'up',
+    bodyPunch: 'body', bodyKick: 'body', bodyKnee: 'body', legKick: 'legs', calfKick: 'legs' };
+  // Which one he uses: skill in it is most of it, and what he came in to do and the state he is in are the
+  // rest. A hurt man covers up, a tired man stops moving his head, and a man told to circle gives ground.
+  Fight.prototype.defence = function (o, key, S, range) {
+    const p = o.plan, shape = SHAPE[key] || (S.target === 'legs' ? 'legs' : S.target === 'body' ? 'body' : 'straight');
+    const legs = 0.5 + 0.5 * o.legF(), w = [];
+    for (const k in DEFENCE) {
+      const d = DEFENCE[k];
+      if (d.on.indexOf(shape) < 0 || (range === 'clinch' && !d.clinch)) continue;
+      let x = d.w * (0.3 + 1.4 * o.a[d.att]);
+      if (d.att === 'evasion' || k === 'stepBack' || k === 'check') x *= legs;
+      if (k === 'block' || k === 'parry') x *= (0.7 + 0.6 * o.a.discipline) * (k === 'block' ? 0.6 + 0.4 * o.armF() : 1);
+      if (k === 'stepBack' && p.vsPressure === 'circle') x *= 1.7;
+      if (p.vsPressure === 'counter' && (k === 'slip' || k === 'roll' || k === 'parry')) x *= 1.5;
+      if (p.mentality > 0.7) x *= k === 'stepBack' ? 0.45 : k === 'block' ? 1.25 : 1;
+      if (o.rocked) x *= k === 'block' ? 2.6 : k === 'stepBack' ? 1.4 : 0.35;
+      if (o.energy < 25 && (k === 'slip' || k === 'roll')) x *= 0.7;
+      w.push([k, x]);
+    }
+    return w.length ? this.rng.weighted(w) : 'block';
+  };
+  // The answer off the back of it: he comes back over the top of the shot that missed him, before the hand
+  // is home. One strike, not a combination, and it carries the edge a counter carries (`_counter`, which
+  // finds an open target and hits harder). A counter is not itself countered — the man who threw first is
+  // the one out of position, and two men countering each other forever is not a fight.
+  Fight.prototype.counterShot = function (o, s, def) {
+    if (this._countering || this.over || this.pos !== 'stand' || o.rocked || o.energy < 8) return;
+    const d = DEFENCE[def], p = o.plan;
+    if (!d || !d.open) return;
+    const c = d.open * (0.08 + 0.4 * o.a.timing) * (0.75 + 0.5 * o.iq()) * o.ef()
+      * (p.vsPressure === 'counter' ? 1.5 : p.vsPressure === 'trade' ? 1.1 : 0.8)
+      * (1.2 - 0.4 * s.a.discipline) + (o.m.counter || 0);
+    if (!this.rng.chance(clamp(c * TUNE.counter, 0, 0.5))) return;
+    this._countering = true;
+    o._counter = true;
+    this.throwStrike(o, this.pickStrike(o, this.range, 'counter', null), 0);
+    o._counter = false;
+    this._countering = false;
+  };
   Fight.prototype.throwStrike = function (s, key, idx) {
     const rng = this.rng, o = s.opp, S = D.STRIKES[key], p = s.plan;
     const skill = s.a[S.skill];
@@ -8755,22 +8836,34 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     s.stat('sigAtt', 1);
     s.stat(cls + 'Att', 1);
     if (!rng.chance(pHit)) {
+      // what he did with it, and so what the picture plays and the commentary says
+      const dfn = this.defence(o, key, S, range);
+      const blocked = dfn === 'block' || dfn === 'check';
+      this.moved(s, key, hand, false, S.target, 0, blocked, dfn);
       // a shot that's blocked rather than slipped still costs the arm that took it (the one on that side)
-      const blocked = S.target !== 'legs' && cls !== 'knee' && rng.chance(0.45);
-      this.moved(s, key, hand, false, S.target, 0, blocked);
-      if (blocked) {
+      if (dfn === 'block') {
         const ai = 1 - hand;
         o.hurtArm(ai, S.dmg * (cls === 'kick' ? 0.55 : 0.16) * rng.range(0.6, 1.3) * this.wc.pow);
         if (o.armHealth(ai) <= 0) { this.call('limbBreak', s, o, 3, 'ko', { sub: 'block', limb: 'arm' }); this.finish(s, 'TKO', 'Arm injury'); return true; }
+      } else if (dfn === 'check') {
+        // the shin came up and the kick hit the knee: it costs the man who threw it, as a checked kick
+        // that lands does. (Before this a leg kick that missed could not be checked at all — misses were
+        // never 'blocked' for the legs — so the only checks in the fight were on kicks that landed.)
+        s.hurtLeg(hand, 1 + 2.4 * o.a.kickDef);
+        if (!this.quiet && this.trng.next() < 0.5) this.call('checked', s, o, 0, 'strike', { s: S.name }, o.side);
       }
       // missed body and head kicks can be caught: wrestling plus kick defence
       if ((key === 'bodyKick' || key === 'headKick') && rng.chance((0.12 * o.a.wrestling * o.plan.takedowns + 0.08 * o.a.kickDef + 0.03) * (1 + o.m.catchKicks) * (s._kickRead ? 1.25 : 0.85))) {
         this.call('caught', s, o, 1, 'td', { s: S.name }, o.side);
         this.attemptTakedown(o, true);
-      } else if (!this.quiet && this.trng.next() < (idx === 0 ? 0.45 : 0.12)) {
-        const pool = MISS_POOL[key] || (cls === 'punch' ? 'missPunch' : 'missPunch');
+        return false;
+      }
+      if (!this.quiet && this.trng.next() < (idx === 0 ? 0.45 : 0.12)) {
+        // the line now says what he actually did (DEF_POOL); the kicks keep their own, which name the kick
+        const pool = (cls === 'punch' && DEF_POOL[dfn]) || MISS_POOL[key] || DEF_POOL[dfn] || 'missPunch';
         this.call(pool, s, o, 0, 'miss', { s: S.name }, o.side);
       }
+      this.counterShot(o, s, dfn);
       return false;
     }
     s.stat(cls + 'Land', 1);
@@ -8995,8 +9088,27 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       return;
     }
 
+    // Met on the way in. A man who reads the level change can bring a knee up into it: rare, and when it
+    // comes off it is the end of the shot and sometimes the end of the fight. It is thrown before the
+    // takedown resolves, with the edge a counter carries, and what it does to him is taken off the shot.
+    let kneed = 0;
+    if (!fromClinch && !caughtKick && !this.over) {
+      const ready = o.plan.vsTakedown === 'sprawl' || o.plan.vsTakedown === 'sprawlbrawl';
+      // (how often: a few per cent of shots. Keyed first at three times this it came up on 16% of them,
+      // which is a knee on the way in every other round — it is a highlight, not a habit.)
+      const pk = clamp((0.008 + 0.042 * o.a.timing + 0.018 * o.a.tdd) * (ready ? 1.9 : 1) * o.legF() * o.ef()
+        * (1 + 1.1 * clamp(-this.edgeOf(s, 'td'), 0, 0.9)) * (s.set != null && s.set < 0.5 ? 1.3 : 1) * TUNE.kneeOnShot, 0, 0.14);
+      if (rng.chance(pk)) {
+        this.call('kneeOnShot', s, o, 2, 'strike', null, o.side);
+        o._counter = true;
+        kneed = this.throwStrike(o, 'knee', 0) ? 0.95 : 0.2;
+        o._counter = false;
+        if (this.over || this.pos !== 'stand') return;
+      }
+    }
+
     // takedowns (attack) against takedown defence
-    let score = 1.5 * (s.a.wrestling - o.a.tdd * (0.6 + 0.4 * o.legF()))
+    let score = -kneed + 1.5 * (s.a.wrestling - o.a.tdd * (0.6 + 0.4 * o.legF()))
       + 0.3 * (s.a.speed * s.ef() - o.a.speed * o.ef())
       + 0.35 * (s.a.strength - o.a.strength)
       + 0.2 * (s.iq() - o.iq());
@@ -18671,7 +18783,15 @@ defences|Johnny Eblen|3`,
       else if (key === 'uppercut' || key === 'knee') R = any('snapUp');
       else if (SIDEWAYS[key]) { R = any('snapSide'); mirror = !onRear; }
       else R = any(m.dmg >= 6 ? 'snapHeavy' : 'snapBack');
-    } else if (m.blocked) R = head ? any('blockHigh') : legs ? any('check') : any('blockLow');
+    }
+    // what the engine says he did with it (Fight.defence): the picture used to pick one of these itself,
+    // at random, while the engine knew only that the strike had missed and the commentary named a third
+    // thing. A block is high or low by where the strike was going; everything else is its own clip.
+    else if (m.def === 'block') R = head ? any('blockHigh') : legs ? any('check') : any('blockLow');
+    else if (m.def === 'check') R = any('check');
+    else if (m.def && C[m.def]) { R = any(m.def); if (m.def === 'roll') mirror = !onRear; }
+    // (no defence named: the ground, and anything the engine throws without going through throwStrike)
+    else if (m.blocked) R = head ? any('blockHigh') : legs ? any('check') : any('blockLow');
     else if (legs || !head) R = any('stepBack');
     else if (key === 'jab') R = any('slip', 'parry', 'leanBack');
     else if (SIDEWAYS[key] && key !== 'headKick') R = any('roll', 'leanBack');
@@ -18705,7 +18825,11 @@ defences|Johnny Eblen|3`,
         // was followed by a calf kick 254 ms later — the second one started before the first had landed, and
         // the pair read as one odd double-kick)
         const pv = out[out.length - 1], back = pv && /Kick|knee/i.test(pv.key) ? 1 : 0.62;
-        if (out.length) t = m.by === lastBy ? t + pv.dur * back : Math.max(t + pv.dur * pv.mv.hit, lastEnd - dur * 0.5);
+        // a knee the other man meets a shot with lands on the way in, not on the way out: it goes early in
+        // the shot, while he is still coming, rather than at the point where it would have arrived — by
+        // then he is on the floor under a sprawl, and the knee was being thrown from on top of him
+        if (out.length && pv.mv.limb === 'shoot' && m.by !== lastBy && /knee/i.test(m.key)) t = pv.at + pv.dur * 0.2;
+        else if (out.length) t = m.by === lastBy ? t + pv.dur * back : Math.max(t + pv.dur * pv.mv.hit, lastEnd - dur * 0.5);
         out.push(Object.assign({ at: t, dur }, m));
         lastBy = m.by; lastEnd = t + dur;
       }
@@ -21866,11 +21990,13 @@ defences|Johnny Eblen|3`,
     if (FV.fig2 && fig.pairAt && vnow >= fig.pairAt.at) {
       const q = fig.pairAt;
       fig.pairAt = null;
-      // (whatever he was throwing stops here. A technique starts from the pose he is in — the feint or the
-      // punch half-thrown included, since that is what the figure is showing — and a clip plays as a
-      // difference laid on top of it, so an act left running would be counted twice over and go on growing:
-      // the shooter's head moved 8 cm in the frame the sprawl began, which was most of the jolts in it)
-      fig.acts = [];
+      // (whatever he is throwing right now stops here. A technique starts from the pose he is in — the
+      // feint or the punch half-thrown included, since that is what the figure is showing — and a clip
+      // plays as a difference laid on top of it, so an act already running would be counted twice over and
+      // go on growing: the shooter's head moved 8 cm in the frame the sprawl began, which was most of the
+      // jolts in it. One that has not started yet is not in that pose and is left alone — the knee that
+      // meets a shot on the way in is thrown partway through this, and clearing the lot erased it.)
+      fig.acts = fig.acts.filter((a) => vnow < a.t0);
       const a = ANIM.transitPair(fig, q.P, q.roles[me], base, vnow, q.gt || 1, { rejoin: true });
       if (a) {
         if (!q.place) closeRows(q);
