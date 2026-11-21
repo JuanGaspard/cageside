@@ -9227,6 +9227,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       if (w.side !== this.clinchCtrl) {
         // the reversal: he turns the other man into the fence (they swap places)
         const o = w.opp, tx = w.x, ty = w.y; w.x = o.x; w.y = o.y; o.x = tx; o.y = ty;
+        this.revs = (this.revs || 0) + 1;   // (the fight view turns them round each other for it)
         this.clinchCtrl = w.side;
         this.updateCage();
         this.call('underhooks', w, w.opp, 0, 'pos');
@@ -9275,6 +9276,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       if (rng.chance(sigmoid(3 * score + 0.2))) {
         if (wantsOut(Dm) || rng.chance(0.4)) { this.call('clinchOut', Dm, C, 1, 'pos'); this.toStand(); this.edge = null; return; }
         const tx = Dm.x, ty = Dm.y; Dm.x = C.x; Dm.y = C.y; C.x = tx; C.y = ty;
+        this.revs = (this.revs || 0) + 1;
         this.clinchCtrl = Dm.side; this.updateCage();
         this.call('underhooks', Dm, C, 1, 'pos');
         Dm.stat('rev', 0.5);
@@ -22692,6 +22694,49 @@ defences|Johnny Eblen|3`,
       let u = d > 0.05 ? [(tb[0] - ta[0]) / d, (tb[1] - ta[1]) / d] : [Math.cos(c.ang), Math.sin(c.ang)];
       if (d <= 0.05 && A.ancShown && B.ancShown && (B.ancShown[0] - A.ancShown[0]) * u[0] + (B.ancShown[1] - A.ancShown[1]) * u[1] < 0) u = [-u[0], -u[1]];
       const TA = [ta[0] - u[0] * half, ta[1] - u[1] * half], TB = [tb[0] + u[0] * half, tb[1] + u[1] * half];
+      // ---- a reversal in the clinch. The engine does one by swapping the two men's spots, and the picture
+      // used to walk each of them straight to the other's: through one another (chests 10 cm apart on the
+      // way), the facing whipping round at 1,300 degrees a second the frame they crossed, and every limb
+      // chasing it — 894 joint-frames moving more than 3 cm in one frame, against none at all in a clinch
+      // left alone. A reversal is a turn: locked together, the two of them pivot round their common middle,
+      // the man winning the underhooks walking the other round onto the fence. So that is what is shown —
+      // the old spots turned half a circle about their middle over a second, which is exactly where the
+      // swap puts them, with whatever else the engine moved since eased in as it goes.
+      // (the engine counts its reversals, `revs`, and the turn starts on its word — not on the picture's
+      // own line between them flipping over, which missed one whenever the picture was holding on a blow as
+      // it happened, and fired on a clinch broken and taken again the other way round)
+      const ft = FV.fight, nRev = ft ? ft.revs || 0 : 0;
+      if (ft && ft.pos === 'clinch') {
+        // (`cam.noTurn`: the old swap, for measuring against — tests/reversal.js)
+        if (cam.revSeen != null && nRev > cam.revSeen && A.fw && B.fw && !A.fw.off && !B.fw.off && !cam.noTurn) {
+          const sA = [A.fw.x, A.fw.z], sB = [B.fw.x, B.fw.z], m = [(sA[0] + sB[0]) / 2, (sA[1] + sB[1]) / 2];
+          // (round the way that keeps them off the fence: the side whose half-turn sweeps nearer the middle
+          // of the cage)
+          const r = [sA[0] - m[0], sA[1] - m[1]], side = [-r[1], r[0]], sweep = side[0] * -m[0] + side[1] * -m[1];
+          cam.turn = { t0: vnow, dur: 1150 / tempo(), m, r, sgn: sweep >= 0 ? 1 : -1 };
+        }
+      } else cam.turn = null;
+      cam.revSeen = nRev;
+      const tn = cam.turn;
+      if (tn) {
+        const q = (vnow - tn.t0) / tn.dur;
+        if (q >= 1) cam.turn = null;
+        else {
+          // (slow into it and out of it, the way two men who are holding each other turn: they can't snap round)
+          const e = ease(clampN(q, 0, 1)), th = tn.sgn * Math.PI * e, c = Math.cos(th), s = Math.sin(th);
+          const rA = [tn.r[0] * c - tn.r[1] * s, tn.r[0] * s + tn.r[1] * c];
+          const half2 = [(TB[0] - TA[0]) / 2, (TB[1] - TA[1]) / 2], mid2 = [(TA[0] + TB[0]) / 2, (TA[1] + TB[1]) / 2];
+          // where the turn would finish (A where B started) against where the engine has them now: the
+          // difference, in the middle and in the spacing, comes in with the turn
+          const mm = [lerp(tn.m[0], mid2[0], e), lerp(tn.m[1], mid2[1], e)];
+          const k = lerp(1, Math.hypot(half2[0], half2[1]) / (Math.hypot(tn.r[0], tn.r[1]) || 1), e);
+          // (and in the last of it the line between them settles onto the engine's own, so nothing jumps
+          // when the turn hands back)
+          const w3 = e * e * e, oA = [lerp(rA[0] * k, -half2[0], w3), lerp(rA[1] * k, -half2[1], w3)];
+          TA[0] = mm[0] + oA[0]; TA[1] = mm[1] + oA[1];
+          TB[0] = mm[0] - oA[0]; TB[1] = mm[1] - oA[1];
+        }
+      }
       // ---- restless feet. The engine moves them once a moment (SECS_PER_TICK, 3 s), so between moments both
       // targets stand still and so do the men: measured over two minutes they covered 0.3 m/s between them.
       // Here they circle their common middle and work in and out around wherever the engine has put them,

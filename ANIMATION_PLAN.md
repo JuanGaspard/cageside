@@ -2160,6 +2160,42 @@ it belongs with it.
 Still owed from this one: a body shot to the ribs leaves the man underneath doing nothing, because
 `groundHit` snaps his head aside and there is no clip for what a body shot actually does to him.
 
+## The clinch reversal that walked them through each other (2026-11-21)
+
+The engine reverses a clinch — the man on the fence wins the underhooks and turns the other onto it — by
+swapping the two men's spots. The picture then walked each of them in a straight line to where the other
+had been: through one another, and since which way each faces is taken from the line between them, the
+facing flipped over in the frame they crossed and every limb went after it.
+
+`tests/reversal.js` does the engine's swap by hand in a settled clinch and measures what the picture does,
+with `cam.noTurn` bringing the old way back so the two can be run alternately in one page. A clinch left
+alone has no joint of the trunk, arms or head moving more than 3 cm in a 15 ms frame. Four each way:
+
+| | the swap | the turn |
+|---|---|---|
+| facing comes round in | 450 ms | 1,215 ms |
+| fastest it turns | 1,301°/s | 282°/s |
+| closest the two chests come | 11 cm | 48 cm |
+| worst single-frame jump of an arm, the trunk or the head | **65 cm** | **6.7 cm** |
+| frames where one of those jumps more than 6 cm | 316 | 4 |
+| frames where a foot or knee jumps more than 8 cm | 97 | 26 |
+
+A reversal is a turn now. Locked together, the two of them pivot about their common middle, half a circle
+over about a second (1150 ms at 2x, scaled by `tempo()` like everything else), eased in and out because two
+men holding each other can't snap round; the old spots turned half a circle about their middle are exactly
+where the swap puts them, and whatever else the engine has moved in the meantime is blended in as it goes,
+so nothing jumps when it hands back. It goes round the way that keeps them off the fence. The arms that are
+still jumping are the 2–4 m/s an arm genuinely travels with a body turning at that speed; the worst is now
+about one frame's worth of a quick punch.
+
+The turn starts on the engine's word: `Fight.revs` counts its reversals and the view starts one when it goes
+up. Watching the picture's own line between them flip over instead missed the reversal whenever the picture
+happened to be holding on a blow, and fired on a clinch broken and retaken the other way round. In real
+fights through the view every reversal that leaves them in the clinch gets its turn.
+
+Only the 3D view has it. The flat side view (`?flat`, `?fig2`) is a developer's flag now, and in a side view
+a reversal is the two of them changing sides, which it still does at once.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
