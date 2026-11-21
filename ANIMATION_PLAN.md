@@ -1821,6 +1821,33 @@ switch, and single-situation numbers are only trustworthy where the situation it
 are (23, 23, then 0, 0, 0), the wall walk is not (48, 34 and 15 frames back to back, worst 0.59, 0.78, 0.66).
 Nothing here should be read as a measured improvement in the aggregate; the kick result stands on its own.
 
+### Two kicks in a row (2026-11-20)
+
+Not a counting bug: a thrown strike adds 1.006 to the count on average and a leg kick adds exactly one.
+What looked like one kick counting twice was two kicks genuinely being thrown.
+
+The cause is that `kick` was treated as the whole combination rather than how it starts. `pickStrike`
+filters to kicking skills when the style is `kick`, so *every* strike in the combination was another kick —
+and 65% of kick combinations are two long. That is 686 guaranteed kick-on-kick pairs; the leg-targeted ones
+among them (legKick and calfKick in either order, which look alike on the screen) came to 294.
+
+A kick is how a combination opens. He finishes one standing on one leg, and what follows is hands. The
+style now applies to the first strike only, and a repeat guard sits on top of it: the same strike twice
+costs 0.55, the same *kick* twice 0.12, and any kick straight after a kick 0.3. A double jab is one of the
+most ordinary things in the sport and is left alone.
+
+| of all strikes thrown back to back | before | after |
+|---|---|---|
+| kick on kick | 14.1% | **1.9%** |
+| leg-kick doubles (count) | 294 | **51** |
+| the same strike repeated | 36.2% | **22.9%** |
+
+Kick combinations are the same length as before — the second strike is a punch now instead of a kick.
+
+It moved the landed-target mix, and towards reality rather than away from it: head/body/legs goes from
+62/18/20 to **72/14/14**, against a real split of about 70/16/14. Knockdowns (0.4 a fight) and the finish
+mix are unmoved.
+
 ### The cage was a drawing (2026-11-20)
 
 The engine has always kept each man inside the octagon — `place()` clamps him to `FENCE` of the apothem,

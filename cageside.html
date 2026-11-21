@@ -8619,13 +8619,20 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   };
 
   // `style`: 'light' (range-finders and set-ups), 'power' (committed shots), 'kick', 'counter', or any.
-  Fight.prototype.pickStrike = function (s, range, style) {
+  Fight.prototype.pickStrike = function (s, range, style, prev) {
     const p = s.plan, rng = this.rng;
+    const prevKick = prev && D.STRIKES[prev] && D.STRIKES[prev].skill === 'kicking';
     const w = [];
     for (const k in D.STRIKES) {
       const S = D.STRIKES[k];
       let wt = S.ranges[range] || 0;
       if (!wt) continue;
+      // (not the same thing twice in a row, much, and a kick after a kick least of all. A double jab is
+      // one of the most ordinary things in the sport; the same kick twice is not, because he finishes the
+      // first one standing on one leg. Without this, 36% of every pair thrown back to back was the same
+      // strike repeated.)
+      if (k === prev) wt *= S.skill === 'kicking' ? 0.12 : 0.55;
+      else if (prevKick && S.skill === 'kicking') wt *= 0.3;
       if (style === 'light' && S.dmg > 5.5) continue;
       if (style === 'kick' && S.skill !== 'kicking') continue;
       if (style === 'power') wt *= S.dmg >= 6 ? 2.2 : 0.5;
@@ -8663,9 +8670,17 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     else if (style === 'light' || style === 'counter') len = Math.min(len, 3);
     if (style === 'power' && len < 2 && rng.chance(0.5)) len = 2;
     const range = this.pos === 'clinch' ? 'clinch' : this.range;
+    let prev = null;
     for (let i = 0; i < len && !this.over && this.pos !== 'ground'; i++) {
-      const k = this.pickStrike(s, range, style);
+      // A kick is how a combination STARTS, not the whole of it. `kick` makes pickStrike return nothing but
+      // kicks, so every strike after the first was another kick too: 65% of kick combinations came out as
+      // two kicks back to back, and the leg-kick pairs among them (legKick and calfKick in either order,
+      // which look the same) read as a man throwing the same kick twice. After the first one he is on one
+      // leg, and what actually follows a kick is hands.
+      const st = i === 0 || style !== 'kick' ? style : null;
+      const k = this.pickStrike(s, range, st, prev);
       this.throwStrike(s, k, i);
+      prev = k;
     }
   };
 
