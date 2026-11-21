@@ -18943,13 +18943,18 @@ defences|Johnny Eblen|3`,
     // (two flags before this — close for hands, wide for round kicks — left low kicks with no band at all, so
     // they fell through to the range spacing and were thrown from up to 2.4 m. Measured over a round, kicks
     // landed at a median 1.59 m and up to 2.25, and punches up to 2.04: no maximum anywhere.)
+    // (and who's throwing it: closing the distance is his step to take, not both of theirs — see fighters3)
     if (FV.fig2) for (const m of p.out) {
+      if (/^gnp/.test(m.key)) continue;
       const b = /^(body|head)Kick$/.test(m.key) ? [1.48, 1.8] : /Kick/.test(m.key) ? [1.24, 1.62]
         : /knee/i.test(m.key) ? [0.7, 1.02]
-        : /jab|cross|hook|uppercut|overhand|Punch|elbow|spinning/.test(m.key) ? [1.02, 1.3] : null;
+        // (an elbow lands with the forearm's length less than a fist, and an uppercut comes up from under him:
+        // at a punch's spacing the elbow finished 35 cm short with the arm half bent)
+        : /elbow/.test(m.key) ? [0.78, 1.05] : /uppercut/.test(m.key) ? [0.95, 1.2]
+        : /jab|cross|hook|overhand|Punch|spinning/.test(m.key) ? [1.02, 1.3] : null;
       if (!b) continue;
       // (from a little before it starts — the space is made during the wind-up — until just after it lands)
-      (cam.bands = cam.bands || []).push({ lo: b[0], hi: b[1], t0: now + m.at - 200, t1: now + m.at + m.dur + 140 });
+      (cam.bands = cam.bands || []).push({ lo: b[0], hi: b[1], t0: now + m.at - 200, t1: now + m.at + m.dur + 140, hit: now + m.at + m.dur * m.mv.hit, by: disp(m.by) });
     }
     // When the blow the moment is about lands: that is when the commentary, the meters and the knockdown
     // itself are allowed to show it, and not before. It used to wait for the FIRST thing that landed, which
@@ -20365,6 +20370,8 @@ defences|Johnny Eblen|3`,
       rncAtt: 1, rncDef: 1, guilloAtt: 1, guilloDef: 1, armbarAtt: 1, armbarDef: 1, triangleAtt: 1, triangleDef: 1,
       kimuraAtt: 1, kimuraDef: 1, armTriAtt: 1, armTriDef: 1 };
 
+    // the positions a man lies in on his back, face up
+    const FACE_UP = { botGuard: 1, botHalf: 1, botSide: 1, botMount: 1, flat: 1 };
     // where on the other fighter a strike lands (world), for an attacker facing `fw` ([x, z] on the floor)
     function target(opp, at, fw, m) {
       const P = opp.v2.pts, s = opp.v2.body.s, t = opp.v2.body.thick;
@@ -20372,7 +20379,14 @@ defences|Johnny Eblen|3`,
       const nearer = (a, b) => (P[a][0] * fw[0] + P[a][2] * fw[1] < P[b][0] * fw[0] + P[b][2] * fw[1] ? a : b);
       const back = (q, d, dy = 0) => [q[0] - fw[0] * d, q[1] + dy, q[2] - fw[1] * d];
       let p;
-      if (at === 'chin') p = back(P.jaw, 0.04 * s, -0.02 * s);
+      // (a man flat on his back is hit on the side of him that faces up, the face and the front of the ribs,
+      // from above: the near side of him going sideways — right for a man standing — is down at the mat. From
+      // the mount the fist was sent there and arrived beside his head at mat level, 22 cm off it with the arm
+      // straight; and from side control the body shot went for his flank, under the man throwing it)
+      const up = FACE_UP[opp.v2.base];
+      const onto = (q, d) => { const u = [-fw[0] * 0.5, 1, -fw[1] * 0.5], l = Math.hypot(u[0], u[1], u[2]); return [q[0] + u[0] / l * d, q[1] + u[1] / l * d, q[2] + u[2] / l * d]; };
+      if (up && (at === 'head' || at === 'body' || at === 'ribs')) p = at === 'head' ? onto(P.Hd, 0.1 * s) : onto(mixp(P.W, P.Ch, at === 'ribs' ? 0.7 : 0.4), 0.11 * s * t);
+      else if (at === 'chin') p = back(P.jaw, 0.04 * s, -0.02 * s);
       else if (at === 'body') p = back(mixp(P.W, P.Ch, 0.4), 0.13 * s * t);
       else if (at === 'ribs') p = back(mixp(P.W, P.Ch, 0.8), 0.13 * s * t);
       else if (at === 'thigh') { const k = nearer('knL', 'knR').slice(2); p = back(mixp(P['hp' + k], P['kn' + k], 0.6), 0.08 * s); }
@@ -21443,8 +21457,10 @@ defences|Johnny Eblen|3`,
           // blow isn't something to follow)
           if (aim.lt >= C.impact) aim.fix = fix;
         }
-        for (const ch of ['root', 'footL', 'footR', 'kneeAtL', 'kneeAtR']) T[AT[ch]] += fix.shift / s * ws;
-        if (fix.pv) {
+        // (on the mat he doesn't step into it: the knees stay where they're planted and the hips drive forward
+        // over them, which takes the shoulders on to the target. Carrying the knees and feet too slid the whole
+        // man along the mat on every punch)
+        for (const ch of ON_GROUND[C.ref] ? ['root'] : ['root', 'footL', 'footR', 'kneeAtL', 'kneeAtR']) T[AT[ch]] += fix.shift / s * ws;        if (fix.pv) {
           // the foot swung about the hip, and the knee it's aimed from with it
           const pv = [fix.pv[0] + fix.shift * ws, fix.pv[1], fix.pv[2]], q = fix.k, a = fix.ang * w, c = Math.cos(a), sn = Math.sin(a);
           const swing = (k, r) => {
@@ -22255,10 +22271,18 @@ defences|Johnny Eblen|3`,
   }
   // A shot arrives (new figure): the beat and the shake for a heavy one, and the other man takes it on his
   // springs (no marker on the picture: this is a simulation).
-  function landed2(fig, opp, a) {
+  function landed2(fig, opp, a, pre) {
     const cam = FV.cam, m = a.m, mv = a.mv;
     if (!m || !mv || mv.limb === 'shoot') return;
     cam.impacts = (cam.impacts || 0) + 1;
+    // (for tests/reach.js: where each blow is at the frame it lands, and where the man it lands on is)
+    if (cam.landLog && fig.v2 && opp.v2 && fig.v2.pts && opp.v2.pts) {
+      const A = (a.C && a.C.aim) || { hand: 'R' }, cp = (P) => { const o = {}; for (const k in P) o[k] = P[k].slice(); return o; };
+      cam.landLog.push({ key: m.key, land: m.land, blocked: m.blocked, target: m.target, at: mv.at, limb: A.hand ? 'hand' : A.foot ? 'foot' : A.knee ? 'knee' : 'elbow',
+        sd: A.hand || A.foot || A.knee || A.elbow, base: fig.v2.base, me: cp(fig.v2.pts), op: cp(opp.v2.pts), s: opp.v2.body.s, t: opp.v2.body.thick, sep: cam.sep && cam.sep.v,
+        band: cam.actNow && [cam.actNow.lo, cam.actNow.hi, cam.actNow.by], lunged: !!a.lunged, stepping: !!(fig.fw && fig.fw.cyc),
+        pre: pre && pre.slice(), shift: a.fix ? a.fix.shift : null });
+    }
     // (a blow that lands should be felt: the picture catches for a beat, the heavier ones shake it, and what
     // it lands on moves. A jab used to do none of these — the hold and the shake needed 7 and 9 damage, which
     // only the big shots make — and the head's own snap was a hundredth of a radian, which is nothing)
@@ -22573,7 +22597,20 @@ defences|Johnny Eblen|3`,
       if (u >= 1) fw.cyc = null;
     }
     const busy = fig.acts.some((x) => !x.feint && !x.walk && vnow >= x.t0 && vnow < x.t0 + x.dur);
-    if (!fw.cyc && !busy) {
+    // (the one step a man does take while throwing: into a punch that needs it, on the way out, one per blow.
+    // A jab from outside is thrown with the lead foot going in under it. The first blow of a moment starts
+    // straight away, so the step taken before it — while he was free to — was never there for it, and that
+    // blow finished short)
+    const band = FV.cam.actNow, mine = band && band.by === (fig === FV.cam.a ? 'a' : 'b');
+    const lg = busy && mine ? fig.acts.find((x) => x.mv && (x.mv.limb === 'hand' || x.mv.limb === 'elbow') && !x.lunged && !x.feint
+      && vnow >= x.t0 && vnow < x.t0 + x.dur * (x.mv.hit || 0.4) * 0.7) : null;
+    // (and it doesn't wait for an ordinary step to finish: caught in the middle of one, the punch went out short
+    // with the step still taking him wherever it had been going. He breaks it off where he is and steps in)
+    if (lg && fw.cyc && !fw.cyc.lunge && Math.hypot(target[0] - fw.x, target[1] - fw.z) > 0.14) {
+      fw.cyc = null;
+      for (const x of fig.acts) if (x.walk && x.fadeAt == null) x.fadeAt = vnow;
+    }
+    if (!fw.cyc && (!busy || lg)) {
       const dx = target[0] - fw.x, dz = target[1] - fw.z, dist = Math.hypot(dx, dz), dth = wrapA(heading - fw.th);
       // A step is worth taking or it isn't. Under about a boot's length he shifts his weight instead, and the
       // error is left to build until there's a real step in it. (Stepping for every 3 cm is what the micro
@@ -22581,10 +22618,15 @@ defences|Johnny Eblen|3`,
       // (and the turn that goes with it: about twenty degrees he takes in the stance, hips and shoulders coming
       // round over planted feet. Below that a separate pivot fired after every travelling step, once the two of
       // them had both moved and the facing had shifted again — 112 pivots a minute, a step and then a twitch)
-      if (dist > 0.14 || Math.abs(dth) > 0.38) {
-        const len = Math.min(dist, reach), turn = clampN(dth, -0.6, 0.6);
-        const dur = quick * (0.6 + 0.4 * Math.max(len / reach, Math.abs(turn) / 0.6));
-        fw.cyc = { x0: fw.x, z0: fw.z, th0: fw.th, dx: dist ? dx / dist * len : 0, dz: dist ? dz / dist * len : 0, dth: turn, t0: vnow, dur, len };
+      if (lg && dist <= 0.14) { /* close enough to throw it from where he is */ }
+      else if (dist > 0.14 || Math.abs(dth) > 0.38) {
+        // (a step into a punch can be a lunge, longer than he'd step to move about: one ordinary step left the
+        // blows thrown from furthest out still 15-25 cm short)
+        const len = Math.min(dist, lg ? reach * 1.45 : reach), turn = clampN(dth, -0.6, 0.6);
+        let dur = quick * (0.6 + 0.4 * Math.max(len / reach, Math.abs(turn) / 0.6));
+        // (stepping into a blow: on the front foot by the time it lands)
+        if (lg) { lg.lunged = true; dur = clampN(lg.t0 + lg.dur * (lg.mv.hit || 0.4) - vnow, 80, dur); }
+        fw.cyc = { x0: fw.x, z0: fw.z, th0: fw.th, dx: dist ? dx / dist * len : 0, dz: dist ? dz / dist * len : 0, dth: turn, t0: vnow, dur, len, lunge: !!lg };
         // the way he's going, in his own frame (a southpaw mirrored): in, out, or to one side, and the step
         // that goes that way (its clip lifts the feet in the right order and shapes the body)
         const ch = Math.cos(fw.th), sh = Math.sin(fw.th), m = s.lead === 1 ? -1 : 1;
@@ -22693,7 +22735,21 @@ defences|Johnny Eblen|3`,
       const d = Math.hypot(tb[0] - ta[0], tb[1] - ta[1]), half = (gap - d) / 2;
       let u = d > 0.05 ? [(tb[0] - ta[0]) / d, (tb[1] - ta[1]) / d] : [Math.cos(c.ang), Math.sin(c.ang)];
       if (d <= 0.05 && A.ancShown && B.ancShown && (B.ancShown[0] - A.ancShown[0]) * u[0] + (B.ancShown[1] - A.ancShown[1]) * u[1] < 0) u = [-u[0], -u[1]];
-      const TA = [ta[0] - u[0] * half, ta[1] - u[1] * half], TB = [tb[0] + u[0] * half, tb[1] + u[1] * half];
+      let TA = [ta[0] - u[0] * half, ta[1] - u[1] * half], TB = [tb[0] + u[0] * half, tb[1] + u[1] * half];
+      // ---- a blow that needs them closer than they are: he steps in to throw it. Where they stand followed the
+      // spacing spring, which a punch's band pulls in — but slowly, and both men equally — and a man throwing
+      // doesn't take a step, so nobody ever stepped in to throw one. Traced, a jab thrown from kicking range
+      // asked for 1.30 m and they stood at 1.95 when it landed, 1.93 when it reached full stretch, the fist
+      // 47 cm from the middle of his head; over real fights two punches in three that the engine scored as
+      // landing finished more than 5 cm short of the head, one in three more than 15. Now the band's own
+      // spacing is where he stands while it lasts, and the man throwing covers all of it: from 200 ms before
+      // the blow he has a step to take, which the footwork takes then, while he's free to; the other man
+      // stays where he is.
+      const ab = cam.actNow, want = ab && cam.sep ? cam.sep.t : null;
+      if (ab && ab.by && want != null && st.pos !== 'clinch' && want < Math.hypot(TB[0] - TA[0], TB[1] - TA[1])) {
+        const c = Math.hypot(TB[0] - TA[0], TB[1] - TA[1]) - want;
+        if (ab.by === 'a') TA = [TA[0] + u[0] * c, TA[1] + u[1] * c]; else TB = [TB[0] - u[0] * c, TB[1] - u[1] * c];
+      }
       // ---- a reversal in the clinch. The engine does one by swapping the two men's spots, and the picture
       // used to walk each of them straight to the other's: through one another (chests 10 cm apart on the
       // way), the facing whipping round at 1,300 degrees a second the frame they crossed, and every limb
@@ -22925,12 +22981,20 @@ defences|Johnny Eblen|3`,
     const ground = st.pos === 'ground';
     const dm = d * UNIT_M;
     // (the new figure holds its hands further out, so it stands a little further off)
-    // what's in the air, and how much room it needs (camMotion sets the bands). Where a hand and a kick overlap
-    // in a combination the kick wins, since it is the one that needs the space.
+    // what's in the air, and how much room it needs (camMotion sets the bands). Where two overlap, the blow that
+    // lands next decides it; once everything has landed, the last one.
+    // (it used to be the widest: a kick's band won wherever it overlapped a punch's, which kept the room for a
+    // kick thrown after a jab but threw the punch after a kick from kicking range, 40 cm short; and two men
+    // trading, each with a punch's band, had the first one's, so only he stepped in. The one started last
+    // instead handed a combination's spacing to its next blow 200 ms before the one in the air had landed)
     const g2 = FV.fig2 ? 1 : 0;
     if (cam.bands && cam.bands.length) cam.bands = cam.bands.filter((b) => vnow < b.t1);
     let act = null;
-    for (const b of cam.bands || []) if (vnow >= b.t0 && (!act || b.lo > act.lo)) act = b;
+    for (const b of cam.bands || []) {
+      if (vnow < b.t0) continue;
+      const due = b.hit >= vnow - 40, aDue = act && act.hit >= vnow - 40;
+      if (!act || (due && (!aDue || b.hit < act.hit)) || (!due && !aDue && b.t0 >= act.t0)) act = b;
+    }
     cam.actNow = act;   // the restless feet read it too: they don't work in and out through a blow
     // (the pocket band was 1.22 to 1.38 m whatever the engine's own spacing was — the two of them pinned a
     // fixed arm's length apart all fight, with every kick thrown from punching range. It now follows the
