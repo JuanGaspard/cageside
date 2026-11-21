@@ -18171,9 +18171,16 @@ defences|Johnny Eblen|3`,
   function statRows() {
     const a = L().stats, b = R().stats;
     const pct = (x) => (x.sigAtt ? Math.round(100 * x.sigLand / x.sigAtt) + '%' : '–');
+    // landed of thrown, for one kind of strike; a kind nobody has thrown yet stays off the table
+    const of = (x, k) => x[k + 'Land'] + ' / ' + x[k + 'Att'];
+    const kind = (label, k) => (a[k + 'Att'] || b[k + 'Att'] ? [[label, of(a, k), of(b, k), a[k + 'Land'] - b[k + 'Land']]] : []);
     const rows = [
       ['Sig. strikes', a.sigLand + ' / ' + a.sigAtt, b.sigLand + ' / ' + b.sigAtt, a.sigLand - b.sigLand],
       ['Accuracy', pct(a), pct(b), (a.sigAtt ? a.sigLand / a.sigAtt : 0) - (b.sigAtt ? b.sigLand / b.sigAtt : 0)],
+      ...kind('Punches', 'punch'),
+      ...kind('Kicks', 'kick'),
+      ...kind('Knees & elbows', 'knee'),
+      ...kind('Ground strikes', 'gnp'),
       ['Head · body · legs', a.headLand + ' · ' + a.bodyLand + ' · ' + a.legLand, b.headLand + ' · ' + b.bodyLand + ' · ' + b.legLand, 0],
       ['Knockdowns', a.kd, b.kd, a.kd - b.kd],
       ['Takedowns', a.tdLand + ' / ' + a.tdAtt, b.tdLand + ' / ' + b.tdAtt, a.tdLand - b.tdLand],
@@ -18911,10 +18918,18 @@ defences|Johnny Eblen|3`,
       // (from a little before it starts — the space is made during the wind-up — until just after it lands)
       (cam.bands = cam.bands || []).push({ lo: b[0], hi: b[1], t0: now + m.at - 200, t1: now + m.at + m.dur + 140 });
     }
-    // when the first blow lands: that is when the commentary and the meters should show it
-    const first = p.out.find((m) => m.land || m.blocked || m.mv.limb === 'shoot');
-    if (!first || (FV.speed || 1) >= 8) return 0;
-    return Math.min(span * 0.55, first.at + first.dur * (first.mv.limb === 'shoot' ? 0.5 : first.mv.hit));
+    // When the blow the moment is about lands: that is when the commentary, the meters and the knockdown
+    // itself are allowed to show it, and not before. It used to wait for the FIRST thing that landed, which
+    // in a combination is the jab in front of it — so a three-punch combination that ended in a knockdown
+    // put the words up, dropped the meters and sent the man to the canvas as the jab landed, with the two
+    // punches that actually did it still to be thrown. It gave away every combination it had.
+    const told = p.out.filter((m) => m.land || m.blocked || m.mv.limb === 'shoot');
+    if (!told.length || (FV.speed || 1) >= 8) return 0;
+    // (the heaviest blow that landed — what the commentary leads on — and the last thing to happen if
+    // nothing landed at all. Ties go to the later one.)
+    let key = told[told.length - 1];
+    for (const m of told) if (m.land && m.dmg >= (key.land ? key.dmg : -1)) key = m;
+    return Math.min(span * 0.85, key.at + key.dur * (key.mv.limb === 'shoot' ? 0.5 : key.mv.hit));
   }
   // The picture's own clock: it stands still for a beat on a heavy blow and runs slow on a knockdown, so
   // everything that moves with the figures uses it (cam.warp is the time it has held back).
