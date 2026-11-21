@@ -1,0 +1,17 @@
+{
+  "id": "gnpBody@topSide",
+  "ref": "topSide",
+  "note": "Ground punch to the BODY from side control. The other hand to the head punch: in side control the right hand is already at his far hip, under the ribs, which is why that is where the body shots come from. It lifts a hand's width clear, turns over and digs back in under the elbow. No wind-up at all - lying across a man there is nowhere to take it.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "topSide", "tan": "flat" },
+    { "t": 70, "set": { "handR": [0.3, -0.33, 0.24], "elbowR": [0.05, 0.4, 1] }, "add": { "spine": [0, 0.03, 0] } },
+    { "t": 130, "note": "cocked: 15 cm off him, no more",
+      "set": { "handR": [0.19, -0.35, 0.29], "elbowR": [0.1, 0.55, 0.95] }, "add": { "spine": [0, 0.06, 0] } },
+    { "t": 175, "set": { "handR": [0.29, -0.34, 0.24], "elbowR": [0.05, 0.4, 1] }, "add": { "spine": [0, 0.04, 0] } },
+    { "t": 215, "note": "in under the elbow and into the ribs, which are straight down from him",
+      "set": { "handR": [0.52, -0.33, 0.15], "elbowR": [0, 0.3, 1] }, "add": { "spine": [0, -0.05, 0] } },
+    { "t": 400, "pose": "topSide", "tan": "flat" }
+  ],
+  "events": { "impact": 215, "recover": 360 }
+}

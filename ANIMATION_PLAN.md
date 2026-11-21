@@ -2104,6 +2104,62 @@ Three things fell out of it along the way:
   it was scheduled for where the shot's own blow would have landed, by which time he is on the floor under
   a sprawl and the knee was being thrown from on top of him. It goes in early now, while he is still coming.
 
+## The punch from side control that was hitting the ribs and being called a head shot (2026-11-21)
+
+Every ground strike in the game was a head strike. `Fight.gnp` scored them all to the head, the two clips
+that play them (`gnpPunch`, `gnpElbow`) are both keyed `at: 'head'`, and that was the whole of it. What the
+picture did with that in side control was throw the punch with the wrong arm.
+
+In side control the holds put the left hand round his head — the crossface — and the right hand at his far
+hip. Measured in the view, the left fist rests 16 cm from the man's head and the right rests 64 cm from it.
+The clip threw the right. Eight firings each way inside one page, alternating so nothing could drift between
+them, the old right-hand punch's fist got a median of **44 cm** from the head it was scored against (range
+31–49) and finished nearer the chest than the face. The crossface arm throws it now, and the same
+measurement gives **7.7 cm** (range 3.5–13.2); a fist and a head together are about 15 cm, so one lands and
+the other never came within a forearm's length.
+
+The other half is that the head is not always what is under him. `GNP[pos].body` is the share of ground
+strikes that goes to the body, and `gnpBody` is a third ground strike with its own clips, its own
+commentary and its own damage. An elbow stays a head weapon from the top, so the body takes punches and
+hammerfists. From side control the right hand — the one at his hip, under the ribs — is exactly the hand
+that throws it, which is why the two shots use different arms. Over five firings from a fresh page in side
+control: a head strike ends 9 cm from the head and 37 cm from the trunk (5/5 nearer the head), a body strike
+17 cm from the trunk's axis and 50 cm from the head (0/5 nearer the head). The picture and the stats bar now
+say the same thing, and the head·body·legs line counts ground work.
+
+From the mount his own hips are on the stomach, and from the back his hands go round a head he is behind:
+neither position has a body to hit, and a body shot keyed from either finished a foot short of anything. So
+`body` is 0.02 and 0 there. Over 7,455 and 7,809 fights with the shares off and on:
+
+| | off | on |
+|---|---|---|
+| ground strikes to the body | 0% | 13.7% |
+| — side control | 0% | 29.9% |
+| — full guard | 0% | 21.7% |
+| — half guard | 0% | 15.3% |
+| — mount | 0% | 1.9% |
+| landed head · body · legs | 66.7 / 18.5 / 14.8 | 64.4 / 20.8 / 14.8 |
+| ground strike accuracy | 67.6% | 67.6% |
+| KO/TKO | 32.2% | 32.8% |
+| submission | 22.7% | 22.7% |
+| decision | 45.1% | 44.5% |
+| ground-and-pound stoppages | 8.5% | 8.6% |
+| knockdowns a fight | 0.21 | 0.21 |
+
+`tests/gnp.js` is the tool: it reads the motion list, so what it counts is what the picture is shown.
+
+**Found on the way, and not fixed here.** A man's arm is 61 cm long. Measured from a fresh page, the top
+man's shoulder sits 90 cm from the head in full guard and 85 cm in the mount, so from those two positions
+the head is out of reach and the "head" punch finishes on the chest (full guard) or 20 cm short (mount).
+Side control is the only one where the arm alone can do it, at 62 cm, which is why fixing the arm fixed it.
+The aim rig is supposed to carry the body the rest of the way — `shift` in `pose2`, capped at 42 cm, which
+would be enough — but on the mat it is applied along the root's own x channel, which does not point at the
+other man when he is lying down. That is the same fault as a standing punch landing from out of range, and
+it belongs with it.
+
+Still owed from this one: a body shot to the ribs leaves the man underneath doing nothing, because
+`groundHit` snaps his head aside and there is no clip for what a body shot actually does to him.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

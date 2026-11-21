@@ -1,0 +1,17 @@
+{
+  "id": "gnpBody",
+  "ref": "mount",
+  "note": "Ground punch to the BODY from the top. The head punch cocks by the ear and drops with everything behind it; a body shot has nowhere near that room, because the thing he is hitting is under his own hips. The hand comes up only as far as his own chest, turns over, and drives down and back into the stomach. Keyed off the mount, and used from the guard and the back as well, where the chest sits the same way up.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "mount", "tan": "flat" },
+    { "t": 70, "set": { "handR": [0.26, -0.18, 0.3], "elbowR": [-0.2, -0.85, 0.7] }, "add": { "spine": [0, 0.05, 0] } },
+    { "t": 130, "note": "cocked no higher than his own chest: there is no posturing up for a body shot",
+      "set": { "handR": [0.18, -0.05, 0.34], "elbowR": [-0.15, -0.8, 0.75] }, "add": { "spine": [0, 0.1, 0], "pelvis": [0, 0.08, 0] } },
+    { "t": 180, "set": { "handR": [0.28, -0.2, 0.28], "elbowR": [-0.2, -0.9, 0.65] }, "add": { "spine": [0, 0.06, 0] } },
+    { "t": 220, "note": "down and back into the stomach, under where his own hips are sitting",
+      "set": { "handR": [0.5, -0.55, 0.18], "elbowR": [-0.3, -1, 0.5] }, "add": { "spine": [0, -0.08, 0] } },
+    { "t": 420, "pose": "mount", "tan": "flat" }
+  ],
+  "events": { "impact": 220, "recover": 380 }
+}

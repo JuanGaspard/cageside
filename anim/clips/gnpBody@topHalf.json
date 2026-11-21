@@ -1,0 +1,16 @@
+{
+  "id": "gnpBody@topHalf",
+  "ref": "topHalf",
+  "note": "Ground punch to the BODY from half guard, keyed against the pose it is thrown from for the same reason the head punch is: the chest is flat here, its forward pointing down at the mat and its up along the mat ahead of him, so a clip keyed off the mount sends the hand out over the man's head. The right hand is already at his waist with a leg trapped; it lifts clear, turns over and digs back into the ribs.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "topHalf", "tan": "flat" },
+    { "t": 70, "set": { "handR": [0.14, -0.36, 0.26], "elbowR": [-0.25, -0.95, 0.6] }, "add": { "spine": [0, 0.03, 0] } },
+    { "t": 130, "note": "a short lift clear of him, not a wind-up",
+      "set": { "handR": [0.04, -0.38, 0.31], "elbowR": [-0.2, -0.9, 0.7] }, "add": { "spine": [0, 0.07, 0] } },
+    { "t": 175, "set": { "handR": [0.14, -0.37, 0.26], "elbowR": [-0.25, -0.95, 0.6] }, "add": { "spine": [0, 0.04, 0] } },
+    { "t": 215, "set": { "handR": [0.36, -0.42, 0.16], "elbowR": [-0.3, -1, 0.5] }, "add": { "spine": [0, -0.05, 0] } },
+    { "t": 400, "pose": "topHalf", "tan": "flat" }
+  ],
+  "events": { "impact": 215, "recover": 360 }
+}
