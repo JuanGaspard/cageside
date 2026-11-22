@@ -2270,6 +2270,43 @@ landing frame, as everything here is, the guard reached and the mount was short 
 The mount (0.02) and back (0) body shares in `GNP` were set from the same bad check; body shots from both do
 land. They're left as they are, since body shots from either are rare in real fights anyway.
 
+## Floating into the clinch (2026-11-22)
+
+A clinch began with the two of them well apart and they drifted together across the floor. `tests/entry.js`
+measures it two ways: over real fights (where the engine had them when one went for the tie-up, and from the
+frame the picture shows the clinch, how far apart the chests are, how long they take to close, how far each
+man's spot travels), and forced (`entry.forced`: set them apart, settle, tie up, alternately the old way and
+the new, in one page).
+
+Two causes, one in each half.
+
+- **The engine let a man tie up from kicking range.** `tryClinch` took any attempt from within 0.42 (1.9 m) as
+  already on him, and from further a burst of a step closed in before it checked. One clinch in eight began
+  from beyond 1.9 m, the median from 1.41 m. The reach is now `TUNE.clinchReach`, 0.36 (1.66 m), just inside
+  kicking range: from further he has to burst in, and a man with good feet gives ground. 0.3, the pocket,
+  turned nearly every tie-up into a burst and halved the clinches in a fight (2.52 → 1.47); 0.36 has 2.20,
+  one in twenty-five from beyond 1.9 m. Over 11,000–14,000 fights each, KO/TKO 30.8 → 30.1%, SUB 22.5 → 23.3,
+  DEC 46.7 → 46.6, knockdowns 0.22 both, takedowns per 15 min 5.13 → 5.07.
+- **The picture glided both men to their new spots.** A change of position moves each man's spot to the new
+  one over the move's own length, which suits a takedown; into the clinch it slid both of them together over
+  600 ms with no step, and the engine's walk to the fence came in the same glide — each man's spot travelled
+  1.2–1.4 m in the first 750 ms. Now (3D) the man who got the tie-up steps in onto the other (`cam.entry`:
+  fighters3 pins the other man's target where he stood, or where the step he was in the middle of puts him,
+  and gives the closing all to him; stepper3 lets him step through the tie-up's own clip, with a lunge as
+  long as the one into a punch, timed 230–420 ms so he arrives as the hands reach the neck). The walk to the
+  fence follows once he's there, on the engine's spots, in steps.
+
+| forced, from 1.6 m, eight each | glide | steps |
+|---|---|---|
+| the other man's spot travels in the first 750 ms | 129 cm (worst 157) | 0 cm (worst 17) |
+| the man tying up travels | 122 cm | 69 cm — the gap, and no more |
+| to clinch distance | 840 ms | 180 ms |
+| both of a man's feet moving at once, first 750 ms | 46 cm | 29 cm |
+
+The entry had to be seen in fighters3, the frame it starts, before anyone has a target: picked up from the
+pose a frame later, the engine's new spots had already sent the other man off on a 70 cm step towards the
+fence.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

@@ -7450,7 +7450,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // The pace is what was wanted; the knockouts following from it were not)
   // (`counter`: how much of a shot a man who slipped or parried fires back — Fight.counterShot. 0 turns
   // counters off, which is how the two builds were measured against each other.)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1 };
+  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36 };
   // Weight classes fight differently: heavyweights hit far harder, throw less and tire sooner; the small men
   // throw more, hit softer and go to decision more often (as in the UFC's own numbers).
   const WEIGHT = {
@@ -9179,7 +9179,12 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     s.spend(1.5);
     // you can only tie a man up once you're on him: from range he has to close the gap first, and a
     // fighter with good feet and evasion gives ground and never lets him get hold
-    const reach = 0.42;
+    // (inside kicking range: 0.36 is 1.66 m, one lunge of a step and his hands are on the neck; from further he
+    // has to burst in, and the other man can give ground. At 0.42, 1.9 m, men were tied up from kicking range
+    // without that — one clinch in eight from beyond 1.9 m, with the picture floating the two of them together.
+    // 0.3, the pocket, made nearly every tie-up a burst and halved the clinches in a fight (2.5 to 1.5);
+    // this has 2.2, one in twenty-five from beyond 1.9 m, and the finishes as they were)
+    const reach = TUNE.clinchReach;
     let d = Math.hypot(o.x - s.x, o.y - s.y);
     if (d > reach) {
       const burst = (0.12 + 0.2 * s.a.footwork) * s.legF() * (0.7 + 0.3 * s.energy / 100);
@@ -22111,7 +22116,13 @@ defences|Johnny Eblen|3`,
         }
       } else {
         const a = role ? ANIM.transitPair(fig, pair.P, role, base, vnow, gt) : id && ANIM.transit(fig, id, base, vnow, gt);
-        glideFor(a, role ? pair : null, role && pair.P.place && pair.P.place[role], null, null);
+        // (into the clinch, in 3D, the feet take him there: the man who got the tie-up steps in onto the other
+        // one, who stays where he is — fighters3 and stepper3, by `cam.entry`. Glided, both of them slid
+        // together across the floor from wherever they'd been, chests a median 1.48 m apart as it began, the
+        // feet dragged half a metre over 750 ms without a step)
+        // (fighters3 sees it start, before anyone's targets are worked out for the frame)
+        const E = FV.cam.entry;
+        if (!(id === 'clinchIn' && !role && E && vnow - E.t0 < 50)) glideFor(a, role ? pair : null, role && pair.P.place && pair.P.place[role], null, null);
       }
     } else if (FV.fig2 && fig.lastBase === base && pair && pair.deny) {
       // denied: tried as far as the other man lets it go (its `deny.at`), held there while he frames
@@ -22606,7 +22617,15 @@ defences|Johnny Eblen|3`,
       if (!c.clip) bob = -0.018 * Math.sin(Math.PI * u) * Math.min(1, c.len / 0.2 + 0.3);
       if (u >= 1) fw.cyc = null;
     }
-    const busy = fig.acts.some((x) => !x.feint && !x.walk && vnow >= x.t0 && vnow < x.t0 + x.dur);
+    // (into the clinch, `cam.entry`: the tie-up's own clip is the hands and the body; the feet are his, so it
+    // doesn't hold them, and the man who got it can take a lunge of a step to get there)
+    const en = FV.cam.entry && vnow < FV.cam.entry.t0 + FV.cam.entry.dur ? FV.cam.entry : null;
+    const closing = en && en.by === (fig === FV.cam.a ? 'a' : 'b');
+    const busy = fig.acts.some((x) => !x.feint && !x.walk && !(en && x.trans && x.react === 'clinchIn') && vnow >= x.t0 && vnow < x.t0 + x.dur);
+    if (closing && fw.cyc && !fw.cyc.lunge && !fw.cyc.entry && Math.hypot(target[0] - fw.x, target[1] - fw.z) > 0.14) {
+      fw.cyc = null;
+      for (const x of fig.acts) if (x.walk && x.fadeAt == null) x.fadeAt = vnow;
+    }
     // (the one step a man does take while throwing: into a punch that needs it, on the way out, one per blow.
     // A jab from outside is thrown with the lead foot going in under it. The first blow of a moment starts
     // straight away, so the step taken before it — while he was free to — was never there for it, and that
@@ -22632,11 +22651,14 @@ defences|Johnny Eblen|3`,
       else if (dist > 0.14 || Math.abs(dth) > 0.38) {
         // (a step into a punch can be a lunge, longer than he'd step to move about: one ordinary step left the
         // blows thrown from furthest out still 15-25 cm short)
-        const len = Math.min(dist, lg ? reach * 1.45 : reach), turn = clampN(dth, -0.6, 0.6);
+        const len = Math.min(dist, lg || closing ? reach * 1.45 : reach), turn = clampN(dth, -0.6, 0.6);
         let dur = quick * (0.6 + 0.4 * Math.max(len / reach, Math.abs(turn) / 0.6));
         // (stepping into a blow: on the front foot by the time it lands)
         if (lg) { lg.lunged = true; dur = clampN(lg.t0 + lg.dur * (lg.mv.hit || 0.4) - vnow, 80, dur); }
-        fw.cyc = { x0: fw.x, z0: fw.z, th0: fw.th, dx: dist ? dx / dist * len : 0, dz: dist ? dz / dist * len : 0, dth: turn, t0: vnow, dur, len, lunge: !!lg };
+        // (and into the clinch, there as the hands get to him: the tie-up reaches the neck at about 300 ms.
+        // At his ordinary rate a lunge took 180 ms, 3.6 m/s, a man fired out of a gun)
+        if (closing) dur = clampN(dur, 230 / tp, 420 / tp);
+        fw.cyc = { x0: fw.x, z0: fw.z, th0: fw.th, dx: dist ? dx / dist * len : 0, dz: dist ? dz / dist * len : 0, dth: turn, t0: vnow, dur, len, lunge: !!lg, entry: !!closing };
         // the way he's going, in his own frame (a southpaw mirrored): in, out, or to one side, and the step
         // that goes that way (its clip lifts the feet in the right order and shapes the body)
         const ch = Math.cos(fw.th), sh = Math.sin(fw.th), m = s.lead === 1 ? -1 : 1;
@@ -22736,6 +22758,7 @@ defences|Johnny Eblen|3`,
       // (where they'd be in another position on the mat, the same man on top: where an attempt was going)
       view.atFor = (g) => { const L = lineup2(Object.assign({}, st, { gpos: g, sub: null }), sep, true); return { a: at(A, L.xa, L.za, L.ya), b: at(B, L.xb, L.zb, L.yb) }; };
       for (const fig of [A, B]) if (fig.fw) fig.fw.off = true;   // standing again: footwork from where he gets up
+      cam.pos3 = 'ground';
     } else {
       const ta = [pa.x * UNIT_M, pa.y * UNIT_M], tb = [pb.x * UNIT_M, pb.y * UNIT_M];
       // (the two of them on one spot, as when they've just come up off the mat: apart along the line they
@@ -22760,6 +22783,31 @@ defences|Johnny Eblen|3`,
         const c = Math.hypot(TB[0] - TA[0], TB[1] - TA[1]) - want;
         if (ab.by === 'a') TA = [TA[0] + u[0] * c, TA[1] + u[1] * c]; else TB = [TB[0] - u[0] * c, TB[1] - u[1] * c];
       }
+      // ---- into the clinch (`cam.entry`, from pose2): the man who got the tie-up steps in onto the other, who
+      // stays where he was when it began, and his steps (stepper3) cover the whole of the gap. The spacing's
+      // spring is put straight at clinch distance, as the steps have taken care of it, so when this hands back
+      // the engine's own spots take over from there — the walk to the fence
+      // (seen here, the frame it starts, before anyone has a target: found later, the engine's own spots had
+      // already sent the other man off on a 70 cm step towards the fence, the walk that should come after)
+      // (`cam.noEntry`: the old glide, for measuring against — tests/entry.js)
+      const fe = FV.fight;
+      if (st.pos === 'clinch' && cam.pos3 === 'stand' && fe && fe.clinchCtrl && !cam.noEntry && A.fw && B.fw && !A.fw.off && !B.fw.off)
+        cam.entry = { t0: vnow, dur: 750, by: disp(fe.clinchCtrl) };
+      cam.pos3 = st.pos;
+      const en = cam.entry;
+      if (en && vnow < en.t0 + en.dur && st.pos === 'clinch' && A.fw && B.fw) {
+        const D = en.by === 'a' ? B : A;
+        // (where he'll be: caught in the middle of a step, where that step puts him, or he walked back to where
+        // it had started from)
+        const dc = D.fw.cyc;
+        if (!en.hold) { en.hold = dc ? [dc.x0 + dc.dx, dc.z0 + dc.dz] : [D.fw.x, D.fw.z]; if (cam.sep) { cam.sep.v = cam.sep.t; cam.sep.d = 0; } }
+        // (along the line between where the two of them are standing, not the engine's spots, which the tie-up
+        // has already put on top of each other)
+        const want = cam.sep ? cam.sep.t : 0.78, h = en.hold, dx = B.fw.x - A.fw.x, dz = B.fw.z - A.fw.z, dl = Math.hypot(dx, dz);
+        const v = dl > 0.05 ? [dx / dl, dz / dl] : u;
+        if (en.by === 'a') { TB = h.slice(); TA = [h[0] - v[0] * want, h[1] - v[1] * want]; }
+        else { TA = h.slice(); TB = [h[0] + v[0] * want, h[1] + v[1] * want]; }
+      } else if (en && vnow >= en.t0 + en.dur) cam.entry = null;
       // ---- a reversal in the clinch. The engine does one by swapping the two men's spots, and the picture
       // used to walk each of them straight to the other's: through one another (chests 10 cm apart on the
       // way), the facing whipping round at 1,300 degrees a second the frame they crossed, and every limb
