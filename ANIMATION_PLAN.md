@@ -2316,6 +2316,20 @@ a counter (or behind his guard) now sometimes goes under the power shot and ties
 still finishing it (`tryClinch`'s `under`, `TUNE.duckUnder`), 0.18 a fight, 71% taking. Clinches a fight
 3.0 → 3.3, the finishes and everything else within the noise.
 
+**Counter wrestling.** A missed body or head kick could already be caught and taken down; nothing else a man
+threw could be wrestled. Now, as a strike misses (`COUNTER_SHOT`, in throwStrike), a wrestler looking for it
+can shoot on it — under the hook or the overhand, rarely the jab or the cross, under a high kick, on a leg
+kick while the kicker stands on one leg, at a man who turns his back to spin — with a bonus to the shot for
+catching him committed and no guillotine or knee waiting for it. In the clinch a knee can be caught and the
+standing leg tripped; a trip stuffed with the whizzer in can be rolled over into a throw; and a stuffed shot
+in the open can be sprawled on and gone behind, to the back or side control. Nobody shoots under an
+uppercut or a knee in the open — those are what meet a level change. A combination stops when one of its
+strikes is wrestled into something else.
+
+At full strength these came on top of the shots men already plan, 1.4 a fight, and tipped the fights:
+submissions 22.9 → 25.4%, KO/TKO 30.9 → 28.8, control +14%. `TUNE.counterShot` is 0.25: 0.38 a fight, and
+over 12,000 fights KO/TKO 29.7%, SUB 22.9, DEC 47.3, knockdowns 0.21, control 264 s per 15 min (258).
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

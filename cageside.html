@@ -7450,7 +7450,23 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // The pace is what was wanted; the knockouts following from it were not)
   // (`counter`: how much of a shot a man who slipped or parried fires back — Fight.counterShot. 0 turns
   // counters off, which is how the two builds were measured against each other.)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1 };
+  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1, counterShot: 0.25 };
+  // A takedown off the other man's own strike, as it misses (throwStrike): `p`, how often a wrestler looking
+  // for it takes it; `b`, what the shot gets for catching him committed. The big looping shots and the turned
+  // back give the most; a jab, which comes back fast, very little; an uppercut and a knee are what meets a
+  // level change, so nobody shoots under those, and a body punch is already down at his level.
+  // (TUNE.counterShot scales these and the sprawl's go-behind and the whizzer throw. At 1 they came on top of
+  // the shots men already plan, 1.4 a fight, and tipped the fights over: submissions 22.9 → 25.4%, control
+  // +14%. At 0.25, 0.38 a fight, the finishes stay where they were)
+  const COUNTER_SHOT = {
+    jab: { p: 0.03, b: 0.12, line: 'counterShot' }, cross: { p: 0.04, b: 0.18, line: 'counterShot' },
+    hook: { p: 0.08, b: 0.3, line: 'counterShot' }, overhand: { p: 0.1, b: 0.35, line: 'counterShot' },
+    spinning: { p: 0.15, b: 0.45, line: 'counterShotSpin' },
+    legKick: { p: 0.07, b: 0.3, line: 'counterShotKick' }, calfKick: { p: 0.06, b: 0.3, line: 'counterShotKick' },
+    bodyKick: { p: 0.05, b: 0.35, line: 'counterShotKick' }, headKick: { p: 0.07, b: 0.4, line: 'counterShotKick' },
+    // (in the clinch only: the knee caught on its way up, and the leg he's standing on tripped out)
+    knee: { p: 0.07, b: 0.3, line: 'kneeCaught', clinch: true }, bodyKnee: { p: 0.07, b: 0.3, line: 'kneeCaught', clinch: true },
+  };
   // Weight classes fight differently: heavyweights hit far harder, throw less and tire sooner; the small men
   // throw more, hit softer and go to decision more often (as in the UFC's own numbers).
   const WEIGHT = {
@@ -7790,6 +7806,12 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     outsideFoot: ['{a} has the outside foot, and the rear hand comes straight down the middle.', '{a} wins the battle of the lead feet and lands down the pipe.', 'Lead foot outside, and {a} has the line for the rear hand.', '{a} steps his lead foot outside and {o} is right on the end of it.'],
     switchStance: ['{a} switches stance.', '{a} changes stance, and {o} has to rethink.', '{a} shows {o} the other stance now.', '{a} switches his feet; a different look for {o}.'],
     switchHurt: ['{a} switches stance to take that lead leg out of the firing line.', 'The lead leg is hurt, and {a} turns it to the back: he\'s switched stance.', '{a} changes stance; he doesn\'t want that leg kicked again.'],
+    counterShot: ['{o} changes levels under the {s} and shoots!', '{a} swings the {s} over the top and {o} is already at his hips!', '{o} ducks the {s} and drives through on a double leg!', '{o} times the {s} and shoots underneath it!'],
+    counterShotKick: ['{o} shoots as the {s} comes in, and {a} is on one leg!', '{o} times the {s} and blasts through on the takedown!', '{a} throws the {s}, and {o} is under it and at his legs!'],
+    counterShotSpin: ['{a} turns his back on the {s} and {o} shoots straight in!', '{o} sees the spin coming and is at his hips before {a} comes round!'],
+    kneeCaught: ['{o} catches the knee and trips {a} off his standing leg!', '{o} scoops the knee and dumps {a}!', '{o} traps the leg as the knee comes up and takes him down!'],
+    whizzerThrow: ['{o} rolls over the whizzer and throws {a}!', '{o} hits the whizzer and turns the trip round on {a}!', '{a} goes for the trip and {o} throws him over the top!'],
+    goBehind: ['{o} sprawls, snaps him down and goes behind!', '{o} stuffs it and spins to the back of {a}!', '{o} turns the shot round: down on top of {a}!'],
     smother: ['{o} smothers the attack and ties {a} up.', '{o} steps inside the combination and grabs hold.', '{o} ducks under the hook and gets hold of {a}.', '{o} slips inside the big shot and grabs hold.'],
     // the corner's minute: did he take it in?
     adviceTaken: ['{a} comes out with a new look. He listened to {c}.', 'You can see {c}\'s instructions in how {a} starts this round.', '{a} took it all in from {c}. Different fighter this round.'],
@@ -8717,7 +8739,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // with his legs under him. He was already out if it finished the fight or put it on the mat.)
     const wasRocked = !!s.rocked;
     let prev = null;
-    for (let i = 0; i < len && !this.over && this.pos !== 'ground' && !(s.rocked && !wasRocked); i++) {
+    // (and a strike wrestled into something else — a caught kick, a shot under his punch, stuffed into the
+    // clinch — ends it: he isn't carrying on with the combination he was throwing at range)
+    const pos0 = this.pos;
+    for (let i = 0; i < len && !this.over && this.pos === pos0 && !(s.rocked && !wasRocked); i++) {
       // A kick is how a combination STARTS, not the whole of it. `kick` makes pickStrike return nothing but
       // kicks, so every strike after the first was another kick too: 65% of kick combinations came out as
       // two kicks back to back, and the leg-kick pairs among them (legKick and calfKick in either order,
@@ -8886,6 +8911,19 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
         this.call('caught', s, o, 1, 'td', { s: S.name }, o.side);
         this.attemptTakedown(o, true);
         return false;
+      }
+      // or he shoots on it: under the hook or the overhand as it goes over him, under a high kick, on a leg
+      // kick while the man throwing it stands on one leg, at a man who's turned his back to spin. A wrestler
+      // looking for it, timing it; the bigger and more committed the shot, the better it goes (COUNTER_SHOT)
+      const cs0 = TUNE.counterShot && !o.rocked && o.energy > 15 && COUNTER_SHOT[key];
+      const cs = cs0 && (cs0.clinch ? this.pos === 'clinch' : this.pos === 'stand') ? cs0 : null;
+      if (cs && (cls !== 'punch' || dfn !== 'block')) {
+        const want = o.a.wrestling * (0.35 + 0.65 * o.plan.takedowns) * (0.5 + o.a.timing) * o.legF() * (1 + o.m.tdOff);
+        if (rng.chance(clamp(cs.p * want * TUNE.counterShot, 0, 0.3))) {
+          this.call(cs.line, s, o, 1, 'td', { s: S.name }, o.side);
+          this.attemptTakedown(o, false, cs.b);
+          return false;
+        }
       }
       if (!this.quiet && this.trng.next() < (idx === 0 ? 0.45 : 0.12)) {
         // the line now says what he actually did (DEF_POOL); the kicks keep their own, which name the kick
@@ -9091,7 +9129,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   };
 
   // ------------------------------------------------------------------ takedowns
-  Fight.prototype.attemptTakedown = function (s, caughtKick) {
+  // `counter`: a shot off the other man's own attack (counterShot, in throwStrike) — he's committed to it and
+  // on the way through it, so no guillotine or knee waiting for it, and it lands more often
+  Fight.prototype.attemptTakedown = function (s, caughtKick, counter) {
     const rng = this.rng, o = s.opp;
     s._acted = true;
     s.stat('tdAtt', 1);
@@ -9099,10 +9139,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     s.spend(caughtKick ? 2 : 4.5);
     o.spend(2);
     const fromClinch = this.pos === 'clinch';
-    if (!caughtKick) this.call(fromClinch ? 'shootClinch' : this.range === 'outside' && this.trng.next() < 0.3 ? 'shootFar' : 'shoot', s, o, 1, 'td');
+    if (!caughtKick && !counter) this.call(fromClinch ? 'shootClinch' : this.range === 'outside' && this.trng.next() < 0.3 ? 'shootFar' : 'shoot', s, o, 1, 'td');
 
     // Guillotine counter
-    if (!fromClinch && !caughtKick && (o.plan.vsTakedown === 'guillotine' || rng.chance(0.25 * o.m.guillotine)) && rng.chance((0.12 + 0.3 * o.a.subOffense) * (1 + o.m.guillotine))) {
+    if (!fromClinch && !caughtKick && !counter && (o.plan.vsTakedown === 'guillotine' || rng.chance(0.25 * o.m.guillotine)) && rng.chance((0.12 + 0.3 * o.a.subOffense) * (1 + o.m.guillotine))) {
       this.call('guillotine', s, o, 2, 'sub', null, o.side);
       o.stat('subAtt', 1);
       const score = 1.8 * (o.a.subOffense - s.a.subDefense) + 0.3 * (o.a.strength - s.a.strength) - 0.25;
@@ -9121,8 +9161,8 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // comes off it is the end of the shot and sometimes the end of the fight. It is thrown before the
     // takedown resolves, with the edge a counter carries, and what it does to him is taken off the shot.
     let kneed = 0;
-    if (!fromClinch && !caughtKick && !this.over) {
-      const ready = o.plan.vsTakedown === 'sprawl' || o.plan.vsTakedown === 'sprawlbrawl';
+    if (!fromClinch && !caughtKick && !counter && !this.over) {
+      const ready =o.plan.vsTakedown === 'sprawl' || o.plan.vsTakedown === 'sprawlbrawl';
       // (how often: a few per cent of shots. Keyed first at three times this it came up on 16% of them,
       // which is a knee on the way in every other round — it is a highlight, not a habit.)
       const pk = clamp((0.008 + 0.042 * o.a.timing + 0.018 * o.a.tdd) * (ready ? 1.9 : 1) * o.legF() * o.ef()
@@ -9142,6 +9182,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       + 0.35 * (s.a.strength - o.a.strength)
       + 0.2 * (s.iq() - o.iq());
     if (caughtKick) score += 0.35;
+    if (counter) score += counter;
     if (fromClinch) score += 0.25 * (s.a.clinch - o.a.clinchDef);
     if (o.rocked) score += 0.6;
     if (o.plan.vsTakedown === 'cage') score -= 0.08;
@@ -9164,6 +9205,15 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       return;
     }
     // stuffed
+    // (and wrestled back: a good wrestler sprawls, snaps him down and goes behind him — the shot turned into his
+    // own takedown, more often on a man who's tired and shooting from too far)
+    if (!fromClinch && TUNE.counterShot && rng.chance(clamp(0.09 * TUNE.counterShot * o.a.wrestling * (0.5 + o.a.tdd) * (s.energy < 40 ? 1.4 : 1) * (1 + o.m.tdOff), 0, 0.2))) {
+      o.stat('tdAtt', 1); o.stat('tdLand', 1);
+      this.pos = 'ground'; this.top = o.side; this.stall = 0;
+      this.gpos = rng.chance(0.45) ? 'back' : 'side';
+      this.call('goBehind', s, o, 2, 'td', null, o.side);
+      return;
+    }
     if (o.plan.vsTakedown === 'sprawlbrawl') {
       this.call('sprawlPunish', s, o, 1, 'td', null, o.side);
       for (let i = 0; i < 2 && !this.over; i++) this.throwStrike(o, rng.pick(['hook', 'uppercut', 'knee']), i);
@@ -9303,8 +9353,18 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     }
     if (act(C, true)) {
       C._acted = true;
-      if (i === 'trip') this.attemptTakedown(C, false);
-      else if (i === 'pin') {
+      if (i === 'trip') {
+        this.attemptTakedown(C, false);
+        // stuffed with the whizzer in: he rolls over it and throws the man who tried it (the stuffed trip has
+        // already handed him the clinch)
+        if (!this.over && this.pos === 'clinch' && j === 'whizzer' && this.clinchCtrl === Dm.side && TUNE.counterShot
+          && rng.chance(clamp(0.16 * TUNE.counterShot * Dm.a.wrestling * (0.5 + Dm.a.strength) * (1 + Dm.m.tdOff), 0, 0.25))) {
+          Dm.stat('tdAtt', 1); Dm.stat('tdLand', 1);
+          this.pos = 'ground'; this.top = Dm.side; this.gpos = rng.chance(0.5) ? 'half' : 'side'; this.stall = 0; this.clinchCtrl = null;
+          this.call('whizzerThrow', C, Dm, 2, 'td', null, Dm.side);
+          return;
+        }
+      } else if (i === 'pin') {
         C.spend(0.6); Dm.spend(1.2);
         C.stat('ctrl', SECS_PER_TICK);
         if (rng.chance(0.35)) this.combo(C, 'light'); // short shots while pinning
