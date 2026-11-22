@@ -67,18 +67,18 @@ export async function ground(g, n = 5, keys = ['gnpPunch', 'gnpElbow', 'gnpBody'
   return { base: log[0] && log[0].base, ...out };
 }
 
-// The striking limb's right of way in the contact pass (ANIM.CONTACT.hitOff brings the old way back), the
-// same blows alternately with it off and on, in one page so nothing drifts between them.
+// Aiming for the contact pass's push (ANIM.CONTACT.ffOff brings the old way back): the same blows
+// alternately with it off and on, in one page so nothing drifts between them.
 export async function groundAB(g, n = 6, key = 'gnpPunch') {
   await C.setup(0, true, true);
   C.pos(g, 'a'); C.run(6000);
   const cam = FV().cam(), CT = FV().anim.CONTACT, off = [], on = [];
   for (let i = 0; i < n; i++) for (const k of [true, false]) {
-    const log = []; cam.landLog = log; CT.hitOff = k;
+    const log = []; cam.landLog = log; CT.ffOff = k;
     C.hit(key, 'a', { target: key === 'gnpBody' ? 'body' : 'head' }); C.run(900);
     for (const r of log) (k ? off : on).push(+gapOf(r).toFixed(3));
   }
-  CT.hitOff = false; cam.landLog = null;
+  CT.ffOff = false; cam.landLog = null;
   const med = (a) => { const s = [...a].sort((x, y) => x - y); return s[s.length >> 1]; };
   return { base: g, key, off: { median: med(off), worst: Math.max(...off) }, on: { median: med(on), worst: Math.max(...on) } };
 }

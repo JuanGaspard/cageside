@@ -2157,6 +2157,12 @@ would be enough — but on the mat it is applied along the root's own x channel,
 other man when he is lying down. That is the same fault as a standing punch landing from out of range, and
 it belongs with it.
 
+*(Corrected the next day, below: that was wrong. The check took the fist's closest approach to the head or
+the chest at any point of the move, and in full guard and the mount the hands rest on his chest, so it caught
+the resting hand, not the punch. Measured at the frame each blow lands, the guard's punches reached; the
+mount's and half guard's finished 5–11 cm short for a different reason — the contact pass — and the
+side-control body shot added here never reached at all. See "Does what lands, land?")*
+
 Still owed from this one: a body shot to the ribs leaves the man underneath doing nothing, because
 `groundHit` snaps his head aside and there is no clip for what a body shot actually does to him.
 
@@ -2195,6 +2201,74 @@ fights through the view every reversal that leaves them in the clinch gets its t
 
 Only the 3D view has it. The flat side view (`?flat`, `?fig2`) is a developer's flag now, and in a side view
 a reversal is the two of them changing sides, which it still does at once.
+
+## Does what lands, land? (2026-11-22)
+
+A blow the engine scores as landing should be seen to. `tests/reach.js` checks: the view logs every blow at
+the frame it lands (`cam.landLog`, in `landed2`), and the gap is measured from the part that lands — fist,
+elbow, knee, the shin for a kick — to the surface of what it was scored against: the head (the contact pass's
+own 0.105 ball), the trunk, the thigh or calf. Under 5 cm is a blow landing; past 15 you see daylight.
+
+**Standing.** Over real fights, two punches to the head in three finished more than 5 cm short, one in three
+more than 15, the worst 54 cm. Kicks landed. A jab from kicking range, traced frame by frame: its band asked
+for 1.30 m and they stood at 1.95 when it landed, the fist 47 cm from the middle of the head with the arm
+straight. Where they stand followed the spacing spring, which a band pulls in slowly and for both men
+equally, and a man throwing doesn't step — so nobody ever stepped in to throw one.
+
+- While a blow's band lasts, the man throwing covers all of the closing himself; the other stays put.
+- He may take one step into a hand strike during its wind-up — up to a lunge, half again his ordinary step —
+  timed to land by impact, breaking off an ordinary step already under way to do it. (The first blow of a
+  moment starts at once, so the step the band asked for 200 ms earlier was never there for it.)
+- Where bands overlap, the blow that lands next decides the spacing. It was the widest, which threw a punch
+  after a kick from kicking range, 40 cm short, and gave two men trading the first one's band only.
+- An elbow and an uppercut get closer bands than a straight punch (0.78–1.05 m, 0.95–1.2).
+- Ground strikes no longer push a standing band at all.
+
+| punches to the head, real fights | before | after |
+|---|---|---|
+| median gap | 7.5 cm short | 3.4 cm into him |
+| more than 5 cm short | 67% | 21% |
+| more than 15 cm short | 30% | 5% |
+| worst | 54 cm | 26 cm |
+
+What's left short is a different thing: punches thrown from too close, chests 60–85 cm apart, mostly as a
+clinch breaks, where the arm is jammed rather than short.
+
+**On the mat.** Measured at the landing frame, one position a fresh page (`reach.ground(pos)`), three things
+were short and the rest landed:
+
+- *Mount and half guard, head strikes, 5–11 cm short.* The aim put the fist on the face; then the contact
+  pass, which keeps the two bodies out of each other on the mat and in the clinch, pushed the top man off
+  the man under him — his hips off the stomach — by 4 to 7 cm, and the fist went with him. The aim now takes
+  last frame's push of the trunks (`st.ct.T`) off its target, so the blow lands where the push leaves it. That
+  push is the trunks', not the blow's, so aiming for it doesn't feed back. In one page, alternating
+  (`reach.groundAB`, `CONTACT.ffOff`): mount punches 5.4 → 1.5 cm, half-guard punches 10.7 → 0.8, half-guard
+  elbows 9.6 → 2.8, side-control punches 4.1 → 0.6.
+- *A man on his back was aimed at sideways*, at the near side of his head as for a man standing, which is
+  down at the mat: from the mount the fist arrived beside his head at mat level. He's hit on the side of him
+  that faces up now. And on the mat the body's carry moves only the hips, not the knees with them.
+- *The side-control body shot never reached.* Aimed at the top of his ribs, it was jammed under the top man's
+  own chest, 7 cm into the ribs, and the contact pass shoved it 21 cm back up. The hand that throws it rests
+  at his far hip, and it now goes into the far side of the ribs.
+
+| at the landing frame, median (worst) | punch to the head | elbow | punch to the body |
+|---|---|---|---|
+| full guard | −0.6 cm (0.1) | −0.8 (−0.2) | −4.1 (−1.4) |
+| half guard | 0.6 (1.7) | 1.2 (2.6) | 1.8 (7.8) |
+| side control | 1.0 (3.5) | 0.8 (1.5) | −0.3 (1.9) |
+| mount | −1.3 (2.3) | −1.2 (0.8) | −0.7 (1.0) |
+| back | −2.6 (−1.0) | −2.7 (−1.6) | −6.7 (−5.1) |
+
+Two things tried and taken out, since neither measured as doing anything: leaning the top man forward from
+the hips when a ground blow is out of reach (nothing on the mat turned out to be out of reach), and giving
+the striking arm right of way in the contact pass (mount punches 6.8 → 6.0 cm, within the noise).
+
+**A correction to the side-control entry above.** It reported that full guard and mount couldn't reach the
+head at all. The check behind that took the fist's closest approach to head or chest at any point of the
+move, and in those positions the hands rest on his chest, so it caught the resting hand. Measured at the
+landing frame, as everything here is, the guard reached and the mount was short for the contact-pass reason.
+The mount (0.02) and back (0) body shares in `GNP` were set from the same bad check; body shots from both do
+land. They're left as they are, since body shots from either are rare in real fights anyway.
 
 ## Sources
 
