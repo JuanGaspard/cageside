@@ -7450,7 +7450,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // The pace is what was wanted; the knockouts following from it were not)
   // (`counter`: how much of a shot a man who slipped or parried fires back — Fight.counterShot. 0 turns
   // counters off, which is how the two builds were measured against each other.)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36 };
+  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1 };
   // Weight classes fight differently: heavyweights hit far harder, throw less and tire sooner; the small men
   // throw more, hit softer and go to decision more often (as in the UFC's own numbers).
   const WEIGHT = {
@@ -7790,7 +7790,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     outsideFoot: ['{a} has the outside foot, and the rear hand comes straight down the middle.', '{a} wins the battle of the lead feet and lands down the pipe.', 'Lead foot outside, and {a} has the line for the rear hand.', '{a} steps his lead foot outside and {o} is right on the end of it.'],
     switchStance: ['{a} switches stance.', '{a} changes stance, and {o} has to rethink.', '{a} shows {o} the other stance now.', '{a} switches his feet; a different look for {o}.'],
     switchHurt: ['{a} switches stance to take that lead leg out of the firing line.', 'The lead leg is hurt, and {a} turns it to the back: he\'s switched stance.', '{a} changes stance; he doesn\'t want that leg kicked again.'],
-    smother: ['{o} smothers the attack and ties {a} up.', '{o} steps inside the combination and grabs hold.'],
+    smother: ['{o} smothers the attack and ties {a} up.', '{o} steps inside the combination and grabs hold.', '{o} ducks under the hook and gets hold of {a}.', '{o} slips inside the big shot and grabs hold.'],
     // the corner's minute: did he take it in?
     adviceTaken: ['{a} comes out with a new look. He listened to {c}.', 'You can see {c}\'s instructions in how {a} starts this round.', '{a} took it all in from {c}. Different fighter this round.'],
     adviceHalf: ['{a} took some of what {c} told him; some of it went in one ear and out the other.', '{a} is doing part of what {c} asked. Only part.'],
@@ -8568,6 +8568,13 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
         }
         this.call('cutOff', s, o, 0, 'info');
         this.giveEdge(s, 'hit', 0.25); this.giveEdge(s, 'dmg', 0.2);
+      } else if ((j === 'counter' || j === 'guard') && !o.rocked && (o.plan.range === 'clinch' || o.plan.vsPressure === 'clinch')
+        && rng.chance(TUNE.duckUnder * (j === 'counter' ? 0.12 + 0.3 * o.a.clinch : 0.05 + 0.15 * o.a.clinch))) {
+        // a clinch fighter's counter to the power shot: under the hook and tied up while the other man is still
+        // finishing it (tryClinch's `under`)
+        this.call('smother', s, o, 0, 'pos', null, o.side);
+        this.tryClinch(o, true, true);
+        return;
       } else if (j === 'counter' && (o.set == null || o.set > 0.3) && !o.rocked) {
         // he walked onto it: the counter comes first
         answered = true;
@@ -9173,7 +9180,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   };
 
   // ------------------------------------------------------------------ clinch
-  Fight.prototype.tryClinch = function (s, reactive) {
+  Fight.prototype.tryClinch = function (s, reactive, under) {
     const rng = this.rng, o = s.opp;
     s._acted = true;
     s.spend(1.5);
@@ -9195,7 +9202,13 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       if (d > reach) { this.call('clinchMiss', s, o, 0, 'info', null, o.side); return; }
     }
     // clinch offence against evasion (keeping it open) and clinch defence (fighting the tie-up)
-    const score = 0.9 * (s.a.clinch - (0.5 * o.a.evasion * o.legF() + 0.5 * o.a.clinchDef)) + 0.4 * (s.a.strength - o.a.strength) + 0.4 * (s.a.wrestling - o.a.tdd) + (reactive ? 0.2 : 0)
+    // (on the fence he has nowhere to circle off to: his evasion counts for a third of what it does in the open,
+    // and the fence itself is worth something — it was a reason to try, `pin` in choose, but no help in getting
+    // hold. And ducking under a power shot the other man is committed to, `under`, gets hold of a man who's
+    // still finishing his punch: worth more than tying up a man who's waiting for it)
+    const pin = TUNE.clinchFence && this.isPinned(o);
+    const score = 0.9 * (s.a.clinch - (0.5 * o.a.evasion * o.legF() * (pin ? 0.33 : 1) + 0.5 * o.a.clinchDef)) + 0.4 * (s.a.strength - o.a.strength) + 0.4 * (s.a.wrestling - o.a.tdd) + (reactive ? 0.2 : 0)
+      + (pin ? TUNE.clinchFence : 0) + (under ? 0.3 : 0)
       + 2 * (s.m.clinchCtrl - o.m.clinchCtrl) + 1.0 * clamp(this.edgeOf(s, 'clinch'), -0.9, 0.9);
     if (rng.chance(sigmoid(3 * score + 0.1))) {
       this.toClinch(s);

@@ -2307,6 +2307,15 @@ The entry had to be seen in fighters3, the frame it starts, before anyone has a 
 pose a frame later, the engine's new spots had already sent the other man off on a 70 cm step towards the
 fence.
 
+**Where a clinch is easiest to get.** Over 11,000 fights each way, by situation: after a stuffed takedown the
+man who stuffed it already tied up every time (0.85 a fight, a quarter of all clinches). On the fence a
+tie-up took 79% against 44% in the open, but only because they're close there — the fence itself was worth
+nothing and the pinned man's evasion counted in full; now it counts a third and the fence adds
+`TUNE.clinchFence`, 79 → 90%. And nobody ducked under a punch into the clinch: a clinch fighter waiting with
+a counter (or behind his guard) now sometimes goes under the power shot and ties up while the other man is
+still finishing it (`tryClinch`'s `under`, `TUNE.duckUnder`), 0.18 a fight, 71% taking. Clinches a fight
+3.0 → 3.3, the finishes and everything else within the noise.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
