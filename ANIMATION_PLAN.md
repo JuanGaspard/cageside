@@ -2330,6 +2330,65 @@ At full strength these came on top of the shots men already plan, 1.4 a fight, a
 submissions 22.9 → 25.4%, KO/TKO 30.9 → 28.8, control +14%. `TUNE.counterShot` is 0.25: 0.38 a fight, and
 over 12,000 fights KO/TKO 29.7%, SUB 22.9, DEC 47.3, knockdowns 0.21, control 264 s per 15 min (258).
 
+## The arm in a kimura of its own making (2026-11-22)
+
+What the shoulder was held to was only how far the upper arm goes *behind* him (`ROM.shBack`). Nothing held
+its turn about its own length, and that turn is what a kimura cranks — the elbow up and out, the forearm gone
+round behind him. `tests/shoulder.js` reads it as swing and twist: from the arm hanging with the forearm
+forward, the upper arm swung the shortest way to where it points, carrying forward and out-to-his-side with
+it; the forearm against those is the turn, in (towards his middle) or out. A shoulder turns in furthest with
+the arm down — the hand to the small of the back, about 110° (`ROM.twInDown` 1.95 rad) — less lifted, about
+70° level (`twInLevel` 1.25), and out about 90° anywhere (`twOut` 1.6). Filmed at the worst frame of each
+situation (`shoulder.snaps`), what the numbers flagged was what the eye objects to: half guard's elbow flared
+with the forearm down his back, the punch cocked from the guard with the forearm behind his head, the chokes'
+arms wrapped round the wrong way, the kimura's arm cranked to 158°.
+
+Held the same way as the shoulder's range already was — by where the elbow goes round the shoulder-to-hand
+line, the hand left where the pose or the grip put it:
+
+- **In the solve** (`FIG.shoulderTwist`): every elbow the bones allow lies on one circle; if the one the pole
+  asks for is out of range, the nearest one round it that isn't (stepping out both ways, closing in on the
+  edge, so it sits on the edge and slides along it). It remembers which way round it went, and keeps to it
+  unless the other is nearer by 0.6 rad: with the pole in the middle of the range it's out of, the nearer way
+  changed frame to frame, and the limit on how fast a limb turns (`swing`) smoothed that into a constant
+  sweep — the rear-naked choke's arms moving 3–6 cm a frame while it was held.
+- **In the contact pass** (its limb `fix`), on the same rule and the same memory: it pushes hands and elbows
+  about after the solve, and over the clinch, half guard and the chokes put back most of what the solve had
+  taken out (the clinch 10% → 5.6% with the solve alone, 0% with both). With its own memory it held the
+  armbar's arm on the opposite side of the range from the solve and the two fought.
+- **In `swing`**: an elbow it holds back from where the solve put it, out of range, goes on round the way it
+  was going as far as the edge — the first frames of a punch.
+- **In the aim**: an arm's aim moves the hand, and an elbow strike's by however far the elbow is off; in the
+  clinch that left the fist where every elbow on the circle was turned out 110–123°. Where the whole aim
+  would do that, as much of it as doesn't. Sixteen clinch elbows each way: landing median 7.7 → 5.7 cm from
+  the head (no loss), frames out of range 27 → 2. Standing punches to the head over real fights: median 1.3 cm,
+  none more than 15 cm short.
+- **A pose**: from inside the closed guard the ground punch used the mount's clip, and the guard holds the
+  hands 18 cm higher, so its wind-up came out above his head, the arm nearly straight up. `gnpPunch@topGuard`
+  postures up and cocks by the ear.
+
+Frames with an arm past the range, the hold off and on, alternately in one page (`shoulder.ab`, `abTech`):
+
+| | off | on |
+|---|---|---|
+| clinch (each man controlling) | 10.2% / 9.0% | 0% / 0.1% |
+| half guard, each on top | 0.8% / 8.5% | 0% / 0% |
+| back, each on top | 7.9% / 14% | 0% / 1.4% |
+| mount, each on top | 1.5% / 1.2% | 0.4% / 0.8% |
+| rear-naked choke | 40% (worst 88° over) | 1.7% (2°) |
+| armbar | 23% | 1.0% (8°) |
+| triangle / kimura / arm-triangle | 26% / 28% / 68% | 0 / 0 / 0 |
+| knee across to the mount | 16.5% | 0.2% |
+| leg freed, denied / reversed | 18.5% / 21% | 0 / 1.7% |
+| half guard straight to the mount | 11% | 0 |
+| real fights, standing / clinch | 1.6% / 3.4% | 0.1% / 0% |
+
+Body overlap doesn't move (every position within 2 cm on average either way, summed 0.16 → 0.15 m), and the
+lock positions' joint jumps are what their own movement makes. What's left is three transitions where the
+keyed hands themselves are the trouble, not the shoulder: the wall walk to the clinch (10.4% → 6.5%, a hand
+thrown up in the air as he rises), guard straight to side control (11.8% → 4.3%, an arm flung out), and the
+knee-across reversal (8.9% → 2.7%). Those are pose fixes, technique by technique.
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),

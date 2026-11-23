@@ -1,0 +1,18 @@
+{
+  "id": "gnpPunch@topGuard",
+  "ref": "topGuard",
+  "note": "Ground punch to the HEAD from inside the closed guard, keyed against the pose it is thrown from. The mount's clip plays as the difference from the mount, and in the guard the hands already sit 18 cm higher than they do in the mount, so its wind-up by the ear came out above his head: the arm raised nearly straight overhead with the forearm back behind it, turned out 156-168 degrees at the top of every punch (tests/shoulder.js). He postures up out of the guard, the fist comes up round the outside to his ear, elbow down and out under it, and drops into the face.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "topGuard", "tan": "flat" },
+    { "t": 70, "set": { "handR": [0.28, 0.0, 0.36], "elbowR": [0, -0.6, 1], "spine": [0.08, 0.15, 0], "pelvis": [0.04, 0.28, 0] } },
+    { "t": 100, "note": "up on the outside, not round the back of the shoulder",
+      "set": { "handR": [0.22, 0.16, 0.38], "elbowR": [0, -0.9, 1], "spine": [0.12, 0.08, 0], "pelvis": [0.08, 0.26, 0] } },
+    { "t": 130, "note": "postured up, cocked by the ear: no higher than it, and the elbow hanging down and out under the fist",
+      "set": { "handR": [0.14, 0.27, 0.3], "elbowR": [0, -1, 1], "spine": [0.15, 0.05, 0], "pelvis": [0.1, 0.24, 0] } },
+    { "t": 180, "set": { "handR": [0.22, 0.04, 0.24], "elbowR": [0, -0.6, 1], "spine": [0.18, 0.2, 0], "pelvis": [0.12, 0.28, 0] } },
+    { "t": 220, "pose": "gnp", "tan": "flat" },
+    { "t": 420, "pose": "topGuard", "tan": "flat" }
+  ],
+  "events": { "impact": 220, "recover": 380 }
+}
