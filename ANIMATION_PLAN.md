@@ -2512,32 +2512,32 @@ are dozens of each), and for every reaction finds the other man's last landed bl
 
 In order of how much each touches, smallest first. Each step stops for a go-ahead before the next.
 
-1. **Body damage is too prevalent.** Find why the loser's body meter so often ends near empty and sits at 1
+1. **Body damage is too prevalent.** *(effort: medium)* Find why the loser's body meter so often ends near empty and sits at 1
    (a display floor or a real floor in `coreLeft`), and how often fights are decided by the body against the
    head. Real fights are rocked and finished to the head far more than to the body. Measure first (share of
    rocked / knockdown / KO by target, body and leg health at the end of fights, how many fights end with a
    part under 10 without a finish), then retune the body share of strikes, what a body shot does to the
    core, and how fast the core recovers, against those numbers and the finish mix. Target: a part under 10
    without a stoppage rare, head the large majority of rockings and finishes.
-2. **No sprawl with his back on the cage.** A man pinned on the fence has no room to sprawl. There the stuffed
+2. **No sprawl with his back on the cage.** *(effort: high)* A man pinned on the fence has no room to sprawl. There the stuffed
    shot becomes its own standing position: the wrestler's head on the hip, driving him into the fence, both
    on their feet (the "head on the hip against the cage" scramble). Engine: a stuffed shot on a pinned man
    goes there instead of the sprawl; from it, the wrestler keeps working the shot (a cage takedown, often into
    the new fence-sit), lets go, or is turned into a front headlock or the clinch; the man on the fence fights
    the hands, knees, or walks out. Picture: two new poses, the layout on the fence (as the fence-sit has),
    and the techniques in and out of it.
-3. **Pressed into the fence, in the clinch.** A clinch position where the man on the fence is just being leaned
+3. **Pressed into the fence, in the clinch.** *(effort: medium)* A clinch position where the man on the fence is just being leaned
    on — chest to chest, hips in, smothered. Little damage either way, control time for the man pinning, a
    drain on the man pinned, and the referee's stand-up clock running. Engine: a third clinch state next to the
    tie-ups, entered from the clinch on the fence and broken out of by the turns and frames that already
    exist. Picture: its own pair of poses, the man pinned with his back flat on the panel.
-4. **Hooks, overhands, uppercuts and elbows, their own clips.** They have clips now (`hook`, `hook_2`,
+4. **Hooks, overhands, uppercuts and elbows, their own clips.** *(effort: high)* They have clips now (`hook`, `hook_2`,
    `overhand`, `overhand_2`, `uppercut`, `uppercut_2`, `elbow`, `elbow_2`), but the ground elbow borrows the
    ground punch (`STANDIN`). Rebuild each from reference (wind-up, hip and shoulder turn, the elbow's path,
    the follow-through and the recovery), measured the way the others were: where it lands, the shoulder's
    range, the snaps. The ground elbows get their own per position (`gnpElbow@topGuard`, `@topHalf`,
    `@topSide`, `@mount`, `@topFence`): short, dropped from the shoulder, the point of the elbow leading.
-5. **Ragdoll for knockdowns and knockouts.** Yes, it can be done here without a physics library: the figure is
+5. **Ragdoll for knockdowns and knockouts.** *(effort: xhigh)* Yes, it can be done here without a physics library: the figure is
    already a set of joints with bone lengths and ranges of motion (`FIG.ROM`), and a position-based ragdoll
    (each joint a particle, the bones kept their length, the ranges held, gravity, the mat and the fence as the
    contact pass already has them) runs on that same skeleton. At the moment the knockout or knockdown blow
