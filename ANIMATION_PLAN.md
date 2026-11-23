@@ -2508,6 +2508,31 @@ are dozens of each), and for every reaction finds the other man's last landed bl
 | knocked out | 6 of 10 | 0 of 12 (0.13 s after) |
 | knocked down | 0 of 1 | 0 of 2 (0.6 s after, as he falls) |
 
+## Step 1 of the plan: the body (2026-11-23)
+
+`harness.bodyAudit` runs whole fights and counts how men are hurt, dropped and finished by target, what share
+of landed strikes goes where, and the worst gauge at the end. Three things made the body look broken:
+
+- **The gauge.** The body gauge showed the core *squared*, and never 0 until the core was really empty: a
+  body half gone read 25, and from 86% of the way to a stoppage it read 1 and sat there, shot after shot.
+  It shows `coreLeft` now, the engine's own scale, the one that decides when he folds and when it's stopped.
+  On the old gauge, one fight in six ended with someone's body under 10; on the engine's scale it was 5.6%.
+- **No recovery.** Between rounds the head cleared 6% plus a flat amount; the body got 3.5 points of the 200
+  that end it, at best. It now gets half the head's kind of recovery (`TUNE.bodyRec`).
+- **All of every body shot stayed.** It's 90% now (`TUNE.bodyTake`).
+
+| ~11,000 fights each | before | after |
+|---|---|---|
+| landed strikes: head / body / legs | 65 / 20 / 15% | the same |
+| body gauge under 10 at the end | 5.6% | 2.1% |
+| any gauge under 10 without a KO/TKO | 0.4% | 0.2% |
+| body folds per fight / body-shot stoppages | 0.067 / 0.024 | 0.037 / 0.005 |
+| hurt, dropped or finished to the head | ~86% | ~93% |
+| KO/TKO, SUB, DEC | 30.1, 21.5, 48.4% | 29.9, 22.0, 48.2% |
+
+Taken all the way (80% and full recovery) body-shot finishes disappeared and KO/TKO fell 1.5 points: a
+body-shot stoppage should be rare, not impossible.
+
 ## Next: the plan for the six points of 2026-11-22 (to start 2026-11-23)
 
 In order of how much each touches, smallest first. Each step stops for a go-ahead before the next.

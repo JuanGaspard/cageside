@@ -178,6 +178,60 @@ export async function effectsReal(attrs, perAttr, secsCap) {
 
 // How much damage shows: the worse-off fighter's consciousness and core at the end of round 1 and at the
 // final bell of fights that go the distance, and the lowest consciousness seen during them.
+// Where the damage goes (2026-11-23): how men are hurt, dropped and finished, by target — the head, the body
+// (`bodyFold`), the legs (`legBuckle`) — what share of landed strikes go to each, and the worst gauge of the
+// worse-off man at the end, on the screen's own curves (the core squared, consciousness cubed, the legs and
+// arms straight). `under10NoKO`: fights that end with a gauge under 10 on someone and no KO/TKO.
+export async function bodyAudit(secs, tune) {
+  const T0 = Object.assign({}, MMA.engine.TUNE);
+  if (tune) Object.assign(MMA.engine.TUNE, tune);
+  try { return await bodyAudit1(secs); } finally { Object.assign(MMA.engine.TUNE, T0); }
+}
+async function bodyAudit1(secs) {
+  const W = MMA.world;
+  if (!W.state() || !W.state().fighters || W.state().settings.world !== 'real') W.newGame({ world: 'real', seed: 11, promotion: 'UFC' });
+  const E = MMA.engine, P = E.Fight.prototype, oc = P.call;
+  const ev = {};
+  P.call = function (k, a, o, imp, kind) { if (typeof k === 'string' && /^(rocked|knockdown|ko|bodyFold|legBuckle|refStop|refStopStand)$/.test(k)) ev[k + ':' + kind] = (ev[k + ':' + kind] || 0) + 1; return oc.apply(this, arguments); };
+  const S = { n: 0, ko: 0, sub: 0, dec: 0, detail: {}, under10NoKO: 0, coreUnder10: 0, legUnder10: 0, endCore: [], endLeg: [], head: 0, body: 0, leg: 0 };
+  const t0 = Date.now();
+  let k = 0;
+  try {
+    while (Date.now() - t0 < secs * 1000) {
+      for (let q = 0; q < 4; q++, k++) {
+        const d = MMA.data.DIVISIONS[k % 8];
+        const list = W.rankings(d.id, 'UFC').list;
+        const i = Math.floor(Math.random() * 12), a = list[i], b = list[i + 1];
+        if (!a || !b) continue;
+        const f = runFight(makeFight(a, b, 3, Math.floor(Math.random() * 1e9)));
+        const r = f.result;
+        S.n++;
+        const fin = r.method === 'KO' || r.method === 'TKO';
+        if (fin) S.ko++; else if (r.method === 'SUB') S.sub++; else S.dec++;
+        S.detail[r.method + ' ' + r.detail] = (S.detail[r.method + ' ' + r.detail] || 0) + 1;
+        let low = 100, lowCore = 100, lowLeg = 100;
+        for (const s of [f.A, f.B]) {
+          const core = s.coreLeft(), leg = Math.min(s.legHealth(0), s.legHealth(1));
+          lowCore = Math.min(lowCore, core); lowLeg = Math.min(lowLeg, leg);
+          low = Math.min(low, core, leg, s.armHealth(0), s.armHealth(1));
+          S.head += s.stats.headLand || 0; S.body += s.stats.bodyLand || 0; S.leg += s.stats.legLand || 0;
+        }
+        S.endCore.push(lowCore); S.endLeg.push(lowLeg);
+        if (lowCore < 10) S.coreUnder10++;
+        if (lowLeg < 10) S.legUnder10++;
+        if (low < 10 && !fin) S.under10NoKO++;
+      }
+      await sleep();
+    }
+  } finally { P.call = oc; }
+  const pc = (x) => (100 * x / S.n).toFixed(1) + '%', med = (a) => { const s = [...a].sort((x, y) => x - y); return Math.round(s[s.length >> 1]); };
+  const top = Object.entries(S.detail).sort((x, y) => y[1] - x[1]).slice(0, 10).map(([kk, v]) => kk + ' ' + pc(v));
+  const per = {}; for (const kk in ev) per[kk] = (ev[kk] / S.n).toFixed(3);
+  const tot = S.head + S.body + S.leg;
+  return { fights: S.n, KO_TKO: pc(S.ko), SUB: pc(S.sub), DEC: pc(S.dec), finishes: top, eventsPerFight: per,
+    landedShare: { head: pc(S.head * S.n / tot), body: pc(S.body * S.n / tot), legs: pc(S.leg * S.n / tot) },
+    worstCoreMedian: med(S.endCore), coreUnder10: pc(S.coreUnder10), legUnder10: pc(S.legUnder10), under10NoKO: pc(S.under10NoKO) };
+}
 export async function damage(secs) {
   const W = MMA.world;
   if (!W.state() || !W.state().fighters || W.state().settings.world !== 'real') W.newGame({ world: 'real', seed: 11, promotion: 'UFC' });
