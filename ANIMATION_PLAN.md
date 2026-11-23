@@ -2481,6 +2481,33 @@ off the fence he was meant to lean on. The double-leg and the clinch trip finish
 technical stand-up start from there, and the ground punch has its own clip (`gnpPunch@topFence`: cocked by
 the ear, in straight at a head with the cage behind it; from the mount's clip it wound up over his head).
 
+## Hurt, dropped or out before the blow (2026-11-22)
+
+A man was shown rocked, knocked down or knocked out before the other man's punch reached him, and knockouts
+came with no punch at all. The words and the meters already waited for the moment's blow to land, but the
+figures read the engine's state directly — rocked, over — so the stance and the fall came at the start of
+the moment, while the punch that did it was still to be thrown. Three more things on top:
+
+- **The blow could be cut.** A moment with more in it than fits is trimmed, and the trimming took from the
+  end — the last punch of a combination, which is the one that finishes it.
+- **The wrong blow set the time.** The reaction was timed to the heaviest blow that landed; when the loser
+  had landed a body punch first, he fell to that, before the cross that knocked him out. The engine now
+  marks the blow that did it (`fx`: ko, kd, hurt — in `call`), and that's the one kept and timed by.
+- **The picture's clock.** The moment's outcome comes out on a timer in real time, and the picture's clock
+  stands still for a beat on a heavy blow, so a knockout punch thrown after one was still on its way in.
+  What the figures are allowed to show (`FV.vis`: who is rocked, whether it's over) and the fall and the
+  stagger are held until that blow lands in the picture itself (`cam.keyAct`, `releaseVis`), plus 30 ms so
+  the fist is seen to arrive, or 1.5 s at most.
+
+`tests/finish.js` runs real fights through the view with clean blows hitting three times as hard (so there
+are dozens of each), and for every reaction finds the other man's last landed blow before it:
+
+| reaction with no landed blow before it | before | after |
+|---|---|---|
+| shown rocked | 7 of 9 | 0 of 13 (a median 0.11 s after it) |
+| knocked out | 6 of 10 | 0 of 12 (0.13 s after) |
+| knocked down | 0 of 1 | 0 of 2 (0.6 s after, as he falls) |
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
