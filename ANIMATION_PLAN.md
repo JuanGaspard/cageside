@@ -2384,10 +2384,42 @@ Frames with an arm past the range, the hold off and on, alternately in one page 
 | real fights, standing / clinch | 1.6% / 3.4% | 0.1% / 0% |
 
 Body overlap doesn't move (every position within 2 cm on average either way, summed 0.16 → 0.15 m), and the
-lock positions' joint jumps are what their own movement makes. What's left is three transitions where the
-keyed hands themselves are the trouble, not the shoulder: the wall walk to the clinch (10.4% → 6.5%, a hand
-thrown up in the air as he rises), guard straight to side control (11.8% → 4.3%, an arm flung out), and the
-knee-across reversal (8.9% → 2.7%). Those are pose fixes, technique by technique.
+lock positions' joint jumps are what their own movement makes.
+
+**The three that were left: the hand, not the elbow.** In three transitions the arm was past the range with
+*no* elbow on the circle in range (`shoulder.trace` gives, for every bad frame, the least any elbow could
+have it past: above 0, the hand is where only a twisted arm reaches). Traced:
+
+- *Guard straight to side control.* Side control's crossface hand was gripped 40% of the way up the other
+  man's head, and the pass into it (`freeLeg`) gripped it there too; with his head out past that shoulder,
+  15–24° past whichever way the elbow went. Both grip round his neck now (`N`–`Hd` 0.12). And the contact
+  pass pushed that fist 45–60 cm on top of it.
+- *The knee-across reversal.* The man bridging out held the trapped arm (`bridgeRoll`) to 1000 ms, after
+  he'd come over on top with the other man on his back under him: his own arm turned out 105°. He lets go at
+  880 now, once he's over (800 was worse: the hand goes back through the other man).
+- *The wall walk.* Sitting up, the chest tipped back over a hand still where it had been, and the fist went
+  back past his own shoulder *at shoulder height*, 50° past whatever the elbow did. The post is out to his
+  side now, but routing the hand round by keys didn't settle it: tried four ways, four runs each, and the
+  runs varied more than the routes did.
+
+So the rule that fixes all three goes where the hand is placed: **`FIG.handInRange`**. Where no elbow has
+the arm in range, the hand is moved as little as gets it somewhere one does — the line from the shoulder
+turned towards hanging forward and down beside him, the same distance out, as far as the first place there's
+an elbow for it. Only then, and from nothing, so a hand isn't touched until it would be twisted. In the solve,
+and in the contact pass's limb fix, which runs last (the crossface fist it had pushed). Measured, four runs
+each, alternating in one page:
+
+| | hold off | on |
+|---|---|---|
+| wall walk to the clinch | 12–25% (worst 107°) | 0.2–1.1% |
+| guard straight to side control | 13–14% (96°) | 0.7–1.2% |
+| knee-across reversal | 8–11% (88°) | 0.2–0.9% |
+| half guard to side control | 9–23% | 2.1% (an elbow lagging, not a hand) |
+
+Overlap in those: 0.1–0.5 cm more summed over both men, 1.1 cm in half guard to side control. No cost in
+frame time (6.6–7.3 ms with or without). Every other technique and attempt comes out at 0–1% held, every
+position under 1% bar the armbar (2.1%) and the clinch with the other man controlling (1.5%), and standing
+punches still land (median 5 cm into the head, none more than 15 cm short).
 
 ## Sources
 

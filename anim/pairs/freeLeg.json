@@ -17,7 +17,7 @@
     { "t": 1500, "top": "@to", "bot": "@to", "tan": "flat" }
   ],
   "grips": [
-    { "who": "top", "eff": "handL", "to": ["N", "Hd", 0.4], "out": [-1, 0, 0], "t": [-1, 1600] },
+    { "who": "top", "eff": "handL", "to": ["N", "Hd", 0.12], "out": [-1, 0, 0], "t": [-1, 1600], "note": "round his neck, where side control's crossface has it: gripped 40% up his head, he came out of this into side control with the arm turned out 14 degrees past what a shoulder turns for a quarter of a second" },
     { "who": "top", "eff": "handR", "to": ["knL", "hpL", 0.2], "out": [1, 0, 0], "t": [150, 750] },
     { "who": "bot", "eff": "footL", "to": ["knR", "anR", 0.35], "add": [0, 0.05, 0], "t": [-1, 450] },
     { "who": "bot", "eff": "footR", "to": ["knR", "anR", 0.55], "add": [0, -0.04, 0], "t": [-1, 400] }

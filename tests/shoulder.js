@@ -133,6 +133,38 @@ export async function abTech(list = [...C.TECHNIQUES, ...C.ATTEMPTS]) {
   R.twOn = true;
   return res;
 }
+// One technique frame by frame: every arm past the range, by how much, and the least any elbow on its circle
+// could have it past (`best`: 0 means an elbow in range existed and the hold didn't get there; above 0, the
+// hand itself is where only a twisted arm reaches — the pose, not the shoulder). And what each man is playing.
+export function bestOnCircle(P, Rc, k) {
+  const FIG = FV().figure, Sh = P['sh' + k], E = P['el' + k], F = P['fi' + k];
+  const L1 = len(sub(E, Sh)), L2 = len(sub(F, E)), d = sub(F, Sh), dl = len(d), u = unit(d);
+  const x = (L1 * L1 - L2 * L2 + dl * dl) / (2 * dl), h = Math.sqrt(Math.max(0, L1 * L1 - x * x));
+  const w0 = unit(flat(sub(E, Sh), u)), w1 = cross(u, w0);
+  let best = 9;
+  for (let a = -Math.PI; a < Math.PI; a += 0.05) {
+    const q = add(mul(w0, Math.cos(a)), mul(w1, Math.sin(a))), E2 = add(add(Sh, mul(u, x)), mul(q, h));
+    best = Math.min(best, FIG.armOver(unit(sub(E2, Sh)), unit(sub(F, E2)), Rc, k === 'L' ? -1 : 1));
+  }
+  return best;
+}
+export function trace(label, minDeg = 3) {
+  const T = [...C.TECHNIQUES, ...C.ATTEMPTS].find((t) => t.label === label);
+  T.from(); C.run(2500); T.go();
+  const rows = [];
+  for (let t = 0; t < T.ms; t += 15) {
+    C.run(15);
+    const cam = FV().cam();
+    for (const s of ['a', 'b']) for (const k of ['L', 'R']) {
+      const g = cam[s].v2, r = g && g.pts && g.fr ? twist(g.pts, g.fr.Rc, k) : null;
+      if (!r || r.over * 180 / Math.PI < minDeg) continue;
+      rows.push(t + ' ' + s + k + ' ' + g.base + (r.tw > 0 ? ' in ' : ' out ') + deg(Math.abs(r.tw)) + ' at ' + deg(r.elev) + ' over ' + deg(r.over)
+        + ' best ' + deg(bestOnCircle(g.pts, g.fr.Rc, k)) + ' | ' + cam[s].acts.map((a) => (a.C && a.C.id) || a.react || '?').join(','));
+    }
+  }
+  C.pos('stand'); C.run(1500);
+  return rows;
+}
 // The frame with the worst arm in each situation, filmed close (saved to review/<name>.png), to see whether
 // what the numbers flag is what the eye objects to.
 export async function snaps(name = 'shoulder', list = SITUATIONS, ms = 3000, orbits = [0.4, 2.2]) {

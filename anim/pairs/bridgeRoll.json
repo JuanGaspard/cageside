@@ -28,7 +28,7 @@
     { "t": 1500, "top": "@to", "bot": "@to", "tan": "flat" }
   ],
   "grips": [
-    { "who": "top", "eff": "handL", "to": ["elL", "fiL", 0.4], "t": [100, 1000], "note": "the trapped arm kept trapped until he's over (let go mid-roll, the hand went back to where the key had it, through the other man's arm and chest)" },
+    { "who": "top", "eff": "handL", "to": ["elL", "fiL", 0.4], "t": [100, 880], "note": "the trapped arm kept trapped until he's over (let go mid-roll, the hand went back to where the key had it, through the other man's arm and chest) - and let go once he is: held on to 1000, with the other man going onto his back under him, his own arm was turned out 105 degrees, past what a shoulder turns" },
     { "who": "top", "eff": "handR", "to": ["shL", "elL", 0.5], "t": [100, 950] }
   ],
   "place": {

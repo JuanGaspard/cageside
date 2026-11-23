@@ -6,7 +6,7 @@
   "keys": [
     { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
     { "t": 350, "top": { "mix": 0.05, "add": { "spine": [0, 0.1, 0] } },
-      "bot": { "mix": 0, "add": { "pelvis": [0, 0.7, 0], "spine": [0, 0.25, 0], "handR": [-0.15, -0.4, 0.12], "root": [-0.03, 0.06] } } },
+      "bot": { "mix": 0, "add": { "pelvis": [0, 0.7, 0], "spine": [0, 0.25, 0], "handR": [-0.08, -0.4, 0.22], "root": [-0.03, 0.06] }, "note": "posted out to his side and a little behind, as a man sitting up bases: straight behind him the arm was turned out past what a shoulder turns" } },
     { "t": 750, "top": { "mix": 0.35, "add": { "root": [0, 0.08], "spine": [0, 0.2, 0] } },
       "bot": { "mix": 0.3, "add": { "pelvis": [0, 0.5, 0], "root": [-0.05, 0.15], "spine": [0, 0.2, 0] } } },
     { "t": 1100, "top": { "mix": 0.8, "add": { "spine": [0, 0.1, 0] } }, "bot": { "mix": 0.8 } },
