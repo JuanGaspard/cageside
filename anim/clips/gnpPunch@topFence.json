@@ -1,0 +1,17 @@
+{
+  "id": "gnpPunch@topFence",
+  "ref": "topFence",
+  "note": "Ground punch from in front of a man sitting against the fence. Up on his knees, his chest already driving forward: the fist comes back by his own ear, no higher - the mount's clip, played from here, wound it up over his head - and goes in short and straight at a head with the cage behind it.",
+  "aim": { "hand": "R" },
+  "keys": [
+    { "t": 0, "pose": "topFence", "tan": "flat" },
+    { "t": 80, "set": { "handR": [0.26, -0.04, 0.3], "elbowR": [0, -0.7, 1] }, "add": { "spine": [0, -0.08, 0] } },
+    { "t": 130, "note": "cocked by the ear, the elbow down and out under it",
+      "set": { "handR": [0.16, 0.12, 0.28], "elbowR": [0, -1, 1] }, "add": { "spine": [0, -0.14, 0], "pelvis": [0, -0.06, 0] } },
+    { "t": 180, "set": { "handR": [0.3, 0.02, 0.2], "elbowR": [0, -0.7, 0.9] }, "add": { "spine": [0, -0.04, 0] } },
+    { "t": 220, "note": "in straight at the head, the hips behind it",
+      "set": { "handR": [0.62, -0.02, 0.06], "elbowR": [-0.2, -0.8, 0.6] }, "add": { "spine": [0, 0.08, 0], "root": [0.04, 0] } },
+    { "t": 420, "pose": "topFence", "tan": "flat" }
+  ],
+  "events": { "impact": 220, "recover": 380 }
+}

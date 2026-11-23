@@ -2,7 +2,7 @@
   "id": "bodyLockTrip",
   "note": "The body-lock trip from the clinch. top: the man taking him down; bot: the man taken down. Chest to chest, he locks his hands round the waist with his head on the chest, and the other man pushes on his head; he steps his lead foot behind the man's heel and drives through with the chest, the man tips back over the leg with the tripped foot coming up, lands on his backside, and he follows him down onto his knees.",
   "from": ["clinch"],
-  "to": ["guard", "half", "side"],
+  "to": ["guard", "half", "side", "fence"],
   "keys": [
     { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
     { "t": 250, "note": "the lock: hands round the waist, head on the chest; he pushes on the head, hips back",

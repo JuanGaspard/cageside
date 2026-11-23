@@ -1,7 +1,7 @@
 {
   "id": "wallWalk",
   "note": "Up off the mat into the clinch (the wall walk). top: the man who was on top, who hangs on; bot: the man getting up. He sits up and posts, gets his feet under him and rises with the man still on him; the man on top comes up with him, arms round his waist, and they end chest to chest.",
-  "from": ["guard", "half", "side", "mount", "back"],
+  "from": ["guard", "half", "side", "mount", "back", "fence"],
   "to": ["clinch"],
   "keys": [
     { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },

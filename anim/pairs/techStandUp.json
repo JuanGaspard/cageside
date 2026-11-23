@@ -1,7 +1,7 @@
 {
   "id": "techStandUp",
   "note": "Back to the feet from the mat (the man underneath gets up). top: the man who was on top; bot: the man getting up. The man on top postures up and steps back first, a foot coming up under him, and rises into his stance; the man underneath, given the room, sits up and posts a hand behind him, lifts his hips off the mat, swings the leg back through and comes up into his stance a step back.",
-  "from": ["guard", "half", "side", "mount", "back"],
+  "from": ["guard", "half", "side", "mount", "back", "fence"],
   "to": ["stand"],
   "keys": [
     { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },

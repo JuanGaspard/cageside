@@ -2,7 +2,7 @@
   "id": "doubleLeg",
   "note": "The double-leg finished, for two (it starts as the shot gets there: the shot itself is the strike clip). top: the man who shot; bot: the man taken down. The shooter's head is on the hip and his arms wrap behind the knees; he steps the trailing leg up and drives through, chest up. The other man's knees buckle and he tips back, hands flung out, and lands on his backside with his legs up. The shooter follows him down onto his knees, chest low, and both settle into the position.",
   "from": ["stand"],
-  "to": ["guard", "half", "side"],
+  "to": ["guard", "half", "side", "fence"],
   "keys": [
     { "t": 0, "top": "@from", "bot": "@from", "tan": "flat" },
     { "t": 220, "note": "in on the hips, head up on his side, arms round behind the knees; he's bending over him, hands on his back",

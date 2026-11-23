@@ -2421,6 +2421,66 @@ frame time (6.6–7.3 ms with or without). Every other technique and attempt com
 position under 1% bar the armbar (2.1%) and the clinch with the other man controlling (1.5%), and standing
 punches still land (median 5 cm into the head, none more than 15 cm short).
 
+## On the fence: through it, and sitting against it (2026-11-22)
+
+**Through the cage.** The fence was a surface in the contact pass for arms and legs only (to the ankle), and
+the two men's middles were held off a panel. Nothing held a man's head or back, so a man laid out on the
+mat by the fence had them through it. `tests/fence.js` takes one man down with his back on the fence at a
+spot round the cage and measures every joint, each a ball (the head 0.1 of him, the trunk 0.13, a shoulder or
+hip 0.08, the rest 0.05), against the eight panels. Of 18 takedowns on the committed version, 6 left
+something through the cage, a head up to 17–39 cm, for most of the time they were down.
+
+So, once both men are posed and the contact pass has had them, whatever of either is through a panel moves
+**both men in off it together**, every point, in that same frame (`cageOut`), and what it took is laid on
+where each is shown from then on (`cageFin`) and let go of slowly, so they settle back against the fence
+rather than off it. Two ways that didn't work first: added to where the layout *aims* them, it was lost in
+the glide that carries each man from one position to the next — exactly when a takedown puts him on the
+fence — and measured from the frame before and eased, a man thrown back into the cage still had his head
+6–10 cm through it for the 200 ms of the fall. And a planted foot is kept inside too, its ball 20 cm in from
+the fence: standing in the clinch on it, a toe had been 23 cm out through the cage.
+
+| through the cage | committed | now |
+|---|---|---|
+| 18 takedowns on the fence, flat (guard, half, side) | 6 through, worst 17 cm | 0 |
+| double-leg and clinch trip into sitting on the fence, 8 | — (no such position) | 0 cm |
+| the clinch on the fence, a knee every 1.2 s, 5 spots | 1 in 5 (a heel, 3 cm) | 0 |
+| walking up it into the clinch, scooting to it, dragged off it, 12 | — | 0 |
+| real fights through the view, 834 moments | a toe 23 cm, a pelvis 16 cm (walking up) | worst 4.9 cm (a heel mid-step), 2 moments over 2 cm |
+
+(The push runs on the mat and in the clinch — walking up the fence he rises from right by it, and the
+pelvis was 16 cm through as they came up. On the feet in the open the hold on where they stand does it.)
+
+**Sitting against the fence** (`fence` on the mat). A man taken down on the cage, or scooting back to it,
+sits with his back to it and the other man in front of him on his knees. In the engine:
+
+- *Getting there.* A takedown that lands on a man pinned on the fence (or tied up there) lands him sitting
+  against it a share of the time — more the better he scrambles and defends the shot, less against a man
+  good on top (`TUNE.fenceSit`). And a man trying to get up near the fence who doesn't make it may get his
+  back to it instead (`scootFence`).
+- *There.* Little to hit (`gnp` 0.6; the GNP table's row for it), the top man's control counted as for a
+  guard, the front-headlock chokes for him and the guillotine for the man sitting (whose only attack it is
+  there). The top man's "pass" is dragging him off the fence, into half guard or side control, harder than a
+  pass (`dragOff`). The man sitting walks up the fence: the easiest place on the mat to get up from
+  (`escape` 1.5), and up into the clinch 85% of the time.
+- *The fence and the shot cut both ways.* A man pinned on the cage can't sprawl away, but he has the cage to
+  lean on and can't be driven over onto his back. It used to count *for* the man shooting (the same +0.08 as
+  being tied up in the open); now it counts a little for the man defending (`TUNE.fenceTdd`, 0.12), the
+  fence wrestler's trait (`cageTd`) still for the shooter, and a takedown that lands often lands him sitting
+  up rather than flat. Getting away from the fence on the feet was already harder (circling off and turning
+  out of the clinch both pay the man pinning him).
+
+Over about 11,000 fights each, twice: takedown accuracy 43% → 39% (on the fence or in the clinch 41–42% →
+33–34%); 0.5 takedowns a fight land him sitting on the fence and 0.37 scoots get him there; wall walks 0.8 →
+1.0 a fight; KO/TKO 30.8% both, submissions 24% → 22%, decisions 45% → 47%, control 267 → 255 s per 15 min.
+
+In the picture: `topFence`/`botFence` (the man sitting leaned back on the cage, knees up and hands framed on
+the shoulders in front of him; the man on top up on his knees, a hand on his head and one on his leg), his
+back put on the nearest panel facing the middle of the cage with the other square in front of him (the panel
+kept while they're there), and the cage's 30 cm hold on a man's middle not applied to him — it held him a hand
+off the fence he was meant to lean on. The double-leg and the clinch trip finish there, the wall walk and the
+technical stand-up start from there, and the ground punch has its own clip (`gnpPunch@topFence`: cocked by
+the ear, in straight at a head with the cage behind it; from the mount's clip it wound up over his head).
+
 ## Sources
 
 - Cascadeur and Shadow Fight 2: [Triple Point press release (2014)](https://pressreleases.triplepointpr.com/?p=14873),
