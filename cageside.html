@@ -7461,7 +7461,11 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // The pace is what was wanted; the knockouts following from it were not)
   // (`counter`: how much of a shot a man who slipped or parried fires back — Fight.counterShot. 0 turns
   // counters off, which is how the two builds were measured against each other.)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1, counterShot: 0.25, fenceSit: 1, fenceTdd: 0.12, bodyTake: 0.9, bodyRec: 0.5, aggr: 1.12, trade: 0.4, gasPush: 0.9, hurtPush: 1 };
+  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.35, rec: 0.5, corner: 0.65, tank: 1.3, cost: 0.85, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1, counterShot: 0.25, fenceSit: 1, fenceTdd: 0.12, bodyTake: 0.9, bodyRec: 0.5, aggr: 1.12, trade: 0.4, gasPush: 0.9, hurtPush: 1, comboFade: 0.1, fireBack: 0.8, survive: 1, unansFade: 0.85, tiredStop: 1.15 };
+  // (`cost` 0.85 and `ref` 1.35, from 1 and 1.15: the tank was tuned for the old, slower pace, and at a real
+  // fight's pace men emptied it far more often than real fighters do — and were stopped for it. With the
+  // tired-only stoppage made harder (`tiredStop`, `unansFade`), the referee stops hurt men a little sooner
+  // instead: the finishes come from men being hurt, as they do in the sport)
   // A takedown off the other man's own strike, as it misses (throwStrike): `p`, how often a wrestler looking
   // for it takes it; `b`, what the shot gets for catching him committed. The big looping shots and the turned
   // back give the most; a jab, which comes back fast, very little; an uppercut and a knee are what meets a
@@ -7826,6 +7830,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     kneeCaught: ['{o} catches the knee and trips {a} off his standing leg!', '{o} scoops the knee and dumps {a}!', '{o} traps the leg as the knee comes up and takes him down!'],
     whizzerThrow: ['{o} rolls over the whizzer and throws {a}!', '{o} hits the whizzer and turns the trip round on {a}!', '{a} goes for the trip and {o} throws him over the top!'],
     goBehind: ['{o} sprawls, snaps him down and goes behind!', '{o} stuffs it and spins to the back of {a}!', '{o} turns the shot round: down on top of {a}!'],
+    survGrab: ['{a} is hurt and lunges for a clinch.', '{a} reaches for {o}, trying to hold on.', 'Hurt, {a} wraps up and looks for a breather.', '{a} grabs at {o} to stop the storm.'],
+    survShot: ['Hurt, {a} dives for a desperate takedown.', '{a} changes levels to survive, shooting on {o}.', '{a} shoots in desperation to escape the punches.'],
+    survRun: ['{a} gets on his bike, circling out to clear his head.', '{a} runs away from {o}, buying time.', '{a} turns and circles off, holding on to his head.'],
+    survCut: ['{o} cuts him off. {a} has nowhere to go.', '{a} tries to circle away, but {o} stays right on him.'],
     smother: ['{o} smothers the attack and ties {a} up.', '{o} steps inside the combination and grabs hold.', '{o} ducks under the hook and gets hold of {a}.', '{o} slips inside the big shot and grabs hold.'],
     // the corner's minute: did he take it in?
     adviceTaken: ['{a} comes out with a new look. He listened to {c}.', 'You can see {c}\'s instructions in how {a} starts this round.', '{a} took it all in from {c}. Different fighter this round.'],
@@ -8427,6 +8435,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
         // of working is generous, and the stool is no longer there to bail him out)
         const rec = Math.max(s.energy < 12 ? 0.3 : 0, TUNE.rec * (s._acted ? 0.35 : 1) * (0.55 + 0.55 * s.a.cardio + 0.42 * s.a.recovery) * bodyDrag / this.wc.tire);
         s.energy = Math.min(s.maxEnergy, s.energy + rec);
+        // (what the referee has seen him take fades when he isn't hurt: it's the beating in front of him now that
+        // he stops, not the round's worth a tired man has soaked up while still defending himself)
+        if (!s.rocked && s.unanswered > 0) s.unanswered *= TUNE.unansFade;
         if (s.rocked > 0) {
           s.beenHurt = true;
           s.rocked -= 0.6 * s.heart() + 0.55 * s.a.recovery > this.rng.next() ? 2 : 1;
@@ -8568,7 +8579,45 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       const back = TUNE.trade * (vs === 'trade' ? 1.5 : vs === 'counter' ? 1.15 : vs === 'circle' ? 0.55 : 0.8)
         * (0.6 + 0.4 * o.plan.mentality) * (0.7 + 0.3 * clamp(this.heat || 1, 0.5, 2.5)) * (0.5 + 0.5 * o.energy / 100)
         * (o.rocked ? 0.35 : 1) * (o.energy < 12 ? 0.3 : 1);
-      if (rng.chance(clamp(back, 0, 0.75))) { if (aAct) bAct = true; else aAct = true; }
+      if (rng.chance(clamp(back, 0, 0.75))) { if (aAct) bAct = true; else aAct = true; this._fireBack = o; }
+    }
+    // A hurt man in front of a man coming to finish him tries to survive it, and how is who he is: he grabs
+    // hold (the clinch fighters, the smart ones), shoots a desperate takedown (the wrestlers), or gets on his
+    // bike and circles out (the quick ones with the legs under them still — not off the fence). Before this
+    // he could only cover up and take it, and when the finishers were told to rush a hurt man the referee
+    // stopped a fifth more fights on punches: every hurt man stood there until it was waved off.
+    const hurt = A.rocked && !B.rocked ? A : B.rocked && !A.rocked ? B : null;
+    if (hurt && TUNE.survive && hurt.energy > 6) {
+      const h = hurt, k = h.opp, legs = h.legF() * (0.6 + 0.4 * h.energy / 100), iq = clamp(h.iq(), 0, 1);
+      const grab = (0.08 + 0.35 * h.a.clinch + 0.12 * iq) * (h.plan.range === 'clinch' || h.plan.vsPressure === 'clinch' ? 1.3 : 1);
+      const shoot = h.plan.takedowns * h.a.wrestling * 0.35 * (h.energy > 20 ? 1 : 0.4);
+      const run = this.isPinned(h) ? 0 : (0.05 + 0.3 * h.a.evasion) * legs * (h.plan.vsPressure === 'circle' ? 1.4 : 1);
+      const kAct = k === A ? aAct : bAct;
+      const want = clamp(TUNE.survive * (grab + shoot + run) * (0.6 + 0.4 * iq) * (kAct ? 1 : 0.5), 0, 0.65);
+      if (rng.chance(want)) {
+        const how = rng.weighted([['grab', grab], ['shoot', shoot], ['run', run]]);
+        if (h === A) aAct = false; else bAct = false;
+        if (how === 'grab') {
+          this.call('survGrab', h, k, 1, 'pos', null, h.side);
+          this.tryClinch(h, true);
+          if (this.pos !== 'stand') return;
+        } else if (how === 'shoot') {
+          this.call('survShot', h, k, 1, 'td', null, h.side);
+          this.attemptTakedown(h, false);
+          return;
+        } else {
+          h._acted = true; h.spend(1);
+          // his legs and evasion against the other man cutting the cage off
+          if (rng.chance(sigmoid(3 * (h.a.evasion * legs - 0.8 * k.a.footwork * k.legF()) + 0.2))) {
+            this.call('survRun', h, k, 1, 'info', null, h.side);
+            this.pivot(h, 0.5);
+            const dd = Math.hypot(h.x - k.x, h.y - k.y) || 0.001;
+            this.shift(h, (h.x - k.x) / dd * 0.1 * legs, (h.y - k.y) / dd * 0.1 * legs); this.spacing();
+            // (and the finisher usually chases him and throws anyway: only now and then does it buy him a breath)
+            if (rng.chance(0.35 * (k.plan.killer === 'swarm' ? 0.6 : 1))) { if (k === A) aAct = false; else bAct = false; }
+          } else this.call('survCut', h, k, 0, 'info', null, k.side);
+        }
+      }
     }
     if (!aAct && !bAct) {
       // feints and footwork only (the moving around happens in footwork())
@@ -8588,7 +8637,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       first = aAct ? A : B; second = first.opp;
     }
     this.exchange(first, second, aAct && bAct);
-    this.edge = null;
+    this.edge = null; this._fireBack = null;
   };
 
   // One exchange: s leads, o answers. 2. the read: both pick at once. 3. the action, with the edge.
@@ -9018,6 +9067,12 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     if (S.target === 'body') dmg *= 1 + m.bodyPower;
     if (o.rocked) dmg *= 1 + 0.6 * s.a.killer;          // a finisher puts their shots on a hurt man
     if (s._counter) dmg *= 1.1 + 0.3 * s.a.timing - 0.2 * o.a.discipline;
+    // Volume isn't power. The third and fourth shots of a flurry are thrown without the feet reset under them —
+    // arm punches, touches, the hands kept busy — and a man firing back while he's being hit is answering,
+    // not set. (When the pace went up to a real fight's, every one of the extra strikes carried a set shot's
+    // weight and finishes rose by a fifth; real high-output fighters don't finish more for throwing more.)
+    if (idx >= 2 && !o.rocked) dmg *= Math.max(0.7, 1 - TUNE.comboFade * (idx - 1));
+    if (this._fireBack === s && !s._counter) dmg *= TUNE.fireBack;
     if (rear) {
       dmg *= 1 + 0.08 * o.intoPower + 0.08 * s.outside;
       if (!this.quiet && this.trng.next() < 0.3) {
@@ -9160,7 +9215,12 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     const cons = o.fog();
     if ((!o.rocked && cons >= 20 && o.energy >= 8) || this.over) return;
     // heart keeps a hurt fighter fighting back; a killer gives the referee no choice; the foggier he is, the sooner it's waved off
-    const threshold = (22 + 30 * this.referee.stoppage + 20 * o.heart()) * (1.35 - 0.7 * s.a.killer) * (0.65 + 0.35 * cons / 100) / TUNE.ref;
+    // (a man who is only exhausted — not hurt, his head clear — is being outworked, and referees let that go
+    // on far longer than a man on wobbly legs: `tiredStop`. Four in five of the referee's stoppages on punches
+    // were of men with an empty tank and a clear head once the pace went up to a real fight's, against a
+    // sport whose stoppages are hurt men)
+    const tiredOnly = !o.rocked && cons >= 20;
+    const threshold = (22 + 30 * this.referee.stoppage + 20 * o.heart()) * (1.35 - 0.7 * s.a.killer) * (0.65 + 0.35 * cons / 100) / TUNE.ref * (tiredOnly ? TUNE.tiredStop : 1);
     if (o.unanswered > threshold && this.rng.chance(0.55)) {
       this.call('refStop', s, o, 3, 'ko');
       this.finish(s, 'TKO', this.pos === 'ground' ? 'Ground & pound' : 'Punches');

@@ -100,6 +100,13 @@ export async function audit(secs = 20, tune) {
         const r = f.result;
         S.fights++;
         if (r.method === 'DEC' || r.method === 'DRAW') S.dec++; else if (r.method === 'SUB') S.sub++; else S.ko++;
+        if (r.method === 'TKO' && r.detail === 'Punches') {
+          const L = f.A.side === r.winner || f.A === r.winner || (r.winner && r.winner.side === 'a') ? f.B : f.A;
+          const st = L.rocked ? 'rocked' : L.energy < 8 ? 'empty' : 'fog';
+          S.stop = S.stop || {}; S.stop[st] = (S.stop[st] || 0) + 1;
+          (S.stopE = S.stopE || []).push(Math.round(L.energy)); (S.stopF = S.stopF || []).push(Math.round(L.fog()));
+        }
+        if (r.method !== 'DEC' && r.method !== 'DRAW') { const key = r.method + ' ' + (r.method === 'SUB' ? '' : r.detail) + ' r' + r.round; S.how = S.how || {}; S.how[key] = (S.how[key] || 0) + 1; }
         S.mins += (r.method === 'DEC' || r.method === 'DRAW') ? 15 : (r.round - 1) * 5 + (r.time || 0) / 60;
         for (const s of [f.A, f.B]) { S.sigA += s.stats.sigAtt; S.sigL += s.stats.sigLand; S.kd += s.stats.kd; }
       }
@@ -117,5 +124,7 @@ export async function audit(secs = 20, tune) {
     quietSpellSecs: { median: g.length ? g[g.length >> 1] * sp : 0, p90: g.length ? g[Math.floor(g.length * 0.9)] * sp : 0, max: g.length ? g[g.length - 1] * sp : 0 },
     attPerMin: { evenFight: (S.evenAtt / Math.max(1, S.evenTicks) * 20).toFixed(1), rivalGassed: (S.gasAtt / Math.max(1, S.gasTicks) * 20).toFixed(1), rivalHurt: (S.hurtAtt / Math.max(1, S.hurtTicks) * 20).toFixed(1) },
     rivalHurtIdle: pc(S.hurtIdle, S.hurtTicks), rivalHurtByKiller: killer, longSpells: S.long,
+    stoppedWhy: S.stop, stopEnergyMedian: S.stopE ? S.stopE.sort((p, q) => p - q)[S.stopE.length >> 1] : null, stopFogMedian: S.stopF ? S.stopF.sort((p, q) => p - q)[S.stopF.length >> 1] : null,
+    how: Object.fromEntries(Object.entries(S.how || {}).sort((p, q) => q[1] - p[1]).slice(0, 14).map(([k, v]) => [k, (100 * v / S.fights).toFixed(1)])),
   };
 }

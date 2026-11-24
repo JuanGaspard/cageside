@@ -2565,7 +2565,32 @@ more, and how much a man throws with the other hurt or gassed; `view` checks the
 | KO/TKO, SUB, DEC | 29.1, 21.8, 49.1% | 35.0, 23.8, 41.2% |
 | knockdowns a fight | 0.19 | 0.16 |
 
-More fights finish: more strikes land. Lowering the impact of a single blow (`shock`) brought it back but
+**Then, the finish rate back to the sport's without giving up the pace.** Broken down, the extra finishes
+were nearly all referee stoppages on punches, and four in five of those were of men with an empty tank and a
+clear head: the busier pace emptied tanks the energy model had been tuned for a slower fight to keep, and the
+referee stopped men for being outworked. Fixed at the causes:
+
+- energy cost per action 0.85 (`TUNE.cost`), for the pace men actually fight at;
+- what the referee has seen a man take fades while he isn't hurt (`unansFade`), and a man only tired, not
+  hurt, needs more before it's waved off (`tiredStop`); the referee stops hurt men a little sooner (`ref`);
+- a hurt man tries to survive by who he is: grabs hold, shoots a desperate takedown, or circles out (the
+  finisher usually chases and throws anyway) — new lines `survGrab`, `survShot`, `survRun`, `survCut`;
+- volume isn't power: the third and later shots of a combination on an unhurt man (`comboFade`) and the shots
+  of a man firing back (`fireBack`) carry less.
+
+| ~11,500 fights | before the pace change | the pace change | now |
+|---|---|---|---|
+| KO/TKO, SUB, DEC | 29.1, 21.8, 49.1% | 35.0, 23.8, 41.2% | 31.5, 25.0, 43.5% |
+| knockdowns a fight | 0.19 | 0.16 | 0.20 |
+| punch stoppages of an exhausted, clear-headed man | ~60% | ~79% | 57% |
+| nothing done on the feet / both throwing / 3+ in a moment | 59 / 15.5 / 9.4% | 46 / 25.5 / 18% | 44 / 27 / 19% |
+| strikes a minute: even / rival gassed | 10.9 / 12.8 | 15.5 / 23.1 | 16.3 / 24.3 |
+
+Submissions are the one number still above the sport's (25% against about 20%); they were above it before
+any of this (22%), and nothing here moves them much. A man with his rival hurt now throws less per standing
+moment (30 a minute) because the hurt man grabs, shoots or runs — which is what hurt men do.
+
+(The first pass, before that:) More fights finish: more strikes land. Lowering the impact of a single blow (`shock`) brought it back but
 took knockdowns down with it; cheaper energy made it worse (fresher men throw more again); a lighter
 build-up of head damage barely moved it; each change contributes a little. Left as it is.
 At normal speed the picture showed everything thrown; at 4× (the game's default) it dropped about a third
