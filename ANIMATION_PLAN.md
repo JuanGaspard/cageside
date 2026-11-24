@@ -2599,6 +2599,37 @@ overfull moment plays its strikes up to 30% quicker, and the fight clock waits f
 (`cam.strikeHold` in runClock, at every speed). Screen time per moment: 4× 750 → 969 ms, 16× 188 → 309 ms;
 `tests/finish.js` at 4× and 16×: no reaction before its blow.
 
+## Step 2 of the plan: the head on the hip against the cage (2026-11-23)
+
+**Engine.** A shot stuffed on a man pinned on the fence no longer ends in a sprawl, a go-behind or a sprawl-
+and-brawl — there's no room for any of them. Most of the time (more for a good wrestler, less against good
+clinch defence) it becomes its own position: `clinchType` 'hip' on the clinch, the wrestler in control, run by
+`hipTick`. Otherwise he's pushed off the fence (`fenceStuff`) or it turns into the tie-up. From the hip:
+
+- the wrestler keeps at the shot (attemptTakedown from there scores +0.2, and lands him sitting on the fence
+  as often as a takedown on the fence does), rides the hips (control time, the other man's tank, short
+  shots to the ribs), comes up into an ordinary tie-up, or lets go — by his plan, his wrestling and his tank;
+  a stuffed finish usually keeps him on the hips (`hipChain`);
+- the man on the fence fights the hands (an edge against the next finish), knees the body and head, walks
+  out along the fence (apart, or the clinch his), or catches the head: a front headlock into the tie-up, or a
+  guillotine he pulls to the mat on;
+- the referee's stand-up clock runs as in the clinch.
+
+`tests/hip.js`, ~5,000 fights: it comes up 0.25 times a fight and lasts about 10 s; out of it, 41% to the
+clinch, 35% apart, 23% a takedown (half of those sitting on the fence), 1% a guillotine. Finishes and
+takedown accuracy as they were (KO/TKO 31.3, SUB 25.3, DEC 43.4%).
+
+**Picture.** Two poses, `hipTop` (bent hard at the waist, the feet staggered to drive, the head pressed beside
+the hip) and `hipBot` (upright, back on the fence, leaning over him, a hand on his head, the other over his
+arm). Both arms round the leg his head is beside, hands locked behind the thigh (`HOLD.hipTop`, mirrored
+for the other stance, `hipTop~`) — round both legs, the far hand couldn't reach. Each man faces the other's
+middle, which pointed the head into the belt; the wrestler now stands `HIP_SIDE` (0.2 m) off the other man's
+middle on his lead side and is turned back square to him (fighters3). Measured on the figures: the head 24 cm
+out from the middle of his hips, beside the hip, at hip height; both grips fully held; no overlap. The shot
+going in plays and arrives there, with no sprawl (camMotion); the finish from there is the double-leg pair,
+which already began "in on the hips" (`doubleLeg` from `hip`, pairNow). `tests/hipview.js`: `shots` and
+`entry` (the shot in, then the finish, filmed).
+
 ## Next: the plan for the six points of 2026-11-22 (to start 2026-11-23)
 
 In order of how much each touches, smallest first. Each step stops for a go-ahead before the next.
