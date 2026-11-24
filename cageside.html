@@ -18581,6 +18581,8 @@ defences|Johnny Eblen|3`,
     // (not when fast-forwarding)
     const cam = FV.cam;
     if (cam && FV.fig2 && (FV.speed || 1) < 8 && !still() && Math.max(cam.busy || 0, cam.hold || 0) > vn()) return;
+    // and a moment with more strikes in it than its time on screen waits for the last of them, at any speed
+    if (cam && !still() && (cam.strikeHold || 0) > vn()) return;
     FV.acc = (FV.acc || 0) + dt * (FV.speed || 1);
     for (let n = 0; FV.acc >= 1000 && FV.running && n < 40; n++) { FV.acc -= 1000; tick(); }
   }
@@ -19047,12 +19049,12 @@ defences|Johnny Eblen|3`,
       return { mv: C && C.impact ? Object.assign({}, mv, { ms: C.dur, hit: C.impact / C.dur }) : mv, C };
     };
     let moves = list.filter((m) => MOVES[m.key]).map((m) => Object.assign(timed(m), m));
-    const plan = (ms) => {
+    const plan = (ms, squeeze) => {
       const out = [];
       let t = 40, lastBy = null, lastEnd = 0;
       for (const m of ms) {
         // (a shot for the legs is the start of a change of position: it plays at its own length too)
-        const dur = m.mv.ms / (m.mv.limb === 'shoot' && (FV.speed || 1) < 8 ? 1 : tempo());
+        const dur = m.mv.ms / (m.mv.limb === 'shoot' && (FV.speed || 1) < 8 ? 1 : tempo() * (squeeze || 1));
         // (the same man throwing again: a hand comes back and goes out again inside its own length, but a leg
         // has to be chambered, thrown and put back down first. At 0.62 of the clip for everything, a body kick
         // was followed by a calf kick 254 ms later — the second one started before the first had landed, and
@@ -19070,19 +19072,13 @@ defences|Johnny Eblen|3`,
     };
     let p = plan(moves);
     const n0 = moves.length;
-    if (p.end > span) { moves = moves.filter((m) => m.land || m.blocked || m.mv.limb === 'shoot'); p = plan(moves); }
-    // (and when even that doesn't fit, what goes is what came first, never the heaviest blow that landed: cut
-    // from the end, the punch that rocked him, dropped him or finished the fight — the last of a combination,
-    // most of the time — was the one cut, and he went down with the other man's hands at his sides)
-    // (the blow the engine says did it — a knockout, a knockdown, a man hurt: `fx` — or failing that the heaviest)
-    const FXR = { ko: 3, kd: 2, hurt: 1 };
-    let keyM = null;
-    for (const m of moves) if (m.land && (!keyM || (FXR[m.fx] || 0) > (FXR[keyM.fx] || 0) || ((FXR[m.fx] || 0) === (FXR[keyM.fx] || 0) && m.dmg >= keyM.dmg))) keyM = m;
-    while (p.end > span && moves.length > 1) {
-      const i = moves.findIndex((m) => m !== keyM);
-      moves = moves.filter((_, j) => j !== i);
-      p = plan(moves);
-    }
+    // Everything thrown is shown. A moment with more in it than its time on screen — a flurry, a trade, at the
+    // faster speeds most of all, where a moment is 750 ms at 4× and the clips only play 1.4× quicker — used to
+    // drop its misses and then its earliest blows until it fit: a third of everything thrown at 4×, the
+    // game's default. Now the strikes play a little quicker (up to 30%), and if that still isn't enough the
+    // fight clock waits for the last of them (`cam.strikeHold`, runClock) — the busy moments take longer.
+    if (p.end > span) p = plan(moves, Math.min(1.3, p.end / span));
+    if (p.end > span) cam.strikeHold = Math.max(cam.strikeHold || 0, vn() + p.end - 60);
     // (how much of what the engine threw the picture had room for: tests/pace.js `view`)
     cam.shownMoves = (cam.shownMoves || 0) + p.out.length; cam.thrownMoves = (cam.thrownMoves || 0) + n0;
     const now = vn();
@@ -19171,7 +19167,9 @@ defences|Johnny Eblen|3`,
     // punches that actually did it still to be thrown. It gave away every combination it had.
     const told = p.out.filter((m) => m.land || m.blocked || m.mv.limb === 'shoot');
     cam.keyAct = null;
-    if (!told.length || (FV.speed || 1) >= 8) return 0;
+    // (at every speed now: with every blow shown, the fast speeds show them landing too, and what they did
+    // waits for them)
+    if (!told.length) return 0;
     // (the heaviest blow that landed — what the commentary leads on — and the last thing to happen if
     // nothing landed at all. Ties go to the later one.)
     let key = told[told.length - 1];
@@ -19183,7 +19181,7 @@ defences|Johnny Eblen|3`,
     // (when it lands in the picture, on the picture's own clock: pushEvents holds what it shows until then)
     const ka = key._act;
     if (ka && key.land) cam.keyAct = { f, at: ka.t0 + ka.dur * (ka.C && ka.C.impact != null && ka.C.dur ? ka.C.impact / ka.C.dur : key.mv.hit) };
-    return Math.min(span * 0.85, key.at + key.dur * (key.mv.limb === 'shoot' ? 0.5 : key.mv.hit));
+    return Math.min(Math.max(span, p.end) * 0.85, key.at + key.dur * (key.mv.limb === 'shoot' ? 0.5 : key.mv.hit));
   }
   // The picture's own clock: it stands still for a beat on a heavy blow and runs slow on a knockdown, so
   // everything that moves with the figures uses it (cam.warp is the time it has held back).

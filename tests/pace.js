@@ -22,7 +22,7 @@ function makeFight(a, b, seed) {
 export async function view(secs = 30, speed = 1, bouts = [1, 3, 4, 2, 0]) {
   const C = await import('./camtest.js'), FV = MMA.fightview;
   const t0 = Date.now();
-  let thrown = 0, shown = 0, fights = 0;
+  let thrown = 0, shown = 0, fights = 0, ms = 0, ticks = 0;
   for (let i = 0; Date.now() - t0 < secs * 1000; i++) {
     await C.setup(bouts[i % bouts.length], true, true);
     const f = C.fight(), cam = FV.cam();
@@ -34,15 +34,19 @@ export async function view(secs = 30, speed = 1, bouts = [1, 3, 4, 2, 0]) {
     try {
       FV.setSpeed && FV.setSpeed(speed);
       if (!FV.camStats().running) FV.actions.fvpause();
-      for (let t = 0; t < 2000000 && !f.over && Date.now() - t0 < secs * 1000; t += 16) {
+      const k0 = f.tick + (f.round - 1) * 100;
+      let t = 0;
+      for (; t < 2000000 && !f.over && Date.now() - t0 < secs * 1000; t += 16) {
         clock += 16; C.setClock(clock);
         for (let k = 0; k < timers.length; k++) if (timers[k].at <= clock) { const x = timers.splice(k--, 1)[0]; try { x.fn(); } catch (e) { /* the result screen */ } }
         FV.camFrame(clock);
       }
+      ms += t; ticks += f.tick + (f.round - 1) * 100 - k0;
     } finally { performance.now = real; window.setTimeout = realST; }
     thrown += cam.thrownMoves || 0; shown += cam.shownMoves || 0; fights++;
   }
-  return { fights, thrown, shown, shownPct: (100 * shown / Math.max(1, thrown)).toFixed(1) + '%' };
+  // (`msPerMoment`: screen time per 3-second moment of the fight; 3000 / speed if nothing ever waited)
+  return { fights, thrown, shown, shownPct: (100 * shown / Math.max(1, thrown)).toFixed(1) + '%', msPerMoment: Math.round(ms / Math.max(1, ticks)), plain: Math.round(3000 / speed) };
 }
 
 export async function audit(secs = 20, tune) {

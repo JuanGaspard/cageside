@@ -2568,7 +2568,11 @@ more, and how much a man throws with the other hurt or gassed; `view` checks the
 More fights finish: more strikes land. Lowering the impact of a single blow (`shock`) brought it back but
 took knockdowns down with it; cheaper energy made it worse (fresher men throw more again); a lighter
 build-up of head damage barely moved it; each change contributes a little. Left as it is.
-At normal speed the picture shows everything thrown; at 4× it drops about a third (misses first), as it did.
+At normal speed the picture showed everything thrown; at 4× (the game's default) it dropped about a third
+(misses first, then the earliest blows) to fit each moment into its 750 ms. Now nothing is dropped: an
+overfull moment plays its strikes up to 30% quicker, and the fight clock waits for the rest
+(`cam.strikeHold` in runClock, at every speed). Screen time per moment: 4× 750 → 969 ms, 16× 188 → 309 ms;
+`tests/finish.js` at 4× and 16×: no reaction before its blow.
 
 ## Next: the plan for the six points of 2026-11-22 (to start 2026-11-23)
 
