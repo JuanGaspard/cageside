@@ -7454,14 +7454,25 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // Fight-night form: a small spread for the whole night (a big one made one man dominate from start to
   // finish), plus a swing each round, so a fighter can lose a round and come back. Upsets come mostly from
   // single shots, scrambles and close rounds, as they do for real.
-  const FORM_SD = 0.06;
+  // (and now none for the whole night. Rolled at the bell, 6% on every attribute for the full fight was bigger
+  // than the gap between two neighbouring ranked men, so it decided the fight and the first minute gave it
+  // away: the man ahead after a minute won 72%, the first round's winner 81%, the man who scored the first
+  // knockdown 95%, a man who'd been hurt 11%. The same spread now lives inside the fight instead — a bigger
+  // swing each round (`swing`), form drifting minute to minute (`flowSd`, `flowRev`), the second wind, the
+  // flush shot, the chin's night, urgency and coasting: tests/swing.js)
+  const FORM_SD = 0;
   // the engine's balance knobs (these are the values the game ships with; the simulator can change them)
   // (shock 1.66 -> 1.45: the combinations got longer and the action came in flurries, so a hurt man now eats
   // three shots where he used to eat one, and the finish rate went from 29% of fights to 38% on its own.
   // The pace is what was wanted; the knockouts following from it were not)
   // (`counter`: how much of a shot a man who slipped or parried fires back — Fight.counterShot. 0 turns
   // counters off, which is how the two builds were measured against each other.)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.35, rec: 0.5, corner: 0.65, tank: 1.3, cost: 0.85, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1, counterShot: 0.25, fenceSit: 1, fenceTdd: 0.12, bodyTake: 0.9, bodyRec: 0.5, aggr: 1.12, trade: 0.4, gasPush: 0.9, hurtPush: 1, comboFade: 0.1, fireBack: 0.8, survive: 1, unansFade: 0.85, tiredStop: 1.15, hipFence: 1, press: 1, pressDrain: 1, pressDmg: 0.5 };
+  // (`shock` 1.75 from 1.45: the whole-night form made mismatches, and mismatches made knockouts; without it
+  // the single clean shot carries them, which is also where the flukes come from)
+  const TUNE = { form: FORM_SD, swing: 0.3, amp: 0.75, shock: 1.75, ref: 1.35, rec: 0.5, corner: 0.65, tank: 1.3, cost: 0.85, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1, counterShot: 0.25, fenceSit: 1, fenceTdd: 0.12, bodyTake: 0.9, bodyRec: 0.5, aggr: 1.12, trade: 0.4, gasPush: 0.9, hurtPush: 1, comboFade: 0.1, fireBack: 0.8, survive: 1, unansFade: 0.85, tiredStop: 1.15, hipFence: 1, press: 1, pressDrain: 1, pressDmg: 0.5,
+    // the life in a fight (step, land, cardsRead): form drifting minute to minute, the second wind, the
+    // flush shot, the chin's night, shorter hurt spells, urgency when behind and coasting when well ahead
+    flowSd: 0.03, flowRev: 0.03, bounce: 0.12, flush: 0.025, flushK: 1.7, chinNight: 0.06, rockLen: 0.75, urgency: 1.6, coast: 1, kdSurvive: 1 };
   // (`cost` 0.85 and `ref` 1.35, from 1 and 1.15: the tank was tuned for the old, slower pace, and at a real
   // fight's pace men emptied it far more often than real fighters do — and were stopped for it. With the
   // tired-only stoppage made harder (`tiredStop`, `unansFade`), the referee stops hurt men a little sooner
@@ -7652,6 +7663,8 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     this.A.tire = this.B.tire = this.wc.tire; // big men gas sooner
     this.toCorners();
     this.rollSwing();
+    // (each man's chin on the night, and where his form starts: a chin isn't the same every fight)
+    for (const s of [this.A, this.B]) { s.chinNight = this.rng.gauss(0, TUNE.chinNight); s.flow = this.rng.gauss(0, TUNE.flowSd * 2); s.urgency = 0; s.coast = 0; }
     // same surname? use full names so the commentary stays readable
     if (this.A.name === this.B.name) { this.A.name = MMA.fighter.fullName(cfg.a); this.B.name = MMA.fighter.fullName(cfg.b); }
     this.round = 1; this.tick = 0;
@@ -7838,6 +7851,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     hipRide: ['{a} leans on the hips, making {o} carry his weight.', '{a} grinds on the fence, head on the hip.'],
     hipUp: ['{a} comes up off the legs into the clinch.', '{a} lets go of the legs and gets an underhook.'],
     hipLetGo: ['{a} lets go of the legs and backs out.', '{a} gives up on the shot and steps away.'],
+    kdSurvive: ['{a} ties up the arms of {o} and holds on!', '{a} wraps him up and survives the storm.', '{a} gets his guard back and smothers the punches.', 'Somehow {a} is still in this, holding on for dear life.'],
     pressIn: ['{a} flattens {o} against the fence, chest to chest.', '{a} gets his hips in and pins {o} flat on the cage.', '{a} leans all his weight on {o} against the fence.'],
     pressLean: ['{a} keeps {o} pressed into the cage, making him carry the weight.', 'Not much happening: {a} is smothering {o} on the fence.', '{a} grinds his head into the chin of {o}.'],
     pressFrame: ['{a} gets a forearm in and pushes his hips off the fence.', '{a} frames on the neck and makes some room.'],
@@ -8290,14 +8304,14 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       const gas = this.gasRead(s);
       return {
         jab: (0.5 + a.boxing) * (1.25 - 0.5 * p.power) * (out ? 1.1 : 1),
-        blitz: (0.25 + 0.75 * p.mentality) * (0.4 + p.power) * (0.5 + a.boxing) * (out ? 0.55 : 1.15) * (o.rocked ? 2 + 2 * a.killer : 1) * (1 + 0.9 * gas),
+        blitz: (0.25 + 0.75 * p.mentality) * (0.4 + p.power) * (0.5 + a.boxing) * (out ? 0.55 : 1.15) * (o.rocked ? 2 + 2 * a.killer : 1) * (1 + 0.9 * gas) * (1 + 0.9 * (s.urgency || 0)),
         // (kicking was the likeliest thing a man did at range — weighted above the jab, and a kick action throws
         // a combination of nothing but kicks. Across 260 fights that put 35% of every landed strike into the
         // legs, against something nearer 15% in the UFC's own numbers, and kicks at 40% of everything thrown.
         // At range a fighter's hands still lead; the kicks come off them)
         kick: (0.12 + 1.0 * a.kicking) * (out ? 0.5 : 0.3) * (p.targeting === 'legs' || p.targeting === 'body' ? 1.4 : 1) * (o.rocked ? 0.5 : 1),
         feint: (0.1 + 0.55 * s.offIQ()) * (o.rocked ? 0.3 : 1) * (1 - 0.5 * gas),
-        shot: p.takedowns * (0.03 + 0.27 * a.wrestling) * (o.rocked && p.killer === 'takedown' ? 3 : 1) * (s.energy < 20 ? 0.5 : 1) * (out ? 0.75 : 1) * (1 + gas),
+        shot: p.takedowns * (0.03 + 0.27 * a.wrestling) * (o.rocked && p.killer === 'takedown' ? 3 : 1) * (s.energy < 20 ? 0.5 : 1) * (out ? 0.75 : 1) * (1 + gas) * (1 + 0.6 * (s.urgency || 0)),
         tie: (p.range === 'clinch' ? 0.45 : 0.04) * (out ? 0.35 : 1),
       };
     }
@@ -8453,8 +8467,18 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
         if (s.rocked > 0) {
           s.beenHurt = true;
           s.rocked -= 0.6 * s.heart() + 0.55 * s.a.recovery > this.rng.next() ? 2 : 1;
-          if (s.rocked <= 0) { s.rocked = 0; s.unanswered = 0; this.call('recovered', s, s.opp, 1); }
+          if (s.rocked <= 0) {
+            s.rocked = 0; s.unanswered = 0; this.call('recovered', s, s.opp, 1);
+            // he weathered it, and it's lit something: the second wind, the hurt man who comes back swinging.
+            // More of it the more heart he has (and the head clears a little with the adrenaline)
+            s.flow = (s.flow || 0) + TUNE.bounce * (0.4 + 0.8 * clamp(s.heart(), 0, 1.2));
+            s.head = Math.max(0, s.head - TUNE.bounce * 60 * s.heart());
+          }
         }
+        // ---- the flow of the fight: a man's form drifts from minute to minute on its own (a rhythm found and
+        // lost, a read that clicks, a lapse), settling back to his level. It's what lets the man losing win a
+        // stretch of a round he's losing, and the man winning lose one
+        s.flow = (s.flow || 0) * (1 - TUNE.flowRev) + this.rng.gauss(0, TUNE.flowSd);
       }
       this.foulCheck();
       this.tick++;
@@ -8540,7 +8564,10 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // the rhythm of the fight, dulled a little by a patient game plan: the careful ones join in less
     act *= 1 + (this.heat == null ? 0 : this.heat - 1) * (0.55 + 0.45 * p.mentality);
     act *= 0.55 + 0.45 * (s.energy / 100);
-    act *= 1 + s.m.output + 0.8 * (s.swing || 0);
+    act *= 1 + s.m.output + 0.8 * ((s.swing || 0) + (s.flow || 0));
+    // behind on the cards and told so: he has to make something happen. Two rounds up going into the last: he
+    // can afford to be careful, unless finishing is who he is
+    act *= 1 + 0.35 * (s.urgency || 0) - 0.2 * (s.coast || 0);
     // A hurt man in front of him: go and get him. How hard depends on how he finishes — a swarmer is on him
     // at once and stays on him, a measured finisher steps in behind his shots and picks them (still far busier
     // than he was), a wrestler goes for the legs (standPrior's shot) and throws to get there. Killer instinct
@@ -8964,7 +8991,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // the top of his accuracy as well meant a man who fell behind missed almost everything: across rounds the
     // share of rounds where one landed under 20% while the other landed over 45% ran 20%, 32%, 36%)
     let atk = (0.62 * skill + 0.14 * s.a.speed + 0.14 * s.iq() + 0.1 * s.a.timing + (range === 'pocket' ? 0.08 * (s.a.footwork - 0.5) : 0)) * (0.62 + 0.38 * s.ef());
-    atk *= 1 + (s.swing || 0);
+    atk *= 1 + (s.swing || 0) + (s.flow || 0);
     if (o.rocked) atk *= 1 + 0.4 * s.a.killer * TUNE.killer;          // killer instinct: sharper when they're hurt
     else if (o.energy < 40 || o.head > 60) atk *= 1 + 0.2 * s.a.killer * TUNE.killer; // ...or fading
     // every strike meets its own defence: punch defence, kick defence or clinch defence; discipline (never
@@ -8987,7 +9014,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       if (o.plan.vsPressure === 'circle') def += 0.06 * o.a.evasion * o.legF();
       if (range === 'outside') def += 0.04 * o.a.evasion * o.legF();
     }
-    def *= 1 + 0.6 * (o.swing || 0);
+    def *= 1 + 0.6 * ((o.swing || 0) + (o.flow || 0));
+    // (a man behind and going for it leaves himself open; a man coasting on a lead is careful)
+    def *= 1 - 0.1 * (o.urgency || 0) + 0.05 * (o.coast || 0);
     if (o.rocked) def *= 0.45;
     if (o.plan.mentality > 0.7) def *= 0.86 + 0.14 * o.a.discipline;          // walking forward gets you hit, unless disciplined
     if (s._counter) def *= 0.82 - 0.15 * s.a.timing + 0.22 * o.a.discipline;  // counters land on an open target
@@ -9187,14 +9216,18 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // any clean shot can end it at any time; the foggier he already is, the less it takes
     const cons = o.fog() / 100;
     const vuln = 1 + 0.85 * Math.pow(1 - cons, 2.2);
-    const shock = eff * Math.pow(this.wc.pow, 0.5) * 1.95 * TUNE.shock * vuln * (o.rocked ? 1.45 : 1) * (o.energy < 20 ? 1.1 : 1);
+    // (and now and then one lands right on the button — the angle, the timing, him walking into it — whoever
+    // threw it and however the fight's been going: the puncher's chance, `flush`)
+    const flush = rng.chance(TUNE.flush) ? TUNE.flushK : 1;
+    const shock = eff * Math.pow(this.wc.pow, 0.5) * 1.95 * TUNE.shock * vuln * flush * (o.rocked ? 1.45 : 1) * (o.energy < 20 ? 1.1 : 1);
     // out on his feet: with nothing left, almost anything finishes it
     if (cons <= 0.08 && eff > 2.5 && rng.chance(0.45)) {
       if (!ground) s.stat('kd', 1);
       this.call(ground ? 'refStop' : 'ko', s, o, 3, 'ko', x);
       return this.finish(s, ground ? 'TKO' : rng.chance(0.5) ? 'KO' : 'TKO', ground ? 'Ground & pound' : rng.chance(0.5) ? this.finishName(key) : 'Punches');
     }
-    const resist = 15 + 28 * o.a.chin + 9 * o.heart();
+    // (a chin has its nights: `chinNight`, rolled at the start of the fight)
+    const resist = 15 + 28 * clamp(o.a.chin + (o.chinNight || 0), 0, 1.2) + 9 * o.heart();
     const r = shock / resist;
     if (r > 1.3 && rng.chance((r - 1.3) * 1.1)) {
       this.call('ko', s, o, 3, 'ko', x);
@@ -9203,7 +9236,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     }
     if (r > 0.88 && rng.chance((r - 0.88) * 0.85)) {
       s.stat('rockedOpp', 1);
-      o.rocked = Math.max(o.rocked, 6 + Math.round(8 * (1 - o.heart())));
+      // (dropped: hurt for 12 to 30 seconds, not 18 to 42 — most men who survive the first flurry after a
+      // knockdown have their legs back inside half a minute, and some of them go on to win; `rockLen`)
+      o.rocked = Math.max(o.rocked, Math.round(TUNE.rockLen * (6 + 8 * (1 - o.heart()))));
       o.unanswered += eff;
       // (a man already on the mat cannot be knocked down: there it is simply a bad shot that hurts him, and
       // it is neither counted nor called as a knockdown. This branch never checked, while the knockout
@@ -9217,7 +9252,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     }
     if (r > 0.55 && rng.chance((r - 0.55) * 0.9)) {
       if (!o.rocked) s.stat('rockedOpp', 1);
-      o.rocked = Math.max(o.rocked, 3 + Math.round(6 * (1 - o.heart())));
+      o.rocked = Math.max(o.rocked, Math.max(2, Math.round(TUNE.rockLen * (3 + 6 * (1 - o.heart())))));
       this.call('rocked', s, o, 2, 'hurt', x);
     } else plain();
     // referee intervention: a hurt fighter who isn't defending himself
@@ -9273,7 +9308,18 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     this.stall = 0;
     this.call('pounce', s, o, 1, 'pos');
     const n = (k === 'swarm' ? 3 : 2) + (this.rng.chance(0.5 * s.a.killer) ? 1 : 0);
-    for (let i = 0; i < n && !this.over; i++) this.gnp(s, true);
+    for (let i = 0; i < n && !this.over; i++) {
+      // (and between the flurries, the man under him fights to survive it: ties up the arms, wraps the legs,
+      // holds on, gets his guard back. Heart, a guard and a scramble do it. Before this the pounce simply ran
+      // its course: 78% of first knockdowns were finished in the same round, and the man dropped won 3% of
+      // those fights, against something nearer half and a fifth in the sport)
+      if (i > 0 && this.pos === 'ground' && rng.chance(TUNE.kdSurvive * (0.12 + 0.22 * clamp(o.heart(), 0, 1.2) + 0.2 * o.a.guard + 0.12 * o.a.scramble))) {
+        this.call('kdSurvive', o, s, 1, 'pos', null, o.side);
+        if (this.gpos !== 'guard' && rng.chance(0.4 * o.a.guard)) this.gpos = 'guard';
+        break;
+      }
+      this.gnp(s, true);
+    }
   };
 
   // ------------------------------------------------------------------ takedowns
@@ -10186,10 +10232,30 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // Start the next round (after both corners have been worked). Includes the doctor check.
   // Each round, each man has his own night inside the night: some rounds click, some don't.
   Fight.prototype.rollSwing = function () { for (const s of [this.A, this.B]) s.swing = this.rng.gauss(0, TUNE.swing); };
+  // Where each man stands on the cards going into the next round, as his corner tells him (a corner gets a
+  // close round wrong now and then): behind with few rounds left, he has to go and get it (`urgency`, more
+  // and heavier shots and more shots for the legs, more open for it); two up with one to go, he can afford
+  // to be careful unless finishing is who he is (`coast`). It's what gives a fight its last-round turns.
+  Fight.prototype.cardsRead = function () {
+    const cards = this.scorecards || [], done = cards[0] ? cards[0].length : 0, left = this.rounds - done;
+    let lead = 0;   // rounds A is up on the majority of the cards
+    for (let j = 0; j < done; j++) {
+      let v = 0;
+      for (const c of cards) v += Math.sign(c[j][0] - c[j][1]);
+      if (v !== 0 && this.rng.chance(0.12)) v = 0;   // the corner calls a close one either way
+      lead += Math.sign(v);
+    }
+    for (const s of [this.A, this.B]) {
+      const up = s === this.A ? lead : -lead;
+      s.urgency = left > 0 && up < 0 ? TUNE.urgency * clamp(-up / left, 0, 1) * (0.6 + 0.4 * s.heart()) : 0;
+      s.coast = left > 0 && up >= 2 && up >= left ? TUNE.coast * (1 - 0.7 * s.a.killer) * (1.2 - s.plan.mentality) : 0;
+    }
+  };
   Fight.prototype.nextRound = function () {
     if (!this.betweenRounds || this.over) return;
     this.events = [];
     this.rollSwing();
+    this.cardsRead();
     for (const s of [this.A, this.B]) {
       if (s.cut > 7 && this.rng.chance(clamp((s.cut - 7) / 5, 0, 0.9))) {
         this.call('doctorStop', s.opp, s, 3, 'ko');

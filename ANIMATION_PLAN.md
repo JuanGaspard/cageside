@@ -2649,6 +2649,40 @@ pinning them to the panel — his back is on the fence, so a lock behind it rode
 `pressBot` (flat and square on the panel, a forearm on the neck and a hand on the shoulder). Spacing 0.5 m
 against the clinch's 0.78. All four grips held, no overlap.
 
+## Life in a fight: not knowing who wins (2026-11-23, before step 4)
+
+`tests/swing.js` `audit`: how often whoever looks like winning early does win; `matchups`: the same pairing
+fought 40 times, how decided it is before the bell.
+
+The pairings themselves were reasonable (the favourite's median chance 65%, the higher-ranked man winning
+53–55%), but inside a fight everything was settled early. The cause was the whole-night form roll: 6% on
+every attribute for the full fight, bigger than the gap between two neighbouring ranked men, decided at the
+bell and given away in the first minute. Its spread now lives inside the fight instead:
+
+- no whole-night form (`FORM_SD` 0); a bigger swing each round (`swing` 0.3) and form that drifts minute to
+  minute (`flow`: `flowSd`, `flowRev`, about a minute and a half of memory);
+- the second wind: a hurt man who recovers gets a lift, more with more heart, and his head clears a little;
+- surviving the pounce after a knockdown (`kdSurvive`): tie up, wrap up, guard back — heart, guard, scramble;
+- shorter hurt spells (`rockLen` 0.75: dropped, 12 to 30 seconds);
+- the flush shot (`flush` 2.5% of head shots land on the button, ×1.7) and the chin's night (`chinNight`);
+- urgency behind on the cards (`cardsRead`: more output, more power shots and shots for the legs, more open)
+  and coasting two up going into the last (less output, more careful, unless he's a finisher);
+- `shock` 1.75 from 1.45: the form roll made mismatches and mismatches made knockouts; now the single clean
+  shot carries them.
+
+| ~6,600 fights | before | now |
+|---|---|---|
+| ahead after the first minute → wins | 72% | 67% |
+| won round 1 → wins | 81% | 76% |
+| lost round 1 → won anyway | 19% | 24% |
+| first knockdown (not the finish) → wins | 95% | 86% |
+| was hurt at some point → won anyway | 11% | 22% |
+| round winner changes from the round before | 23% | 32% |
+| decisions with every round to one man | 61% | 50% |
+| KO/TKO, SUB, DEC | 28.2, 25.7, 46.1% | 29.4, 23.1, 47.5% |
+
+Pace, accuracy and output unchanged (10.9 sig. strikes a minute, 45%).
+
 ## Next: the plan for the six points of 2026-11-22 (to start 2026-11-23)
 
 In order of how much each touches, smallest first. Each step stops for a go-ahead before the next.
