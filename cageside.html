@@ -7461,7 +7461,7 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   // The pace is what was wanted; the knockouts following from it were not)
   // (`counter`: how much of a shot a man who slipped or parried fires back — Fight.counterShot. 0 turns
   // counters off, which is how the two builds were measured against each other.)
-  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1, counterShot: 0.25, fenceSit: 1, fenceTdd: 0.12, bodyTake: 0.9, bodyRec: 0.5 };
+  const TUNE = { form: FORM_SD, swing: 0.10, amp: 0.75, shock: 1.45, ref: 1.15, rec: 0.5, corner: 0.65, tank: 1.3, cost: 1, dazed: 1, tiredDef: 1, pin: 1, killer: 1, hitCost: 1, counter: 1, kneeOnShot: 1, clinchReach: 0.36, clinchFence: 0.25, duckUnder: 1, counterShot: 0.25, fenceSit: 1, fenceTdd: 0.12, bodyTake: 0.9, bodyRec: 0.5, aggr: 1.12, trade: 0.4, gasPush: 0.9, hurtPush: 1 };
   // A takedown off the other man's own strike, as it misses (throwStrike): `p`, how often a wrestler looking
   // for it takes it; `b`, what the shot gets for catching him committed. The big looping shots and the turned
   // back give the most; a jab, which comes back fast, very little; an uppercut and a knee are what meets a
@@ -8266,16 +8266,18 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
   Fight.prototype.standPrior = function (s, role) {
     const p = s.plan, a = s.a, o = s.opp, out = this.range === 'outside';
     if (role === 'att') {
+      // (a tired man in front of him: the committed shots and the takedowns, not the feints and the range-finders)
+      const gas = this.gasRead(s);
       return {
         jab: (0.5 + a.boxing) * (1.25 - 0.5 * p.power) * (out ? 1.1 : 1),
-        blitz: (0.25 + 0.75 * p.mentality) * (0.4 + p.power) * (0.5 + a.boxing) * (out ? 0.55 : 1.15) * (o.rocked ? 2 + 2 * a.killer : 1),
+        blitz: (0.25 + 0.75 * p.mentality) * (0.4 + p.power) * (0.5 + a.boxing) * (out ? 0.55 : 1.15) * (o.rocked ? 2 + 2 * a.killer : 1) * (1 + 0.9 * gas),
         // (kicking was the likeliest thing a man did at range — weighted above the jab, and a kick action throws
         // a combination of nothing but kicks. Across 260 fights that put 35% of every landed strike into the
         // legs, against something nearer 15% in the UFC's own numbers, and kicks at 40% of everything thrown.
         // At range a fighter's hands still lead; the kicks come off them)
         kick: (0.12 + 1.0 * a.kicking) * (out ? 0.5 : 0.3) * (p.targeting === 'legs' || p.targeting === 'body' ? 1.4 : 1) * (o.rocked ? 0.5 : 1),
-        feint: (0.1 + 0.55 * s.offIQ()) * (o.rocked ? 0.3 : 1),
-        shot: p.takedowns * (0.03 + 0.27 * a.wrestling) * (o.rocked && p.killer === 'takedown' ? 3 : 1) * (s.energy < 20 ? 0.5 : 1) * (out ? 0.75 : 1),
+        feint: (0.1 + 0.55 * s.offIQ()) * (o.rocked ? 0.3 : 1) * (1 - 0.5 * gas),
+        shot: p.takedowns * (0.03 + 0.27 * a.wrestling) * (o.rocked && p.killer === 'takedown' ? 3 : 1) * (s.energy < 20 ? 0.5 : 1) * (out ? 0.75 : 1) * (1 + gas),
         tie: (p.range === 'clinch' ? 0.45 : 0.04) * (out ? 0.35 : 1),
       };
     }
@@ -8482,29 +8484,52 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // it settles back towards the fight's own level, and is kicked out of it now and then
     this.heat += (1 - this.heat) * 0.22;
     const live = (this.A.energy + this.B.energy) / 200;
-    if (rng.chance(0.1 + 0.05 * live)) this.heat = 1.8 + rng.next() * 1.6;          // they open up
-    else if (rng.chance(0.07)) this.heat = 0.45 + rng.next() * 0.3;                  // feeling out: feints and feet
-    // nothing thrown for a while and somebody forces it — the crowd, the corner, the clock, impatience.
-    // (Without this the quiet spells ran to 19 moments, nearly a minute of two men not throwing at all.)
-    if (this.lull > 3) this.heat = Math.max(this.heat, Math.min(2.2, 1 + 0.3 * (this.lull - 3)));
+    // (the feeling-out spells were half again as common and the open-ups rarer: 61% of every moment on the
+    // feet had nothing thrown in it by either man, and a quiet spell ran past a minute now and then. Real
+    // fighters touch each other far more than that; the dead air between exchanges is seconds, not half-minutes)
+    if (rng.chance(0.14 + 0.06 * live)) this.heat = 1.8 + rng.next() * 1.6;          // they open up
+    else if (rng.chance(0.045)) this.heat = 0.5 + rng.next() * 0.3;                  // feeling out: feints and feet
+    // nothing thrown for a few seconds and somebody forces it — the crowd, the corner, the clock, impatience.
+    // (Without this the quiet spells ran to 19 moments, nearly a minute of two men not throwing at all; it used
+    // to wait three moments before it began to push, and pushed gently)
+    if (this.lull > 1) this.heat = Math.max(this.heat, Math.min(2.4, 1.1 + 0.4 * (this.lull - 1)));
     // a hurt man is a reason for everyone to stop being careful
     if (this.A.rocked || this.B.rocked) this.heat = Math.max(this.heat, 1.8);
+    // and so is a man with nothing left in the tank, once the fresher one has seen it
+    if (Math.max(this.gasRead(this.A), this.gasRead(this.B)) > 0.4) this.heat = Math.max(this.heat, 1.35);
     // and the last half-minute of a round, when a man who needs it goes looking
     if (this.tick > TICKS_PER_ROUND - 10) this.heat = Math.max(this.heat, 1.25);
+  };
+  // How plainly s can see that the other man is spent, 0 to 1: the other man low in the tank, s with more in
+  // his, and s sharp enough to notice it (the hands coming down, the mouth open, the feet flat). A smart
+  // fighter sees it early; a dull one only once it's obvious.
+  Fight.prototype.gasRead = function (s) {
+    const o = s.opp;
+    if (!o || o.energy >= 48) return 0;
+    const low = clamp((48 - o.energy) / 30, 0, 1), fresher = clamp((s.energy - o.energy) / 25, 0, 1);
+    return low * fresher * (0.45 + 0.55 * clamp(s.iq(), 0, 1));
   };
   Fight.prototype.activity = function (s) {
     const p = s.plan;
     // (the base rate comes down as the combinations get longer and the flurries busier: the same man throws
     // about as much over a round as he did, but he throws it in bursts instead of a steady drip)
-    let act = (0.105 + 0.2 * p.workRate + 0.06 * p.mentality + 0.035 * s.a.speed) * 0.88 * this.wc.pace;
+    let act = (0.105 + 0.2 * p.workRate + 0.06 * p.mentality + 0.035 * s.a.speed) * 0.88 * this.wc.pace * TUNE.aggr;
     // the rhythm of the fight, dulled a little by a patient game plan: the careful ones join in less
     act *= 1 + (this.heat == null ? 0 : this.heat - 1) * (0.55 + 0.45 * p.mentality);
     act *= 0.55 + 0.45 * (s.energy / 100);
     act *= 1 + s.m.output + 0.8 * (s.swing || 0);
-    if (s.opp.rocked) act *= 1 + 0.35 * s.a.killer;
+    // A hurt man in front of him: go and get him. How hard depends on how he finishes — a swarmer is on him
+    // at once and stays on him, a measured finisher steps in behind his shots and picks them (still far busier
+    // than he was), a wrestler goes for the legs (standPrior's shot) and throws to get there. Killer instinct
+    // is how fast any of them recognises it. (Before this a man with his opponent hurt in front of him threw
+    // nothing at all in 28% of those moments.)
+    const k = TUNE.hurtPush;
+    if (s.opp.rocked) act *= 1 + (0.35 + 0.45 * k) * s.a.killer;
     if (s.rocked) act *= 0.35;
-    if (s.opp.rocked && (p.killer === 'swarm')) act = Math.max(act, 0.8);
-    if (s.opp.rocked && p.killer === 'measured') act = Math.max(act, 0.5);
+    // and a gassed one: the fresher man ups the pace to drown him (the aggressive ones most, the patient ones
+    // still a little: he isn't going to let the man breathe)
+    const gas = this.gasRead(s);
+    if (gas && !s.rocked) act *= 1 + TUNE.gasPush * gas * (0.45 + 0.4 * p.mentality + 0.25 * s.a.killer);
     if (s.energy < 12) act *= 0.5;
     // at the distance he wants he can let his hands go; out of it he has to find his range first
     if (this.pos === 'stand' && s.x != null) {
@@ -8515,6 +8540,13 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
       const px = this.posEdge ? this.posEdge[s.side] : 0;
       act *= clamp(1 + 0.9 * clamp(s.offIQ(), 0, 1.1) * px, 0.4, 1.9);
     }
+    // (the floor for a hurt man in front of him comes last: the range and the feet above don't talk a swarmer
+    // out of it — he walks through them)
+    if (s.opp.rocked && !s.rocked && s.energy >= 12) {
+      if (p.killer === 'swarm') act = Math.max(act, 0.82 + 0.13 * k);
+      else if (p.killer === 'measured') act = Math.max(act, (0.55 + 0.2 * k) * (0.8 + 0.3 * s.a.killer));
+      else act = Math.max(act, (0.45 + 0.15 * k) * (0.8 + 0.3 * s.a.killer));
+    }
     return clamp(act, 0.03, 0.95);
   };
 
@@ -8524,8 +8556,20 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     if (this.tick === 0 || rng.chance(0.3)) this.fightForRange();
     this.footwork();
 
-    const aAct = rng.chance(this.activity(A));
-    const bAct = rng.chance(this.activity(B));
+    let aAct = rng.chance(this.activity(A));
+    let bAct = rng.chance(this.activity(B));
+    // Being opened up on is itself a reason to throw: a man who was only going to watch this moment fires back
+    // when the other one lets go, and it becomes a trade. The brawlers do it most, the counter-punchers
+    // waiting for exactly this next, the circlers least; the rhythm of the fight raises it for everyone.
+    // (Without this both men threw in the same moment 15% of the time — the exchanges were one man
+    // attacking and the other covering, and the firefights the sport is known for barely happened.)
+    if (aAct !== bAct) {
+      const o = aAct ? B : A, vs = o.plan.vsPressure;
+      const back = TUNE.trade * (vs === 'trade' ? 1.5 : vs === 'counter' ? 1.15 : vs === 'circle' ? 0.55 : 0.8)
+        * (0.6 + 0.4 * o.plan.mentality) * (0.7 + 0.3 * clamp(this.heat || 1, 0.5, 2.5)) * (0.5 + 0.5 * o.energy / 100)
+        * (o.rocked ? 0.35 : 1) * (o.energy < 12 ? 0.3 : 1);
+      if (rng.chance(clamp(back, 0, 0.75))) { if (aAct) bAct = true; else aAct = true; }
+    }
     if (!aAct && !bAct) {
       // feints and footwork only (the moving around happens in footwork())
       this.ambient();
@@ -8651,7 +8695,11 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
         if (shoot) this.attemptTakedown(s, false); else this.combo(s, 'power');
       } else if (reactive) {
         if (!this.quiet && this.trng.next() < 0.4) this.call('feintSeen', s, o, 0, 'info', null, o.side);
-      } else if (rng.chance(0.4)) this.combo(s, 'light');
+        // (he didn't bite, and the feint is usually still the front of something: a man feints to throw)
+        if (rng.chance(0.3 + 0.1 * clamp((this.heat || 1) - 1, 0, 1.5))) this.combo(s, 'light');
+      } else if (rng.chance(0.6 + 0.1 * clamp((this.heat || 1) - 1, 0, 1.5))) this.combo(s, 'light');
+      // (a feint that went nowhere was the commonest moment of all in the long quiet spells: both men busy
+      // and neither one throwing — two in five of them led into anything, and an unbitten one into nothing)
       return;
     } else if (i === 'shot') {
       if (j === 'counter' && v > 0) this.call('levelChange', s, o, 1, 'td');
@@ -8749,6 +8797,9 @@ body.pc .bfig-n { font-size: 12px; white-space: nowrap; }
     // and a fourth, for the quick and the busy, or on a man who is already hurt
     if (len >= 3 && rng.chance(0.1 + 0.18 * s.a.speed + 0.14 * p.workRate + (s.opp.rocked ? 0.3 : 0))) len++;
     if (s.opp.rocked && p.killer === 'swarm' && rng.chance(0.5)) len++;
+    // in the middle of a firefight the hands keep going, and against a man too tired to answer there's no
+    // reason to stop at two
+    if (this.pos === 'stand' && rng.chance(clamp(0.14 * ((this.heat || 1) - 1.2), 0, 0.3) + 0.3 * this.gasRead(s))) len++;
     // a jab-led sequence runs to three; a counter is short but not always two; kicks don't come in fours
     if (style === 'kick') len = Math.min(len, 2);
     else if (style === 'light' || style === 'counter') len = Math.min(len, 3);
@@ -19018,6 +19069,7 @@ defences|Johnny Eblen|3`,
       return { out, end: lastEnd };
     };
     let p = plan(moves);
+    const n0 = moves.length;
     if (p.end > span) { moves = moves.filter((m) => m.land || m.blocked || m.mv.limb === 'shoot'); p = plan(moves); }
     // (and when even that doesn't fit, what goes is what came first, never the heaviest blow that landed: cut
     // from the end, the punch that rocked him, dropped him or finished the fight — the last of a combination,
@@ -19031,6 +19083,8 @@ defences|Johnny Eblen|3`,
       moves = moves.filter((_, j) => j !== i);
       p = plan(moves);
     }
+    // (how much of what the engine threw the picture had room for: tests/pace.js `view`)
+    cam.shownMoves = (cam.shownMoves || 0) + p.out.length; cam.thrownMoves = (cam.thrownMoves || 0) + n0;
     const now = vn();
     let shotEnd = 0;
     for (const m of p.out) {

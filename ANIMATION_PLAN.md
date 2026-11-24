@@ -2533,6 +2533,43 @@ of landed strikes goes where, and the worst gauge at the end. Three things made 
 Taken all the way (80% and full recovery) body-shot finishes disappeared and KO/TKO fell 1.5 points: a
 body-shot stoppage should be rare, not impossible.
 
+## The pace on the feet (2026-11-23, between steps 1 and 2)
+
+`tests/pace.js` `audit` counts, moment by moment on the feet, how often neither man does anything (no strike,
+no shot, no tie-up), how long the quiet spells run, how often both men throw, how often one throws three or
+more, and how much a man throws with the other hurt or gassed; `view` checks the picture has room to show it.
+
+- **The rhythm** (`heatTick`): open-ups more common (0.14 a moment, from 0.10), feeling-out spells rarer
+  (0.045, from 0.07), and dead air pushes after two quiet moments instead of four, and harder.
+- **A little busier overall** (`TUNE.aggr` 1.12 on the base rate).
+- **Trading** (`TUNE.trade`): a man who wasn't going to throw this moment fires back when the other lets go,
+  by style (brawlers most, circlers least) and with the heat. Longer combinations in a firefight.
+- **Feints lead somewhere**: an unbitten feint now leads into a light combination 60% of the time (was 40%),
+  a read one 30% (was never). Busy feinting with nothing behind it was most of the long quiet spells.
+- **Rushing the finish** (`TUNE.hurtPush`): the floor on how much a man throws with his opponent hurt now
+  comes after the range and footwork factors instead of before (they were talking swarmers out of it), and
+  every style has one: swarm highest, measured next, a takedown finisher's shots on top of his throws.
+- **Upping the ante on a gassed man** (`gasRead`, `TUNE.gasPush`): how plainly he sees the other man is spent
+  (the other low, himself fresher, his IQ to notice) raises his output, his commitment (more power shots and
+  shots for the legs, fewer feints), his combinations, and the fight's heat.
+
+| ~9,500 fights each | before | after |
+|---|---|---|
+| moments on the feet with nothing done by either | 59% | 46% |
+| quiet spell, median / 90th percentile | 6 / 15 s | 3 / 9 s |
+| both men throwing in the same moment | 15.5% | 25.5% |
+| one man throwing 3+ in a moment | 9.4% | 18% |
+| strikes a minute: even fight / rival gassed / rival hurt | 10.9 / 12.8 / 33.4 | 15.5 / 23.1 / 37.5 |
+| nothing thrown with the rival hurt | 25% | 18% |
+| sig. strikes attempted a minute (per man, whole fight) / accuracy | 8.1 / 44.4% | 10.6 / 43.7% |
+| KO/TKO, SUB, DEC | 29.1, 21.8, 49.1% | 35.0, 23.8, 41.2% |
+| knockdowns a fight | 0.19 | 0.16 |
+
+More fights finish: more strikes land. Lowering the impact of a single blow (`shock`) brought it back but
+took knockdowns down with it; cheaper energy made it worse (fresher men throw more again); a lighter
+build-up of head damage barely moved it; each change contributes a little. Left as it is.
+At normal speed the picture shows everything thrown; at 4× it drops about a third (misses first), as it did.
+
 ## Next: the plan for the six points of 2026-11-22 (to start 2026-11-23)
 
 In order of how much each touches, smallest first. Each step stops for a go-ahead before the next.
