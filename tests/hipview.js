@@ -2,14 +2,15 @@
 // far the two bodies are into each other:   import * as V from './tests/hipview.js'; await V.shots('hip1')
 import * as C from './camtest.js';
 const FVX = () => MMA.fightview;
-export async function shots(name = 'hip', orbits = [0.4, 1.4, 2.4, 3.6], tw = 420, crop = [0.2, 0.12, 0.6, 0.8], lead = null) {
+// (`type`: the clinch state to pose — 'hip', or 'press', pressed flat into the fence)
+export async function shots(name = 'hip', orbits = [0.4, 1.4, 2.4, 3.6], tw = 420, crop = [0.2, 0.12, 0.6, 0.8], lead = null, type = 'hip') {
   await C.setup(1, true, true);
   const f = C.fight(), A = f.A, B = f.B;
   if (lead != null) A.lead = lead;   // (which side his head goes to follows his stance)
   // B with his back on the fence, A in on his hips
   const r = 3.2, ang = Math.atan2(B.y, B.x) || 0;
   f.place(B, Math.cos(ang) * r, Math.sin(ang) * r); f.place(A, B.x - Math.cos(ang) * 0.25, B.y - Math.sin(ang) * 0.25);
-  f.toClinch(A); f.clinchType = 'hip';
+  f.toClinch(A); f.clinchType = type;
   for (let i = 0; i < 6; i++) f.driveToFence(A, 0.2);
   const T3 = FVX().three(), cv = document.querySelector('#fvcanvas');
   T3.near = 2.6; C.run(3000);

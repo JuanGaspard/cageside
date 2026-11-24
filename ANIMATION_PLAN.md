@@ -2630,6 +2630,25 @@ going in plays and arrives there, with no sprawl (camMotion); the finish from th
 which already began "in on the hips" (`doubleLeg` from `hip`, pairNow). `tests/hipview.js`: `shots` and
 `entry` (the shot in, then the finish, filmed).
 
+## Step 3 of the plan: pressed into the fence, in the clinch (2026-11-23)
+
+**Engine.** A third clinch state, `clinchType` 'press': chest to chest, hips in, the man pinned flattened on
+the panel. The man in control gets there off the pin on the fence (`TUNE.press`: more for the strong and the
+controllers). In it: control time for him and a drain on the man pinned (`pressDrain`), almost nothing thrown
+(now and then one short shot from either, at half weight, `pressDmg`), the tie-up seldom coming apart on its
+own, the man pinned harder to turn. Out of it: the man on the fence frames off (back to the ordinary tie-up,
+`pressFrame`) or wins the underhooks and turns him (either clears it), a trip, or the referee's stand-up
+clock, which the press does nothing to reset.
+
+`tests/hip.js audit(secs, tune, 'press')`, ~4,800 fights: it comes up 1.1 times a fight and lasts ~12 s;
+damage landed 0.16 a moment in it against 1.25 in the ordinary clinch; out of it 61% to the ordinary tie-up,
+30% apart, 9% a takedown. Finishes as they were.
+
+**Picture.** `pressTop` (leaning in off a staggered stance, head driven in beside his, a hand on each hip
+pinning them to the panel — his back is on the fence, so a lock behind it rode up to the shoulders) and
+`pressBot` (flat and square on the panel, a forearm on the neck and a hand on the shoulder). Spacing 0.5 m
+against the clinch's 0.78. All four grips held, no overlap.
+
 ## Next: the plan for the six points of 2026-11-22 (to start 2026-11-23)
 
 In order of how much each touches, smallest first. Each step stops for a go-ahead before the next.

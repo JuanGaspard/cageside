@@ -6,7 +6,9 @@ const waiting = [];
 chan.port1.onmessage = () => { const r = waiting.shift(); if (r) r(); };
 const sleep = () => new Promise((r) => { waiting.push(r); chan.port2.postMessage(0); });
 
-export async function audit(secs = 20, tune) {
+// `type`: which clinch state to follow — 'hip' (default) or 'press' (pressed flat into the fence). For the
+// press it also counts the damage landed while in it, against the ordinary clinch's.
+export async function audit(secs = 20, tune, type = 'hip') {
   const E = MMA.engine, W = MMA.world, F = MMA.fighter, T = E.TUNE, old = {};
   if (tune) for (const k in tune) { old[k] = T[k]; T[k] = tune[k]; }
   if (!W.state() || !W.state().fighters || W.state().settings.world !== 'real') W.newGame({ world: 'real', seed: 11, promotion: 'UFC' });
@@ -25,9 +27,11 @@ export async function audit(secs = 20, tune) {
         let guard = 0;
         while (!f.over && guard++ < 3000) {
           if (f.betweenRounds) { f.corner('a', E.aiCorner(f, f.A)); f.corner('b', E.aiCorner(f, f.B)); f.nextRound(); continue; }
-          const was = f.pos === 'clinch' && f.clinchType === 'hip';
+          const was = f.pos === 'clinch' && f.clinchType === type, plain = f.pos === 'clinch' && !f.clinchType;
+          const d0 = f.A.stats.dmg + f.B.stats.dmg;
           f.step();
-          const is = f.pos === 'clinch' && f.clinchType === 'hip';
+          const is = f.pos === 'clinch' && f.clinchType === type, dd = f.A.stats.dmg + f.B.stats.dmg - d0;
+          if (was) { S.inT = (S.inT || 0) + 1; S.inD = (S.inD || 0) + dd; } else if (plain) { S.plT = (S.plT || 0) + 1; S.plD = (S.plD || 0) + dd; }
           if (is) S.ticks++;
           if (is && !was) S.entries++;
           if (was && !is) {
@@ -49,5 +53,7 @@ export async function audit(secs = 20, tune) {
   for (const x in S.exits) ex[x] = pc(S.exits[x], nEx);
   return { fights: S.fights, KO_TKO: pc(S.ko, S.fights), SUB: pc(S.sub, S.fights), DEC: pc(S.dec, S.fights),
     tdPerFight: (S.tdA / S.fights).toFixed(2), tdAcc: pc(S.tdL, S.tdA),
+    dmgPerMoment: { inIt: ((S.inD || 0) / Math.max(1, S.inT || 0)).toFixed(2), ordinaryClinch: ((S.plD || 0) / Math.max(1, S.plT || 0)).toFixed(2) },
+    clinchMomentsPerFight: (((S.plT || 0) + (S.inT || 0)) / S.fights).toFixed(1),
     hipPerFight: (S.entries / S.fights).toFixed(2), hipSecsEach: (S.ticks * 3 / Math.max(1, S.entries)).toFixed(1), exits: ex };
 }
