@@ -2683,6 +2683,39 @@ bell and given away in the first minute. Its spread now lives inside the fight i
 
 Pace, accuracy and output unchanged (10.9 sig. strikes a minute, 45%).
 
+## Step 4 of the plan: hooks, overhands, uppercuts and elbows (2026-11-24)
+
+`tests/strikes4.js`: `film` (frame by frame, any angle), `ground` (the ground elbow from each position),
+`measure` (at the impact: fist — or the point of the elbow — to the middle of his head; the elbow's bend; the
+shoulder turned past its range over the whole strike). A head is ~0.11 m in radius, so ~0.15 is contact.
+
+Rebuilt from how each is thrown: the hook a bent arm swung round by the body, elbow up level with the fist,
+coming in from outside the guard (reach 0.66 of the arm, the body closes the rest); the overhand a loop up
+above eye level and out, then over and down onto the temple with the elbow above the fist and the head off
+the line; the uppercut a dip of the knees and the rear shoulder, the fist at the belly, driven up the middle
+by the legs with the elbow under it; the elbows the forearm folded, the point swung across (`elbow`) or
+chopped down (`elbow_2`). Ground elbows are their own clips now (they were the ground punch): `gnpElbow`
+(mount) and `@topGuard`, `@topHalf`, `@topSide` (the left arm, as the punch there), `@topFence` — the fist
+pulled to the ear, the elbow high, the point dropped onto the brow with the weight behind it.
+
+An elbow can't be aimed by moving the hand (the folded arm opens to reach, and the shoulder over-turns): the
+aim now turns and leans the trunk to bring the shoulder onto the line (`sp`, a small search), carries the fist
+with the elbow, and aims the striking surface (a quarter of the way down the forearm).
+
+| at the impact (reps of each) | before | after |
+|---|---|---|
+| hook: elbow bend / lands | 106–130° / yes | 92–99° / yes |
+| overhand: bend / shoulder over its range | 117–152° / 2–17° | 94–110° / 3–9° |
+| uppercut: to the head | 0.23–0.36 m (short) | 0.15–0.18 m |
+| standing elbow: to the head / shoulder over | 0.20–0.40 m / 17–44° | 0.08–0.13 m / 15–31° |
+| ground elbow (mount, guard, fence): to the head | punch clip | 0.29–0.37 m |
+| ground elbow (half, side): to the head | punch clip | 0.32–0.66 m |
+
+Still open: the standing elbow lands with the arm opening to ~130° and the shoulder 15–31° past its range;
+the ground elbows read as elbows but stop 15–50 cm short — on the mount the contact pass pushes him ~20 cm
+back as his chest comes over the face, undoing the aim, and from half guard the trunk search can't see that
+his chest is already on the man. Both want the aim and the contact pass solved together.
+
 ## Next: the plan for the six points of 2026-11-22 (to start 2026-11-23)
 
 In order of how much each touches, smallest first. Each step stops for a go-ahead before the next.

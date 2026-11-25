@@ -1,15 +1,15 @@
 {
   "id": "overhand_2",
   "ref": "guard",
-  "note": "Overhand, the shorter one: a dip to the lead side takes the head off the line, and the rear hand comes over the top from there with less of the body behind it.",
-  "aim": { "hand": "R" },
+  "note": "Overhand right, the shorter loop (step 4): less dip, the fist rising over his lead hand rather than out wide, still coming down on the head with the elbow above it and the weight going through.",
+  "aim": { "hand": "R", "reach": 0.82, "far": 0.48 },
   "keys": [
     { "t": 0, "pose": "guard", "tan": "flat" },
-    { "t": 90, "set": { "root": [0, 0.82], "pelvis": [-0.7, 0.12, 0.06], "spine": [-0.15, 0.3, -0.15], "neck": [0.75, -0.1], "handR": [0.12, 0.3, 0.14], "elbowR": [-0.5, 0.4, 0.7] } },
-    { "t": 200, "tan": "flat", "set": { "root": [0.1, 0.84], "pelvis": [0.25, 0.14, -0.06], "spine": [0.3, 0.35, -0.25], "neck": [-0.55, -0.15], "handR": [0.68, 0.28, -0.04], "elbowR": [0, 0.6, 1], "shR": [0.06, 0.02], "footR": [-0.3, 0.167, 0.1], "toeR": [-0.1, 0.8], "kneeR": [1, 0, -0.3], "handL": [0.22, 0.26, -0.06] } },
-    { "t": 260, "set": { "handR": [0.66, 0.12, -0.06] } },
-    { "t": 440, "pose": "guard", "tan": "flat" }
+    { "t": 110, "set": { "root": [0.01, 0.81], "pelvis": [-0.55, 0.14, 0.08], "spine": [-0.08, 0.3, 0.14], "neck": [0.6, 0.02], "handR": [0.24, 0.44, 0.24], "elbowR": [-0.3, 1, 0.7] } },
+    { "t": 210, "tan": "flat", "set": { "root": [0.11, 0.81], "pelvis": [0.26, 0.16, -0.08], "spine": [0.32, 0.4, -0.25], "neck": [-0.55, -0.15], "handR": [0.62, 0.26, -0.03], "elbowR": [0, 0.9, 0.55], "shR": [0.06, 0.03], "footR": [-0.3, 0.167, 0.1], "toeR": [-0.1, 0.8], "kneeR": [1, 0, -0.3], "handL": [0.22, 0.26, -0.06] } },
+    { "t": 265, "set": { "handR": [0.56, 0.08, -0.1], "elbowR": [0, 0.6, 0.6] } },
+    { "t": 450, "pose": "guard", "tan": "flat" }
   ],
-  "events": { "impact": 200, "recover": 370 },
-  "contacts": { "L": [[0, 440]], "R": [[0, 440]] }
+  "events": { "impact": 210, "recover": 380 },
+  "contacts": { "L": [[0, 450]], "R": [[0, 450]] }
 }

@@ -1,0 +1,13 @@
+{
+  "id": "gnpElbow@topHalf",
+  "ref": "topHalf",
+  "note": "Ground elbow from half guard (step 4): chest-to-chest, there's no room to posture, so it's short — the elbow lifted only to his own shoulder height and chopped down across the face with the shoulder behind it, the head staying low on him.",
+  "aim": { "elbow": "R", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "topHalf", "tan": "flat" },
+    { "t": 90, "set": { "handR": [0.08, 0.18, 0.2], "elbowR": [0, 1, 0.7], "spine": [0.08, -0.05, 0] } },
+    { "t": 155, "tan": "flat", "set": { "handR": [0.14, -0.08, 0.0], "elbowR": [1, -0.6, 0.3], "spine": [0.15, 0.12, 0] } },
+    { "t": 340, "pose": "topHalf", "tan": "flat" }
+  ],
+  "events": { "impact": 155, "recover": 300 }
+}

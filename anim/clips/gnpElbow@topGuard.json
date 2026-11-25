@@ -1,0 +1,13 @@
+{
+  "id": "gnpElbow@topGuard",
+  "ref": "topGuard",
+  "note": "Ground elbow from inside the closed guard (step 4): he posts a hand on the chest, postures up off his heels with the fist at his ear and the elbow high, then drops forward through the guard with the point of the elbow onto the brow, the forearm folded across. A longer fall than from the mount: he's further off him.",
+  "aim": { "elbow": "R", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "topGuard", "tan": "flat" },
+    { "t": 110, "set": { "handR": [0.06, 0.32, 0.22], "elbowR": [0, 1, 0.8], "spine": [0.1, 0.02, 0], "pelvis": [0.06, 0.18, 0] } },
+    { "t": 190, "tan": "flat", "set": { "handR": [0.16, -0.06, 0.02], "elbowR": [1, -0.7, 0.3], "spine": [0.18, 0.55, 0], "pelvis": [0.12, 0.42, 0] } },
+    { "t": 400, "pose": "topGuard", "tan": "flat" }
+  ],
+  "events": { "impact": 190, "recover": 350 }
+}

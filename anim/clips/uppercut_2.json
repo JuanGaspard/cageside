@@ -1,15 +1,15 @@
 {
   "id": "uppercut_2",
   "ref": "guard",
-  "note": "Rear uppercut, the shovelled one: less of a dip, the fist travelling forward as much as up.",
-  "aim": { "hand": "R", "reach": 0.72, "far": 0.45 },
+  "note": "Rear uppercut, the short one (step 4): a smaller dip and a tighter arm, thrown in close off a slip — the same drive up from the legs, the fist up the middle with the elbow under it.",
+  "aim": { "hand": "R", "reach": 0.58, "far": 0.55 },
   "keys": [
     { "t": 0, "pose": "guard", "tan": "flat" },
-    { "t": 70, "set": { "root": [0, 0.81], "pelvis": [-0.68, 0.1, 0.06], "spine": [-0.12, 0.28, 0.08], "handR": [0.2, 0.1, 0.1], "elbowR": [-0.3, -1, 0.4] } },
-    { "t": 180, "tan": "flat", "set": { "root": [0.07, 0.85], "pelvis": [0, 0.1, 0], "spine": [0.2, 0.22, -0.04], "neck": [-0.35, 0.03], "handR": [0.48, 0.3, 0.03], "elbowR": [0.4, -1, 0.5], "footR": [-0.33, 0.152, 0.12], "toeR": [-0.45, 0.6], "handL": [0.24, 0.27, -0.05] } },
-    { "t": 225, "set": { "handR": [0.47, 0.34, 0.02] } },
-    { "t": 380, "pose": "guard", "tan": "flat" }
+    { "t": 80, "set": { "root": [0, 0.78], "pelvis": [-0.7, 0.12, 0.1], "spine": [-0.1, 0.3, 0.12], "neck": [0.6, -0.08], "handR": [0.22, 0.02, 0.1], "elbowR": [-0.3, -1, 0.25] } },
+    { "t": 180, "tan": "flat", "set": { "root": [0.07, 0.87], "pelvis": [0, 0.07, -0.02], "spine": [0.22, 0.14, -0.06], "neck": [-0.35, 0.03], "handR": [0.37, 0.31, 0.01], "elbowR": [0.4, -1, 0.2], "footR": [-0.33, 0.152, 0.12], "toeR": [-0.45, 0.6], "handL": [0.24, 0.27, -0.05] } },
+    { "t": 225, "set": { "handR": [0.34, 0.39, 0.01] } },
+    { "t": 390, "pose": "guard", "tan": "flat" }
   ],
-  "events": { "impact": 180, "recover": 315 },
-  "contacts": { "L": [[0, 380]], "R": [[0, 380]] }
+  "events": { "impact": 180, "recover": 325 },
+  "contacts": { "L": [[0, 390]], "R": [[0, 390]] }
 }

@@ -1,0 +1,15 @@
+{
+  "id": "gnpElbow",
+  "ref": "mount",
+  "note": "Ground elbow from the mount (step 4). Until now a ground elbow was a ground punch (STANDIN), the arm straight into the face. An elbow from on top is the arm folded tight, the fist pulled back to his own ear and the elbow raised high and out, then the point dropped down and across onto the brow with his weight falling on it — the fist finishing by his own chest, never out past the elbow. The other hand posts on the chest.",
+  "aim": { "elbow": "R", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "mount", "tan": "flat" },
+    { "t": 100, "note": "postured up, the fist at his own ear, the elbow high and out",
+      "set": { "handR": [0.04, 0.28, 0.22], "elbowR": [0, 1, 0.8], "spine": [0.12, 0.04, 0], "pelvis": [0.08, 0.14, 0] } },
+    { "t": 175, "tan": "flat", "note": "impact: the point of the elbow dropped onto the brow, the forearm folded across in front of him, the weight on it",
+      "set": { "handR": [0.14, -0.08, 0.02], "elbowR": [1, -0.7, 0.3], "spine": [0.2, 0.5, 0], "pelvis": [0.12, 0.3, 0] } },
+    { "t": 380, "pose": "mount", "tan": "flat" }
+  ],
+  "events": { "impact": 175, "recover": 330 }
+}

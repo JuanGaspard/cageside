@@ -1,0 +1,13 @@
+{
+  "id": "gnpElbow@topSide",
+  "ref": "topSide",
+  "note": "Ground elbow from side control (step 4): across him, the near arm (the left, the one the ground punch uses here, on his head's side) comes off the crossface, the elbow lifts a little and is driven down into the side of the face — short and heavy, the chest still on him.",
+  "aim": { "elbow": "L", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "topSide", "tan": "flat" },
+    { "t": 90, "set": { "handL": [0.06, 0.2, -0.18], "elbowL": [0, 1, -0.6], "spine": [0.06, -0.06, 0] } },
+    { "t": 155, "tan": "flat", "set": { "handL": [0.12, -0.08, -0.02], "elbowL": [1, -0.6, -0.25], "spine": [0.12, 0.12, 0] } },
+    { "t": 340, "pose": "topSide", "tan": "flat" }
+  ],
+  "events": { "impact": 155, "recover": 300 }
+}

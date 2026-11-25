@@ -1,15 +1,17 @@
 {
   "id": "elbow_2",
   "ref": "guard",
-  "note": "Rear elbow, coming down: the elbow goes up high first, then the point slices down and across through the head as he sits into it.",
-  "aim": { "elbow": "R", "far": 0.45 },
+  "note": "Diagonal elbow, rear, chopping down (step 4): the elbow raised high, the fist by the ear, then the point brought down and across onto the brow — the one that cuts. The forearm stays folded; the body drops onto it.",
+  "aim": { "elbow": "R", "far": 0.5 },
   "keys": [
     { "t": 0, "pose": "guard", "tan": "flat" },
-    { "t": 80, "set": { "root": [0.02, 0.87], "pelvis": [-0.7, 0.08, 0.04], "spine": [-0.15, 0.18, 0.06], "handR": [0.06, 0.42, 0.12], "elbowR": [0.2, 1, 0.6] } },
-    { "t": 170, "tan": "flat", "set": { "root": [0.08, 0.84], "pelvis": [0.15, 0.12, -0.04], "spine": [0.3, 0.36, -0.1], "neck": [-0.5, -0.1], "handR": [0.14, 0.34, -0.08], "elbowR": [1, 0.3, 0.1], "footR": [-0.33, 0.158, 0.12], "toeR": [-0.3, 0.65], "handL": [0.26, 0.26, -0.06] } },
-    { "t": 215, "set": { "handR": [0.1, 0.26, -0.16], "spine": [0.3, 0.42, -0.1] } },
-    { "t": 380, "pose": "guard", "tan": "flat" }
+    { "t": 90, "note": "the elbow up high, the fist at the ear",
+      "set": { "root": [0.02, 0.86], "pelvis": [-0.7, 0.06, 0.04], "spine": [-0.15, 0.16, 0.08], "neck": [0.65, 0], "handR": [0.04, 0.42, 0.12], "elbowR": [0.1, 1, 0.6], "handL": [0.28, 0.26, -0.07] } },
+    { "t": 175, "tan": "flat", "note": "impact: down and across onto the brow, the weight dropping onto it",
+      "set": { "root": [0.09, 0.83], "pelvis": [0.15, 0.14, -0.04], "spine": [0.3, 0.38, -0.1], "neck": [-0.5, -0.05], "handR": [0.1, 0.3, -0.08], "elbowR": [1, -0.1, 0.3], "footR": [-0.33, 0.158, 0.12], "toeR": [-0.3, 0.65], "handL": [0.26, 0.26, -0.06] } },
+    { "t": 220, "set": { "handR": [0.08, 0.22, -0.14], "spine": [0.3, 0.44, -0.1] } },
+    { "t": 390, "pose": "guard", "tan": "flat" }
   ],
-  "events": { "impact": 170, "recover": 320 },
-  "contacts": { "L": [[0, 380]], "R": [[0, 380]] }
+  "events": { "impact": 175, "recover": 325 },
+  "contacts": { "L": [[0, 390]], "R": [[0, 390]] }
 }

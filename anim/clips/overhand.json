@@ -1,16 +1,19 @@
 {
   "id": "overhand",
   "ref": "guard",
-  "note": "Overhand. The rear hand cocks high behind, loops up and over and comes down on the head, the whole body falling in behind it: hips through, chest over the lead knee, the head off the line, the rear foot up on its toes.",
-  "aim": { "hand": "R" },
+  "note": "Overhand right, rebuilt (step 4). The old one travelled forward at shoulder height and read as a cross. An overhand loops OVER the top of his guard and comes DOWN onto the head: the head dips off the line to the lead side as the rear shoulder rolls up, the fist rises out to the side above eye level with the elbow high behind it, then the hips and shoulder throw it over and down in an arc, landing on the side of the head/temple with the elbow still above the fist, and the body falling forward through it onto the lead leg. The lead hand stays up on the face.",
+  "aim": { "hand": "R", "reach": 0.82, "far": 0.5 },
   "keys": [
     { "t": 0, "pose": "guard", "tan": "flat" },
-    { "t": 100, "set": { "root": [-0.02, 0.83], "pelvis": [-0.75, 0.1, 0.1], "spine": [-0.25, 0.18, 0.12], "neck": [0.85, 0], "handR": [0.1, 0.32, 0.15], "elbowR": [-0.6, 0.3, 0.7] } },
-    { "t": 180, "set": { "root": [0.06, 0.84], "pelvis": [-0.1, 0.12, -0.05], "spine": [0.2, 0.3, -0.1], "neck": [-0.1, -0.05], "handR": [0.45, 0.45, 0.08], "elbowR": [0, 0.7, 0.7], "handL": [0.24, 0.24, -0.06] } },
-    { "t": 230, "tan": "flat", "set": { "root": [0.13, 0.83], "pelvis": [0.3, 0.15, -0.08], "spine": [0.35, 0.4, -0.18], "neck": [-0.6, -0.2], "handR": [0.72, 0.24, -0.02], "elbowR": [0, 0.5, 1], "shR": [0.06, 0.02], "footR": [-0.3, 0.167, 0.1], "toeR": [-0.1, 0.8], "kneeR": [1, 0, -0.3], "handL": [0.22, 0.26, -0.06] } },
-    { "t": 290, "set": { "handR": [0.68, 0.08, -0.05], "spine": [0.35, 0.45, -0.18] } },
-    { "t": 480, "pose": "guard", "tan": "flat" }
+    { "t": 100, "note": "the dip: knees bend, head down and off the line to the lead side, the rear hand starting up and out",
+      "set": { "root": [-0.01, 0.8], "pelvis": [-0.78, 0.14, 0.1], "spine": [-0.2, 0.28, 0.2], "neck": [0.8, 0.05], "handR": [0.14, 0.32, 0.24], "elbowR": [-0.5, 0.6, 0.8] } },
+    { "t": 170, "note": "the loop: the fist up above eye level, out wide, the elbow high behind it",
+      "set": { "root": [0.03, 0.81], "pelvis": [-0.35, 0.14, 0.02], "spine": [0.05, 0.3, 0.05], "neck": [0.3, 0], "handR": [0.3, 0.48, 0.3], "elbowR": [-0.2, 1, 0.7], "handL": [0.24, 0.25, -0.06] } },
+    { "t": 240, "tan": "flat", "note": "impact: over and down onto the temple, the elbow above the fist, the weight falling onto the lead leg, the rear heel up",
+      "set": { "root": [0.13, 0.8], "pelvis": [0.32, 0.18, -0.1], "spine": [0.38, 0.45, -0.25], "neck": [-0.6, -0.2], "handR": [0.62, 0.24, -0.02], "elbowR": [0, 0.95, 0.5], "shR": [0.06, 0.03], "footR": [-0.3, 0.167, 0.1], "toeR": [-0.1, 0.8], "kneeR": [1, 0, -0.3], "handL": [0.22, 0.26, -0.06] } },
+    { "t": 300, "note": "through it, down and across", "set": { "handR": [0.56, 0.06, -0.12], "elbowR": [0, 0.6, 0.6], "spine": [0.38, 0.5, -0.25] } },
+    { "t": 500, "pose": "guard", "tan": "flat" }
   ],
-  "events": { "impact": 230, "recover": 400 },
-  "contacts": { "L": [[0, 480]], "R": [[0, 480]] }
+  "events": { "impact": 240, "recover": 420 },
+  "contacts": { "L": [[0, 500]], "R": [[0, 500]] }
 }

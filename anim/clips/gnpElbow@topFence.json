@@ -1,0 +1,13 @@
+{
+  "id": "gnpElbow@topFence",
+  "ref": "topFence",
+  "note": "Ground elbow onto a man sitting against the fence (step 4): up on his knees in front of him, the hand on the head pinning it to the panel, the elbow raised and brought down across the brow.",
+  "aim": { "elbow": "R", "far": 0.6 },
+  "keys": [
+    { "t": 0, "pose": "topFence", "tan": "flat" },
+    { "t": 100, "set": { "handR": [0.06, 0.32, 0.2], "elbowR": [0, 1, 0.75], "spine": [0.08, 0.05, 0] } },
+    { "t": 175, "tan": "flat", "set": { "handR": [0.14, 0.0, 0.02], "elbowR": [1, -0.6, 0.3], "spine": [0.15, 0.48, 0] } },
+    { "t": 380, "pose": "topFence", "tan": "flat" }
+  ],
+  "events": { "impact": 175, "recover": 330 }
+}

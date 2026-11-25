@@ -1,15 +1,17 @@
 {
   "id": "uppercut",
   "ref": "guard",
-  "note": "Rear uppercut. Dips onto the rear side, the fist dropping with the shoulder, then the legs and hips drive it up through the middle, palm up, the rear heel turning; the lead hand on the chin.",
-  "aim": { "hand": "R", "reach": 0.68, "far": 0.45 },
+  "note": "Rear uppercut, rebuilt (step 4). The old one came forward more than up and landed short of the chin. An uppercut is driven UP from the legs: the knees dip and the rear shoulder drops, the fist drops to belly height with the elbow tucked to the ribs, then the legs and the rear hip drive up and round together and the fist rises up the middle under his chin, palm towards the puncher, the elbow under the fist and the arm bent tight (a right angle or less). Close range: the body steps in to it (far), so the arm keeps its bend.",
+  "aim": { "hand": "R", "reach": 0.6, "far": 0.55 },
   "keys": [
     { "t": 0, "pose": "guard", "tan": "flat" },
-    { "t": 90, "set": { "root": [-0.01, 0.8], "pelvis": [-0.7, 0.1, 0.08], "spine": [-0.15, 0.3, 0.1], "neck": [0.7, -0.05], "handR": [0.16, 0.06, 0.1], "elbowR": [-0.4, -1, 0.3] } },
-    { "t": 190, "tan": "flat", "set": { "root": [0.06, 0.87], "pelvis": [0.05, 0.08, -0.02], "spine": [0.25, 0.16, -0.06], "neck": [-0.45, 0.05], "handR": [0.42, 0.36, 0.02], "elbowR": [0.2, -1, 0.4], "shR": [0.04, 0.03], "footR": [-0.33, 0.158, 0.12], "toeR": [-0.4, 0.65], "kneeR": [1, 0, 0.1], "handL": [0.24, 0.27, -0.05] } },
-    { "t": 240, "set": { "handR": [0.4, 0.42, 0.01] } },
-    { "t": 400, "pose": "guard", "tan": "flat" }
+    { "t": 100, "note": "the dip: knees bent, the rear shoulder down, the fist down at the belly with the elbow on the ribs, eyes up",
+      "set": { "root": [-0.01, 0.76], "pelvis": [-0.75, 0.12, 0.12], "spine": [-0.1, 0.32, 0.16], "neck": [0.7, -0.1], "handR": [0.2, -0.04, 0.1], "elbowR": [-0.3, -1, 0.2], "handL": [0.26, 0.24, -0.08] } },
+    { "t": 200, "tan": "flat", "note": "impact: the legs straighten and the rear hip drives round; the fist has come up the middle under his chin, the elbow right under it",
+      "set": { "root": [0.06, 0.88], "pelvis": [0.05, 0.05, -0.04], "spine": [0.25, 0.1, -0.08], "neck": [-0.4, 0.05], "handR": [0.36, 0.33, 0.0], "elbowR": [0.4, -1, 0.15], "shR": [0.04, 0.03], "footR": [-0.33, 0.158, 0.12], "toeR": [-0.4, 0.65], "kneeR": [1, 0, 0.1], "handL": [0.24, 0.27, -0.05] } },
+    { "t": 250, "note": "on up through it", "set": { "handR": [0.33, 0.42, 0.0], "root": [0.06, 0.89] } },
+    { "t": 420, "pose": "guard", "tan": "flat" }
   ],
-  "events": { "impact": 190, "recover": 330 },
-  "contacts": { "L": [[0, 400]], "R": [[0, 400]] }
+  "events": { "impact": 200, "recover": 350 },
+  "contacts": { "L": [[0, 420]], "R": [[0, 420]] }
 }
